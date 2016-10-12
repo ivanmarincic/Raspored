@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="godine_prompt">Godina studija</string>
+    <string-array name="godine_array">
+        <item>Strojarstvo</item>
+        <item>1. preddiplomski</item>
+        <item>2. preddiplomski</item>
+        <item>3. preddiplomski</item>
+        <item>1. diplomski</item>
+        <item>2. diplomski</item>
+        <item>Računarstvo</item>
+        <item>1. preddiplomski</item>
+        <item>2. preddiplomski</item>
+        <item>3. preddiplomski</item>
+        <item>1. diplomski</item>
+        <item>2. diplomski</item>
+        <item>Elektrotehnika</item>
+        <item>1. preddiplomski</item>
+    </string-array>
+</resources>
