@@ -1,0 +1,51 @@
+{
+  "project_info": {
+    "project_number": "189834966002",
+    "project_id": "raspored-33684"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:189834966002:android:0bcb068d6d03b39e",
+        "android_client_info": {
+          "package_name": "com.idiotnation.raspored"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "189834966002-jg3a1iggindqpkgejnkf84ovr1jloftf.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.idiotnation.raspored",
+            "certificate_hash": "B4C66F5C7F2B7A7CFD3D3E2C81AC577E7F53BF94"
+          }
+        },
+        {
+          "client_id": "189834966002-ji6v0r32r4crvjvc27pet1q8qi0738h9.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyARrWTC7RGrEvablZPGHtkS-VKeudKDko0"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 2,
+          "analytics_property": {
+            "tracking_id": "UA-75140423-1"
+          }
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 1
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

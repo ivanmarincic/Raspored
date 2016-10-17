@@ -1,0 +1,31 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme.Light" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">@color/colorPrimaryL</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDarkL</item>
+        <item name="colorBackground">@color/colorBackgroundL</item>
+        <item name="colorAccent">@color/colorAccentL</item>
+        <item name="android:textColorSecondary">@color/colorAccentL</item>
+        <item name="textColorPrimary">@color/textColorPrimaryL</item>
+        <item name="textColorSecondary">@color/textColorSecondaryL</item>
+        <item name="textDisabled">@color/textDisabledL</item>
+        <item name="textColorAlertDialogListItem">@color/textColorPrimaryL</item>
+    </style>
+    <style name="AppTheme.Dark" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">@color/colorPrimaryD</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDarkD</item>
+        <item name="colorBackground">@color/colorBackgroundD</item>
+        <item name="colorAccent">@color/colorAccentD</item>
+        <item name="android:textColorSecondary">@color/colorAccentD</item>
+        <item name="textColorPrimary">@color/textColorPrimaryD</item>
+        <item name="textColorSecondary">@color/textColorSecondaryD</item>
+        <item name="textDisabled">@color/textDisabledD</item>
+        <item name="textColorAlertDialogListItem">@color/textColorPrimaryD</item>
+    </style>
+
+    <style name="SpinnerDropdownTheme">
+        <item name="android:textColor">?attr/textColorPrimary</item>
+    </style>
+
+</resources>

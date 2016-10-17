@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.idiotnation.raspored.CustomSwipeToRefresh xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:fab="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/refresh_layout"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    tools:context=".MainActivity">
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/action_bar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            android:elevation="4dp"
+            android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
+
+        <RelativeLayout
+            android:id="@+id/rl_1"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/action_bar"
+            android:clickable="true">
+
+            <ImageView
+                android:id="@+id/sati"
+                android:layout_width="130dp"
+                android:layout_height="fill_parent"
+                android:layout_alignParentLeft="true"
+                android:background="?attr/colorBackground"
+                android:clickable="true"
+                android:scaleType="fitXY" />
+
+            <android.support.v4.view.ViewPager
+                android:id="@+id/pager"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_alignParentRight="true"
+                android:layout_toEndOf="@+id/sati"
+                android:layout_toRightOf="@+id/sati"
+                android:background="?attr/colorBackground"
+                android:overScrollMode="never" />
+
+            <FrameLayout
+                android:id="@+id/land_view"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:background="?attr/colorAccent"
+                android:clickable="true" />
+
+            <TextView
+                android:id="@+id/info_msg"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_centerInParent="true"
+                android:gravity="center"
+                android:padding="15dp"
+                android:background="?attr/colorBackground"
+                android:text="@string/info_msg"
+                android:textColor="?attr/textColorSecondary"
+                android:textSize="14dp"
+                android:textStyle="bold"
+                android:visibility="invisible" />
+
+            <TextView
+                android:id="@+id/err_msg"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_centerInParent="true"
+                android:gravity="center"
+                android:padding="15dp"
+                android:background="?attr/colorBackground"
+                android:text="@string/error_msg"
+                android:textColor="?attr/textColorSecondary"
+                android:textSize="14dp"
+                android:textStyle="bold"
+                android:visibility="invisible" />
+        </RelativeLayout>
+
+        <com.github.clans.fab.FloatingActionMenu
+            android:id="@+id/pages_menu"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            fab:menu_animationDelayPerItem="0"
+            fab:menu_colorNormal="?attr/colorPrimary"
+            fab:menu_colorPressed="?attr/colorPrimary"
+            fab:menu_colorRipple="?attr/colorPrimary"
+            fab:menu_icon="@drawable/pages_material"
+            fab:menu_shadowColor="#000">
+
+            <com.github.clans.fab.FloatingActionButton
+                android:id="@+id/menu_next"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/next_material"
+                fab:fab_colorNormal="?attr/colorPrimary"
+                fab:fab_colorPressed="?attr/colorPrimary"
+                fab:fab_label="Sljedeca"
+                fab:fab_shadowColor="#000"
+                fab:fab_size="mini" />
+
+            <com.github.clans.fab.FloatingActionButton
+                android:id="@+id/menu_prev"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/previous_material"
+                fab:fab_colorNormal="?attr/colorPrimary"
+                fab:fab_colorPressed="?attr/colorPrimary"
+                fab:fab_label="Prethodna"
+                fab:fab_shadowColor="#000"
+                fab:fab_size="mini" />
+
+
+        </com.github.clans.fab.FloatingActionMenu>
+
+        <FrameLayout
+            android:id="@+id/easter_egg_bg"
+            android:layout_marginTop="?attr/actionBarSize"
+            android:clickable="true"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:visibility="gone"
+            android:background="@drawable/spooderman_material"/>
+    </RelativeLayout>
+</com.idiotnation.raspored.CustomSwipeToRefresh>
