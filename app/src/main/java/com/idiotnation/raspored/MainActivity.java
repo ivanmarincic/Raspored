@@ -93,7 +93,6 @@ public class MainActivity extends AppCompatActivity {
     Handler mHandler;
     static ArrayList<tableColumn> columns;
 
-
     int day;
     boolean executePost = false;
 
@@ -112,35 +111,12 @@ public class MainActivity extends AppCompatActivity {
             addPager();
             addFrameView();
             onConfigurationChanged(getResources().getConfiguration());
-            if(prefs.getBoolean("FirstRun", false) && prefs.getInt("SpinnerDefault", -1)!=-1){
+            if (prefs.getBoolean("FirstRun", false) && prefs.getInt("SpinnerDefault", -1) != -1) {
                 checkIfHasContent();
-            }else{
-                startAnimation();
-                ConnectionHelper connectionHelper = new ConnectionHelper(getApplicationContext());
-                connectionHelper.setFinishListener(new ConnectionHelper.finishListener() {
-                    @Override
-                    public void onFinish(boolean isConnectionEstablished) {
-                        if (isConnectionEstablished) {
-                            prefs.edit().putBoolean("FirstRun", true).apply();
-                            listAvailableUrls();
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    infoMessage.setVisibility(View.VISIBLE);
-                                    stopAnimation(View.INVISIBLE);
-                                }
-                            });
-                        } else {
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    internetErrorMessage();
-                                }
-                            });
-                        }
-                    }
-                });
-                connectionHelper.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+            } else {
+                listAvailableUrls(false);
+                prefs.edit().putBoolean("FirstRun", true).apply();
+                infoMessage.setVisibility(View.VISIBLE);
             }
             if (prefs.getBoolean("AutoUpdate", false)) {
                 startService(new Intent(this, AutoUpdateService.class));
@@ -199,7 +175,7 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected Void doInBackground(Void... params) {
-                startDownload();
+            startDownload();
             return null;
         }
 
@@ -207,7 +183,7 @@ public class MainActivity extends AppCompatActivity {
         protected void onPostExecute(Void aVoid) {
             if (executePost) {
                 getPdfImg(executePost);
-                mToolbar.setTitle("Raspored - " + prefs.getString("UpdateDate", "ažuriraj"));
+                mToolbar.setTitle(prefs.getString("UpdateDate", "ažuriraj"));
                 mTracker.send(new HitBuilders.EventBuilder()
                         .setCategory("Action")
                         .setAction("Refresh")
@@ -219,14 +195,6 @@ public class MainActivity extends AppCompatActivity {
                 stopAnimation(View.INVISIBLE);
             }
             Toast.makeText(getApplicationContext(), taskResult, Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    public boolean checkForUpdate(String id) {
-        if (prefs.getString("CurrentRasporedId", "NN").equals(id) && new File(getFilesDir().getAbsolutePath() + "/raspored.pdf").exists()) {
-            return false;
-        } else {
-            return true;
         }
     }
 
@@ -250,42 +218,39 @@ public class MainActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.ab_settings:
                 item.setEnabled(false);
-                if (rasporedUrls.size() < 10) {
-                    listAvailableUrls();
-                }
-                    SettingsDialog settingsDialog = new SettingsDialog(MainActivity.this, rasporedUrls);
-                    settingsDialog.show();
-                    settingsDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
-                        @Override
-                        public void onDismiss(DialogInterface dialog) {
-                            item.setEnabled(true);
-                            if(SettingsDialog.doRefresh){
-                                SettingsDialog.doRefresh = false;
-                                checkDownload();
+                SettingsDialog settingsDialog = new SettingsDialog(MainActivity.this, rasporedUrls);
+                settingsDialog.show();
+                settingsDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                    @Override
+                    public void onDismiss(DialogInterface dialog) {
+                        item.setEnabled(true);
+                        if (SettingsDialog.doRefresh) {
+                            SettingsDialog.doRefresh = false;
+                            checkDownload();
+                        }
+                    }
+                });
+                settingsDialog.setOnEggListener(new SettingsDialog.onEggsterListener() {
+                    @Override
+                    public void onEgg() {
+                        easterEgg = (FrameLayout) findViewById(R.id.easter_egg_bg);
+                        easterEgg.setVisibility(View.VISIBLE);
+                        Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+                        v.vibrate(1000);
+                        Runnable clickList = new Runnable() {
+                            @Override
+                            public void run() {
+                                easterEgg.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        easterEgg.setVisibility(View.GONE);
+                                    }
+                                });
                             }
-                        }
-                    });
-                    settingsDialog.setOnEggListener(new SettingsDialog.onEggsterListener() {
-                        @Override
-                        public void onEgg() {
-                            easterEgg = (FrameLayout) findViewById(R.id.easter_egg_bg);
-                            easterEgg.setVisibility(View.VISIBLE);
-                            Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-                            v.vibrate(1000);
-                            Runnable clickList = new Runnable() {
-                                @Override
-                                public void run() {
-                                    easterEgg.setOnClickListener(new View.OnClickListener() {
-                                        @Override
-                                        public void onClick(View v) {
-                                            easterEgg.setVisibility(View.GONE);
-                                        }
-                                    });
-                                }
-                            };
-                            mHandler.postDelayed(clickList, 5000);
-                        }
-                    });
+                        };
+                        mHandler.postDelayed(clickList, 5000);
+                    }
+                });
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -319,17 +284,17 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void internetErrorMessage(){
-        if(!new File(getFilesDir().getAbsolutePath() + "/raspored.pdf").exists()){
+    public void internetErrorMessage() {
+        if (!new File(getFilesDir().getAbsolutePath() + "/raspored.pdf").exists()) {
             stopAnimation(View.VISIBLE);
-        }else{
+        } else {
             stopAnimation(View.INVISIBLE);
             Toast.makeText(getApplicationContext(), "Niste povezani s internetom", Toast.LENGTH_SHORT).show();
         }
     }
 
     // Lists all avaliable URLs from Web Page
-    public void listAvailableUrls() {
+    public void listAvailableUrls(final boolean checkDownload) {
         startAnimation();
         ConnectionHelper connectionHelper = new ConnectionHelper(getApplicationContext());
         connectionHelper.setFinishListener(new ConnectionHelper.finishListener() {
@@ -338,6 +303,9 @@ public class MainActivity extends AppCompatActivity {
                 if (isConnectionEstablished) {
                     try {
                         rasporedUrls = new DegreeLoader().getDegrees();
+                        if(checkDownload){
+                            checkDownload();
+                        }
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -345,7 +313,7 @@ public class MainActivity extends AppCompatActivity {
                         @Override
                         public void run() {
                             stopAnimation(View.INVISIBLE);
-                            if(!new File(getFilesDir().getAbsolutePath() + "/raspored.pdf").exists()){
+                            if (!new File(getFilesDir().getAbsolutePath() + "/raspored.pdf").exists()) {
                                 infoMessage.setVisibility(View.VISIBLE);
                             }
                         }
@@ -374,21 +342,32 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    public boolean checkForUpdate(String id) {
+        if (prefs.getString("CurrentRasporedId", "NN").equals(id) && new File(getFilesDir().getAbsolutePath() + "/raspored.pdf").exists()) {
+            return false;
+        } else {
+            return true;
+        }
+    }
 
-    public void checkDownload(){
+    // Used for checking wether PDF is downloaded or not
+    public void checkIfHasContent() {
+        if (rasporedUrls.size() < 10) {
+            listAvailableUrls(true);
+        }
+        if (new File(getFilesDir().getAbsolutePath() + "/raspored.pdf").exists()) {
+            getPdfImg(!new File(getFilesDir().getAbsolutePath() + "/raspored.json").exists());
+        }
+    }
+
+    public void checkDownload() {
         startAnimation();
         ConnectionHelper connectionHelper = new ConnectionHelper(getApplicationContext());
         connectionHelper.setFinishListener(new ConnectionHelper.finishListener() {
             @Override
             public void onFinish(boolean isConnectionEstablished) {
                 if (isConnectionEstablished) {
-                    new downloadTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            errorMessage.setVisibility(View.INVISIBLE);
-                        }
-                    });
+                    new downloadTask().execute();
                 } else {
                     runOnUiThread(new Runnable() {
                         @Override
@@ -402,20 +381,7 @@ public class MainActivity extends AppCompatActivity {
         connectionHelper.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
-    // Used for checking wether PDF is downloaded or not
-    public void checkIfHasContent() {
-        startAnimation();
-        if(rasporedUrls.size()<10){
-            listAvailableUrls();
-        }
-        if (!new File(getFilesDir().getAbsolutePath() + "/raspored.pdf").exists()) {
-            checkDownload();
-        } else {
-            getPdfImg(!new File(getFilesDir().getAbsolutePath() + "/raspored.json").exists());
-        }
-    }
-
-    public void stopAnimation(int visibility){
+    public void stopAnimation(int visibility) {
         errorMessage.setVisibility(visibility);
         mRefresh.post(new Runnable() {
             @Override
@@ -425,8 +391,8 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    public void startAnimation(){
-        if(!mRefresh.isRefreshing()){
+    public void startAnimation() {
+        if (!mRefresh.isRefreshing()) {
             mRefresh.post(new Runnable() {
                 @Override
                 public void run() {
@@ -452,10 +418,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void startDownload() {
-        listAvailableUrls();
         executePost = true;
         taskResult = "";
-        if(rasporedUrls.size()>=10){
+        if (rasporedUrls.size() >= 10) {
             if (checkForUpdate(getGDiskId(rasporedUrls.get(prefs.getInt("SpinnerDefault", 0))))) {
                 downloadPdfContent("https://docs.google.com/uc?export=download&id=" + getGDiskId(rasporedUrls.get(prefs.getInt("SpinnerDefault", 0))));
                 prefs.edit().putString("UpdateDate", new SimpleDateFormat("dd.MM.yyyy").format(new Date())).apply();
@@ -465,8 +430,8 @@ public class MainActivity extends AppCompatActivity {
                 executePost = false;
                 taskResult = "Raspored nije izmjenjen";
             }
-        }else{
-            taskResult = "Pokušajte ponvno doslo je do greške";
+        } else {
+            taskResult = "Pokušajte ponovno doslo je do greške";
         }
     }
 
@@ -480,9 +445,9 @@ public class MainActivity extends AppCompatActivity {
         mRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                if(prefs.getInt("SpinnerDefault", -1)!=-1){
-                    checkDownload();
-                }else{
+                if (prefs.getInt("SpinnerDefault", -1) != -1) {
+                    listAvailableUrls(true);
+                } else {
                     Toast.makeText(MainActivity.this, "Odaberite godinu studija", Toast.LENGTH_SHORT).show();
                     stopAnimation(errorMessage.getVisibility());
                 }
@@ -604,10 +569,8 @@ public class MainActivity extends AppCompatActivity {
                         getColumns();
                     }
                     loadJson();
-                    runOnUiThread(new Runnable()
-                    {
-                        public void run()
-                        {
+                    runOnUiThread(new Runnable() {
+                        public void run() {
                             mFrame.setBackgroundDrawable(new BitmapDrawable(Bitmap.createBitmap(bmp, columns.get(0).getX(), columns.get(0).getY(), columns.get(columns.size() - 1).getX() - columns.get(0).getX() + columns.get(columns.size() - 1).getWidth(), columns.get(columns.size() - 1).getY() - columns.get(0).getY() + columns.get(columns.size() - 1).getHeight())));
                             reloadRaspored();
                             stopAnimation(View.INVISIBLE);
@@ -641,7 +604,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public boolean validateBitmap(Bitmap bmp) throws Exception {
+    /*public boolean validateBitmap(Bitmap bmp) throws Exception {
         if (bmp != null) {
             List<Integer> colorCache = new ArrayList<>();
             List<Integer> cordCache = new ArrayList<>();
@@ -672,7 +635,7 @@ public class MainActivity extends AppCompatActivity {
             prefs.edit().putInt("currentPDFPage", 1).apply();
         }
         return true;
-    }
+    }*/
 
     public void getTableLines() {
         xs = new ArrayList<>();
@@ -822,13 +785,13 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    class PDF extends AsyncTask<Void, Void, Void>{
+    class PDF extends AsyncTask<Void, Void, Void> {
 
         Context context;
         finishListener finishListener;
         int pageNum;
 
-        public PDF(Context context, int pageNum){
+        public PDF(Context context, int pageNum) {
             this.context = context;
             this.pageNum = pageNum - 1;
         }
@@ -839,10 +802,12 @@ public class MainActivity extends AppCompatActivity {
                 PdfiumCore pdfiumCore = new PdfiumCore(context);
                 PdfDocument pdfDocument = pdfiumCore.newDocument(getSeekableFileDescriptor(getFilesDir().getAbsolutePath() + "/raspored.pdf"));
                 pdfCount = pdfiumCore.getPageCount(pdfDocument);
+                pageNum = pageNum >= pdfCount ? 0 : pageNum;
+
                 pdfiumCore.openPage(pdfDocument, pageNum);
 
-                int width = pdfiumCore.getPageWidthPoint(pdfDocument, pageNum)*3;
-                int height = pdfiumCore.getPageHeightPoint(pdfDocument, pageNum)*3;
+                int width = pdfiumCore.getPageWidthPoint(pdfDocument, pageNum) * 3;
+                int height = pdfiumCore.getPageHeightPoint(pdfDocument, pageNum) * 3;
 
                 Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
 
@@ -854,13 +819,13 @@ public class MainActivity extends AppCompatActivity {
 
                 pdfiumCore.closeDocument(pdfDocument);
                 finishListener.onFinish(bitmap);
-            } catch(Exception e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
             return null;
         }
 
-        public void setFinishListener(finishListener finishListener){
+        public void setFinishListener(finishListener finishListener) {
             this.finishListener = finishListener;
         }
 

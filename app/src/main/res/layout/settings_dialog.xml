@@ -80,7 +80,7 @@
             android:layout_weight="1"
             android:clickable="true"
             android:gravity="center|left"
-            android:text="Verzija: 4.3"
+            android:text="Verzija: 4.4"
             android:textColor="?attr/textColorPrimary"
             android:textSize="15dp" />
     </LinearLayout>

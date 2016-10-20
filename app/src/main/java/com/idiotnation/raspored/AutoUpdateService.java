@@ -61,6 +61,7 @@ public class AutoUpdateService extends Service {
                                                         .setSmallIcon(R.drawable.update_material)
                                                         .setContentTitle("Raspored")
                                                         .setContentText("Dostupan novi raspored")
+                                                        .setAutoCancel(true)
                                                         .setContentIntent(notificationPendingIntent);
                                         NotificationManager mNotifyMgr =
                                                 (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
