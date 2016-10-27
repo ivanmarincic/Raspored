@@ -1,5 +1,8 @@
 package com.idiotnation.raspored;
 
+import android.content.Context;
+import android.os.AsyncTask;
+
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -9,7 +12,28 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DegreeLoader {
+public class DegreeLoader extends AsyncTask<Void, Void, Void> {
+
+    onFinihListener onFinishListener;
+    Context context;
+
+    public  DegreeLoader(Context context){
+        this.context = context;
+    }
+
+    @Override
+    protected Void doInBackground(Void... voids) {
+        try{
+            if(Utils.checkActiveInternetConnection(context)){
+                onFinishListener.onFinish(getDegrees());
+            }else {
+                onFinishListener.onFinish(null);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return null;
+    }
 
     public List getDegrees() throws IOException {
         List rasporedUrls = new ArrayList();
@@ -67,4 +91,13 @@ public class DegreeLoader {
         }
         return rasporedUrls;
     }
+
+    public void setOnFinishListener(onFinihListener onFinishListener){
+        this.onFinishListener = onFinishListener;
+    }
+
+    public interface onFinihListener{
+        void onFinish(List list);
+    }
+
 }

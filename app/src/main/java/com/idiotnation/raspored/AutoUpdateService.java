@@ -42,17 +42,17 @@ public class AutoUpdateService extends Service {
         rasporedUrls = new ArrayList<>();
         alarm = (AlarmManager) getSystemService(ALARM_SERVICE);
         rasporedPath = getFilesDir().getAbsolutePath() + "/raspored.pdf";
-        if(prefs.getBoolean("AutoUpdate", false)) {
-            try{
-                ConnectionHelper connectionHelper = new ConnectionHelper(getApplicationContext());
-                connectionHelper.setFinishListener(new ConnectionHelper.finishListener() {
+        if (prefs.getBoolean("AutoUpdate", false)) {
+            try {
+                DegreeLoader degreeLoader = new DegreeLoader(getApplicationContext());
+                degreeLoader.setOnFinishListener(new DegreeLoader.onFinihListener() {
                     @Override
-                    public void onFinish(boolean isConnectionEstablished) {
-                        if (isConnectionEstablished) {
-                            listAvailableUrls();
-                            if(rasporedUrls.size()>=10){
-                                try{
-                                    if(checkForUpdate(getGDiskId(rasporedUrls.get(prefs.getInt("SpinnerDefault", 0))))){
+                    public void onFinish(List list) {
+                        if (list != null) {
+                            rasporedUrls = list;
+                            if (rasporedUrls.size() >= 10) {
+                                try {
+                                    if (checkForUpdate(getGDiskId(rasporedUrls.get(prefs.getInt("SpinnerDefault", 0))))) {
                                         Intent notificationIntent = new Intent(getApplicationContext(), MainActivity.class);
                                         notificationIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
                                         PendingIntent notificationPendingIntent = PendingIntent.getActivity(getApplicationContext(), 0, notificationIntent, 0);
@@ -67,32 +67,32 @@ public class AutoUpdateService extends Service {
                                                 (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
                                         mNotifyMgr.notify(29101996, mBuilder.build());
                                     }
-                                }catch (Exception e){
+                                } catch (Exception e) {
                                     e.printStackTrace();
                                 }
                             }
                         }
                     }
                 });
-                connectionHelper.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-            }catch (Exception e){
+                degreeLoader.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+            } catch (Exception e) {
                 e.printStackTrace();
-            }finally {
+            } finally {
                 stopSelf();
             }
         }
         return Service.START_NOT_STICKY;
     }
 
-    public boolean checkForUpdate(String id){
-       if(prefs.getString("CurrentRasporedId", "NN")!="NN"){
-           if(prefs.getString("CurrentRasporedId", "NN").equals(id) && new File(rasporedPath).exists()){
-               return false;
-           }else{
-               return true;
-           }
-       }
-       return false;
+    public boolean checkForUpdate(String id) {
+        if (prefs.getString("CurrentRasporedId", "NN") != "NN") {
+            if (prefs.getString("CurrentRasporedId", "NN").equals(id) && new File(rasporedPath).exists()) {
+                return false;
+            } else {
+                return true;
+            }
+        }
+        return false;
     }
 
     public static boolean isReachableByTcp(String host, int port, int timeout) {
@@ -107,17 +107,9 @@ public class AutoUpdateService extends Service {
         }
     }
 
-    public void listAvailableUrls() {
-        try {
-            rasporedUrls = new DegreeLoader().getDegrees();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
     @Override
     public void onDestroy() {
-        if(prefs.getBoolean("AutoUpdate", false)){
+        if (prefs.getBoolean("AutoUpdate", false)) {
             Intent intent = new Intent(AutoUpdateService.this, AutoUpdateService.class);
             PendingIntent pendingIntent = PendingIntent.getService(AutoUpdateService.this, 0, intent, 0);
             Calendar calendar = Calendar.getInstance();

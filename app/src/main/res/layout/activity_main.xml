@@ -8,7 +8,6 @@
     android:layout_height="fill_parent"
     tools:context=".MainActivity">
 
-
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -48,11 +47,12 @@
                 android:background="?attr/colorBackground"
                 android:overScrollMode="never" />
 
-            <FrameLayout
+            <ImageView
                 android:id="@+id/land_view"
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
                 android:background="?attr/colorAccent"
+                android:scaleType="fitXY"
                 android:clickable="true" />
 
             <TextView
