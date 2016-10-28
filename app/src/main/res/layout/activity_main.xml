@@ -6,7 +6,7 @@
     android:id="@+id/refresh_layout"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    tools:context=".MainActivity">
+    tools:context=".MainView">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -70,14 +70,28 @@
                 android:visibility="invisible" />
 
             <TextView
-                android:id="@+id/err_msg"
+                android:id="@+id/err_msg_i"
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
                 android:layout_centerInParent="true"
                 android:gravity="center"
                 android:padding="15dp"
                 android:background="?attr/colorBackground"
-                android:text="@string/error_msg"
+                android:text="@string/error_msg_i"
+                android:textColor="?attr/textColorSecondary"
+                android:textSize="14dp"
+                android:textStyle="bold"
+                android:visibility="invisible" />
+
+            <TextView
+                android:id="@+id/err_msg_e"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_centerInParent="true"
+                android:gravity="center"
+                android:padding="15dp"
+                android:background="?attr/colorBackground"
+                android:text="@string/error_msg_e"
                 android:textColor="?attr/textColorSecondary"
                 android:textSize="14dp"
                 android:textStyle="bold"
@@ -94,14 +108,14 @@
             fab:menu_colorNormal="?attr/colorPrimary"
             fab:menu_colorPressed="?attr/colorPrimary"
             fab:menu_colorRipple="?attr/colorPrimary"
-            fab:menu_icon="@drawable/pages_material"
+            fab:menu_icon="@drawable/pages"
             fab:menu_shadowColor="#000">
 
             <com.github.clans.fab.FloatingActionButton
                 android:id="@+id/menu_next"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/next_material"
+                android:src="@drawable/next"
                 fab:fab_colorNormal="?attr/colorPrimary"
                 fab:fab_colorPressed="?attr/colorPrimary"
                 fab:fab_label="Sljedeca"
@@ -112,7 +126,7 @@
                 android:id="@+id/menu_prev"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/previous_material"
+                android:src="@drawable/previous"
                 fab:fab_colorNormal="?attr/colorPrimary"
                 fab:fab_colorPressed="?attr/colorPrimary"
                 fab:fab_label="Prethodna"
@@ -129,6 +143,6 @@
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:visibility="gone"
-            android:background="@drawable/spooderman_material"/>
+            android:background="@drawable/spooderman"/>
     </RelativeLayout>
 </com.idiotnation.raspored.CustomSwipeToRefresh>

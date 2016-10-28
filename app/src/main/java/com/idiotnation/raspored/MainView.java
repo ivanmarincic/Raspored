@@ -1,12 +1,10 @@
 package com.idiotnation.raspored;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.StrictMode;
 import android.os.Vibrator;
 import android.support.v4.app.Fragment;
@@ -39,19 +37,18 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class MainActivity extends AppCompatActivity implements MainContract.View {
+import static com.idiotnation.raspored.Utils.ERROR_INTERNAL;
+import static com.idiotnation.raspored.Utils.ERROR_INTERNET;
+
+public class MainView extends AppCompatActivity implements MainContract.View {
 
 
     // Variables
 
-    Bitmap rasporedBitmap;
     MyPagerAdapter mAdapter;
-
     SharedPreferences prefs;
-    String taskResult;
-    Handler mHandler;
     List<TableColumn> columns;
-    boolean executePost = false, refresh = false;
+    boolean refresh = false;
     int pageCount = 1, currentPageNumber = 1;
 
     // Initialization
@@ -71,8 +68,11 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
     @BindView(R.id.pager)
     ViewPager mPager;
 
-    @BindView(R.id.err_msg)
-    TextView errorMessage;
+    @BindView(R.id.err_msg_e)
+    TextView errorMessageE;
+
+    @BindView(R.id.err_msg_i)
+    TextView errorMessageI;
 
     @BindView(R.id.info_msg)
     TextView infoMessage;
@@ -93,8 +93,6 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
         presenter.previousPage(currentPageNumber, pageCount);
     }
 
-    // TODO: Error handling ( Internet and first run)
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         prefs = getSharedPreferences("com.idiotnation.raspored", MODE_PRIVATE);
@@ -109,6 +107,10 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
 
     @Override
     public void initialize() {
+        if(prefs.getBoolean("FirstRun", true) || prefs.getInt("SpinnerDefault", -1)==-1){
+            prefs.edit().putBoolean("FirstRun", false).apply();
+            showInfo(View.VISIBLE);
+        }
         setPagerProperties();
         setThreadPolicy();
         setActionBarProperties();
@@ -121,7 +123,7 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
     public void checkContent() {
         startAnimation();
         if (new File(getFilesDir().getAbsolutePath() + "/raspored.pdf").exists()) {
-            presenter.getRaspored(getApplicationContext(), prefs.getInt("curentPageNumber", 1));
+            presenter.getRaspored(prefs.getInt("curentPageNumber", 1));
         }
         presenter.refresh(prefs.getInt("SpinnerDefault", -1), prefs.getInt("curentPageNumber", 1));
     }
@@ -136,7 +138,7 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
     public void nextPage(int newPageNumber) {
         prefs.edit().putInt("curentPageNumber", newPageNumber).apply();
         if (pageCount > 1) {
-            presenter.getRaspored(getApplicationContext(), newPageNumber);
+            presenter.getRaspored(newPageNumber);
         }
     }
 
@@ -144,46 +146,57 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
     public void previousPage(int newPageNumber) {
         prefs.edit().putInt("curentPageNumber", newPageNumber).apply();
         if (pageCount > 1) {
-            presenter.getRaspored(getApplicationContext(), newPageNumber);
+            presenter.getRaspored(newPageNumber);
         }
     }
 
     @Override
-    public void setRaspored(Bitmap raspored, int pageCounts, List<TableColumn> rasporedColumns) {
+    public void setRaspored(final Bitmap raspored, int pageCounts, List<TableColumn> rasporedColumns) {
         pageCount = pageCounts;
-        rasporedBitmap = raspored;
         columns = rasporedColumns;
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                hoursView.setImageBitmap(Bitmap.createBitmap(rasporedBitmap, columns.get(0).getX(), columns.get(0).getY(), columns.get(0).getWidth(), columns.get(0).getHeight()));
-                landView.setImageBitmap(Bitmap.createBitmap(rasporedBitmap, columns.get(0).getX(), columns.get(0).getY(), columns.get(columns.size() - 1).getX() - columns.get(0).getX() + columns.get(columns.size() - 1).getWidth(), columns.get(columns.size() - 1).getY() - columns.get(0).getY() + columns.get(columns.size() - 1).getHeight()));
+                hoursView.setImageBitmap(Bitmap.createBitmap(raspored, columns.get(0).getX(), columns.get(0).getY(), columns.get(0).getWidth(), columns.get(0).getHeight()));
+                landView.setImageBitmap(Bitmap.createBitmap(raspored, columns.get(0).getX(), columns.get(0).getY(), columns.get(columns.size() - 1).getX() - columns.get(0).getX() + columns.get(columns.size() - 1).getWidth(), columns.get(columns.size() - 1).getY() - columns.get(0).getY() + columns.get(columns.size() - 1).getHeight()));
+                mAdapter.setRasporedBitmap(raspored);
                 refreshPages();
+                showError(View.INVISIBLE, ERROR_INTERNAL, ERROR_INTERNET);
+                showInfo(View.INVISIBLE);
             }
         });
     }
 
     @Override
-    public void stopAnimation(int visibility) {
-        errorMessage.setVisibility(visibility);
-        mRefresh.post(new Runnable() {
-            @Override
-            public void run() {
-                mRefresh.setRefreshing(false);
-            }
-        });
+    public void stopAnimation() {
+       runOnUiThread(new Runnable() {
+           @Override
+           public void run() {
+               mRefresh.post(new Runnable() {
+                   @Override
+                   public void run() {
+                       mRefresh.setRefreshing(false);
+                   }
+               });
+           }
+       });
     }
 
     @Override
     public void startAnimation() {
-        if (!mRefresh.isRefreshing()) {
-            mRefresh.post(new Runnable() {
-                @Override
-                public void run() {
-                    mRefresh.setRefreshing(true);
-                }
-            });
-        }
+       runOnUiThread(new Runnable() {
+           @Override
+           public void run() {
+               if (!mRefresh.isRefreshing()) {
+                   mRefresh.post(new Runnable() {
+                       @Override
+                       public void run() {
+                           mRefresh.setRefreshing(true);
+                       }
+                   });
+               }
+           }
+       });
     }
 
     @Override
@@ -191,6 +204,34 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
         prefs.edit().putString("UpdateDate", date).apply();
         prefs.edit().putString("CurrentRasporedId", id).apply();
         mToolbar.setTitle(date);
+    }
+
+    @Override
+    public void showError(final int visibility,final int... types) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                for (int type : types) {
+                    if (type == ERROR_INTERNET) {
+                        if(!new File(getFilesDir().getAbsolutePath() + "/raspored.pdf").exists()){
+                            errorMessageI.setVisibility(visibility);
+                        }else{
+                            if(visibility==View.VISIBLE){
+                                Toast.makeText(getApplicationContext(), "Niste povezani s internetom", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    }
+                    if (type == ERROR_INTERNAL) {
+                        errorMessageE.setVisibility(visibility);
+                    }
+                }
+            }
+        });
+    }
+
+    @Override
+    public void showInfo(int visibility) {
+        infoMessage.setVisibility(visibility);
     }
 
     @Override
@@ -219,23 +260,14 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
         switch (item.getItemId()) {
             case R.id.ab_settings:
                 item.setEnabled(false);
-                SettingsDialog settingsDialog = new SettingsDialog(MainActivity.this);
+                SettingsDialog settingsDialog = new SettingsDialog(MainView.this);
                 settingsDialog.show();
-                settingsDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
-                    @Override
-                    public void onDismiss(DialogInterface dialog) {
-                        item.setEnabled(true);
-                        if (refresh) {
-                            presenter.refresh(prefs.getInt("SpinnerDefault", -1), prefs.getInt("curentPageNumber", 1));
-                        }
-                    }
-                });
                 settingsDialog.setOnFinishListener(new SettingsDialog.onFinishListner() {
                     @Override
                     public void onFinish(int spinnerItem) {
-                        if(spinnerItem!=prefs.getInt("SpinnerDefault", -1)){
-                            refresh = true;
-                            prefs.edit().putInt("SpinnerDefault", spinnerItem).apply();
+                        item.setEnabled(true);
+                        if (spinnerItem != prefs.getInt("SpinnerDefault", -1)) {
+                            presenter.refresh(spinnerItem, prefs.getInt("curentPageNumber", 1));
                         }
                     }
                 });
@@ -304,7 +336,7 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
                 if (prefs.getInt("SpinnerDefault", -1) != -1) {
                     presenter.refresh(prefs.getInt("SpinnerDefault", -1), prefs.getInt("curentPageNumber", 1));
                 } else {
-                    Toast.makeText(MainActivity.this, "Odaberite godinu studija", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainView.this, "Odaberite godinu studija", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -314,8 +346,15 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
     // Inner classes
 
     public class MyPagerAdapter extends FragmentStatePagerAdapter {
+
+        Bitmap rasporedBitmap;
+
         public MyPagerAdapter(FragmentManager fm) {
             super(fm);
+        }
+
+        public void setRasporedBitmap(Bitmap rasporedBitmap) {
+            this.rasporedBitmap = rasporedBitmap;
         }
 
         @Override

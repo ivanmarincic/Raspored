@@ -17,7 +17,9 @@ public class MainContract {
         void nextPage(int newPageNumber);
         void previousPage(int newPageNumber);
         void startAnimation();
-        void stopAnimation(int visibility);
+        void stopAnimation();
+        void showError(int visibility, int... type);
+        void showInfo(int visibility);
         void update(String date, String id);
     }
 
@@ -25,8 +27,8 @@ public class MainContract {
         void start(View view, Context context);
         void nextPage(int pageNumber, int pageCount);
         void previousPage(int pageNumber, int pageCount);
-        void getRaspored(Context context, int pageNumber);
-        void download(String url, Context context);
+        void getRaspored( int pageNumber);
+        void download(String url);
         void refresh(int idNumber, int pageNumber);
     }
 

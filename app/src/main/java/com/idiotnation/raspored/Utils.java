@@ -24,6 +24,8 @@ public class Utils {
     public static final int MODE_HORIZONTAL = 0;
     public static final int MODE_VERTICAL = 1;
     public static final String lineColor = "ff000000";
+    public static final int ERROR_INTERNET = 1;
+    public static final int ERROR_INTERNAL = 2;
 
     public static String getGDiskId(String url) {
 

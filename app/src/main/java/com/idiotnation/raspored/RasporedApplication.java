@@ -15,7 +15,7 @@ public class RasporedApplication extends Application {
     @Component(modules = AndroidModule.class)
     public interface ApplicationComponent {
         void inject(RasporedApplication application);
-        void inject(MainActivity activity);
+        void inject(MainView activity);
     }
 
     @Inject

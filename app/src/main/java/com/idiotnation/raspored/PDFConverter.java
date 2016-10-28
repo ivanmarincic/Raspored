@@ -7,15 +7,10 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.ParcelFileDescriptor;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import com.shockwave.pdfium.PdfDocument;
 import com.shockwave.pdfium.PdfiumCore;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -68,6 +63,7 @@ public class PDFConverter extends AsyncTask<Void, Void, Void> {
         return null;
     }
 
+
     protected ParcelFileDescriptor getSeekableFileDescriptor(String path) throws IOException {
         ParcelFileDescriptor pfd;
 
@@ -91,82 +87,65 @@ public class PDFConverter extends AsyncTask<Void, Void, Void> {
         return pfd;
     }
 
-    // TODO: Make better algorithm that is aware of both sides at once
-
     public void getTableLines(Bitmap rasporedBitmap) {
+        if(rasporedBitmap==null)
+            return;
+
         xs = new ArrayList<>();
         ys = new ArrayList<>();
-        if (rasporedBitmap != null) {
-            ArrayList<Integer> wCache = new ArrayList<>();
-            wCache.clear();
-            for (int i = 0; i < rasporedBitmap.getWidth(); i++) {
-                if (Integer.toHexString(rasporedBitmap.getPixel(i, rasporedBitmap.getHeight() / 2)).equals(lineColor)) {
-                    for (int j = 0; j < rasporedBitmap.getHeight() / 2; j++) {
-                        if (Integer.toHexString(rasporedBitmap.getPixel(i, rasporedBitmap.getHeight() / 2 + j)).equals(lineColor)) {
-                            wCache.add(i);
-                        } else {
-                            wCache.clear();
-                            break;
-                        }
-                        if (wCache.size() > 100) {
-                            xs.add(i);
-                            while (Integer.toHexString(rasporedBitmap.getPixel(i, rasporedBitmap.getHeight() / 2 + j)).equals(lineColor)) {
-                                i++;
+        int range = rasporedBitmap.getWidth()>rasporedBitmap.getHeight()?rasporedBitmap.getWidth():rasporedBitmap.getHeight(), currentPosition = 0;
+        int xCache=0, yCache=0, xStart = rasporedBitmap.getWidth()/2, yStart = rasporedBitmap.getHeight()/2;
+        int xOffset=0, yOffset=0;
+        while (currentPosition<range){
+            if(currentPosition+yOffset<rasporedBitmap.getHeight()){
+                if(Integer.toHexString(rasporedBitmap.getPixel(xStart, currentPosition+yOffset)).equals(lineColor)){
+                    for (int i=0; i<150;i++){
+                        if(Integer.toHexString(rasporedBitmap.getPixel(xStart+i, currentPosition+yOffset)).equals(lineColor)){
+                            yCache++;
+                            if(yCache>100){
+                                yCache=0;
+                                ys.add(currentPosition+yOffset);
+                                if(ys.size()==1){
+                                    yStart = ys.get(0)+20;
+                                }
+                                while (Integer.toHexString(rasporedBitmap.getPixel(xStart+i, currentPosition+yOffset)).equals(lineColor)) {
+                                    yOffset++;
+                                }
+                                break;
                             }
-                            wCache.clear();
+                        }else {
+                            yCache = 0;
                             break;
+
                         }
                     }
                 }
             }
-            wCache.clear();
-            for (int i = 0; i < rasporedBitmap.getHeight(); i++) {
-                if (Integer.toHexString(rasporedBitmap.getPixel(xs.get(0) + 20, i)).equals(lineColor)) {
-                    for (int j = 0; j < rasporedBitmap.getWidth() / 2; j++) {
-                        if (Integer.toHexString(rasporedBitmap.getPixel(xs.get(0) + j, i)).equals(lineColor)) {
-                            wCache.add(i);
-                        } else {
-                            wCache.clear();
-                            break;
-                        }
-                        if (wCache.size() > 100) {
-                            ys.add(i);
-                            while (Integer.toHexString(rasporedBitmap.getPixel(xs.get(0) + j, i)).equals(lineColor)) {
-                                i++;
+            if(currentPosition+xOffset<rasporedBitmap.getWidth()){
+                if(Integer.toHexString(rasporedBitmap.getPixel(currentPosition+xOffset, yStart)).equals(lineColor)){
+                    for (int i=0; i<150;i++){
+                        if(Integer.toHexString(rasporedBitmap.getPixel(currentPosition+xOffset, yStart+i)).equals(lineColor)){
+                            xCache++;
+                            if(xCache>100){
+                                xCache=0;
+                                xs.add(currentPosition+xOffset);
+                                if(xs.size()==1){
+                                    xStart = xs.get(0)+20;
+                                }
+                                while (Integer.toHexString(rasporedBitmap.getPixel(currentPosition+xOffset, yStart+i)).equals(lineColor)) {
+                                    xOffset++;
+                                }
+                                break;
                             }
-                            wCache.clear();
+                        }else {
+                            xCache = 0;
                             break;
+
                         }
                     }
                 }
             }
-        }
-    }
-
-    public void saveColumnsToJson(List<TableColumn> columns) {
-        try {
-            FileOutputStream fos = context.openFileOutput("raspored.json", MODE_PRIVATE);
-            fos.write(new Gson().toJson(columns).getBytes());
-            fos.close();
-        } catch (Exception e) {
-        }
-    }
-
-    public List<TableColumn> loadColumnsFromJson() {
-        StringBuilder text = new StringBuilder();
-        try {
-            BufferedReader br = new BufferedReader(new FileReader(new File(context.getFilesDir(), "raspored.json")));
-            String line;
-
-            while ((line = br.readLine()) != null) {
-                text.append(line);
-                text.append('\n');
-            }
-            br.close();
-        } catch (IOException e) {
-        }finally {
-            return new Gson().fromJson(text.toString(), new TypeToken<ArrayList<TableColumn>>() {
-            }.getType());
+            currentPosition++;
         }
     }
 

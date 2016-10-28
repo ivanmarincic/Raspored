@@ -53,12 +53,12 @@ public class AutoUpdateService extends Service {
                             if (rasporedUrls.size() >= 10) {
                                 try {
                                     if (checkForUpdate(getGDiskId(rasporedUrls.get(prefs.getInt("SpinnerDefault", 0))))) {
-                                        Intent notificationIntent = new Intent(getApplicationContext(), MainActivity.class);
+                                        Intent notificationIntent = new Intent(getApplicationContext(), MainView.class);
                                         notificationIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
                                         PendingIntent notificationPendingIntent = PendingIntent.getActivity(getApplicationContext(), 0, notificationIntent, 0);
                                         NotificationCompat.Builder mBuilder =
                                                 new NotificationCompat.Builder(getApplicationContext())
-                                                        .setSmallIcon(R.drawable.update_material)
+                                                        .setSmallIcon(R.drawable.update)
                                                         .setContentTitle("Raspored")
                                                         .setContentText("Dostupan novi raspored")
                                                         .setAutoCancel(true)

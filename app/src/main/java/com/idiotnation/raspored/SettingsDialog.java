@@ -33,7 +33,7 @@ public class SettingsDialog extends Dialog {
     Activity activity;
     TextView easterEgg;
     CheckBox autoUpdate, nightMode;
-    ImageView gitHub;
+    ImageView gitHub, tipButton;
     Spinner godineSpinner;
     SharedPreferences prefs;
     onEggsterListener eggsterListener;
@@ -60,6 +60,7 @@ public class SettingsDialog extends Dialog {
         nightMode = (CheckBox) findViewById(R.id.night_mode);
         easterEgg = (TextView) findViewById(R.id.easter_egg);
         gitHub = (ImageView) findViewById(R.id.gitButton);
+        tipButton = (ImageView) findViewById(R.id.tipButton);
         prefs = activity.getSharedPreferences("com.idiotnation.raspored", MODE_PRIVATE);
     }
 
@@ -68,6 +69,7 @@ public class SettingsDialog extends Dialog {
         nightMode.setChecked(prefs.getBoolean("DarkMode", false));
         if (nightMode.isChecked()) {
             gitHub.setImageBitmap(Utils.createInvertedBitmap(BitmapFactory.decodeResource(activity.getResources(), R.drawable.git), true));
+            tipButton.setImageBitmap(Utils.createInvertedBitmap(BitmapFactory.decodeResource(activity.getResources(), R.drawable.tip), true));
         }
         autoUpdate.setVisibility(View.VISIBLE);
         nightMode.setVisibility(View.VISIBLE);

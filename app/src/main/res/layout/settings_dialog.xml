@@ -77,12 +77,20 @@
             android:layout_centerVertical="true"
             android:layout_gravity="right"
             android:layout_toRightOf="@+id/night_mode"
-            android:layout_weight="0.9"
+            android:layout_weight="0.8"
             android:clickable="true"
             android:gravity="center|left"
             android:text="Verzija: 4.4"
             android:textColor="?attr/textColorPrimary"
             android:textSize="15dp" />
+
+        <ImageView
+            android:id="@+id/tipButton"
+            android:layout_width="0dp"
+            android:layout_height="32dp"
+            android:layout_weight="0.1"
+            android:layout_marginRight="15dp"
+            android:src="@drawable/tip"/>
 
         <ImageView
             android:id="@+id/gitButton"
