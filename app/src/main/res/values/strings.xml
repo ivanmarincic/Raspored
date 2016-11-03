@@ -3,5 +3,7 @@
     <string name="app_name">Raspored</string>
     <string name="error_msg_e">Pokušajte ponvno čini se da je došlo do greške</string>
     <string name="error_msg_i">Niste povezani s internetom</string>
+    <string name="error_msg_u">Raspored nije dostupan</string>
     <string name="info_msg">Odaberite godinu studija u postavkama u gornjem desnom kutu, \n povucite prema dolje preko ekrana za osvježavanje</string>
+    <string name="info_end">Dovršeno preuzimanje</string>
 </resources>

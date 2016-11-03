@@ -2,11 +2,13 @@ package com.idiotnation.raspored;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.content.res.Configuration;
-import android.graphics.Bitmap;
+import android.content.res.TypedArray;
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.os.Vibrator;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
@@ -14,12 +16,14 @@ import android.support.v4.view.ViewPager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -35,44 +39,37 @@ import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 
 import static com.idiotnation.raspored.Utils.ERROR_INTERNAL;
 import static com.idiotnation.raspored.Utils.ERROR_INTERNET;
+import static com.idiotnation.raspored.Utils.ERROR_UNAVAILABLE;
+import static com.idiotnation.raspored.Utils.INFO_FINISHED;
+import static com.idiotnation.raspored.Utils.INFO_MESSAGE;
 
 public class MainView extends AppCompatActivity implements MainContract.View {
-
 
     // Variables
 
     MyPagerAdapter mAdapter;
     SharedPreferences prefs;
-    List<TableColumn> columns;
-    boolean refresh = false;
-    int pageCount = 1, currentPageNumber = 1;
+    float pageWidth = 1;
 
     // Initialization
 
     @Inject
     MainPresenter presenter;
 
-    @BindView(R.id.land_view)
-    ImageView landView;
-
     @BindView(R.id.easter_egg_bg)
     FrameLayout easterEgg;
 
     @BindView(R.id.sati)
-    ImageView hoursView;
+    RelativeLayout hoursView;
 
     @BindView(R.id.pager)
     ViewPager mPager;
 
-    @BindView(R.id.err_msg_e)
-    TextView errorMessageE;
-
-    @BindView(R.id.err_msg_i)
-    TextView errorMessageI;
+    @BindView(R.id.dayTabs)
+    TabLayout mTabs;
 
     @BindView(R.id.info_msg)
     TextView infoMessage;
@@ -82,16 +79,6 @@ public class MainView extends AppCompatActivity implements MainContract.View {
 
     @BindView(R.id.action_bar)
     Toolbar mToolbar;
-
-    @OnClick(R.id.menu_next)
-    public void nextRasporedPage() {
-        presenter.nextPage(currentPageNumber, pageCount);
-    }
-
-    @OnClick(R.id.menu_prev)
-    public void previousRasporedPage() {
-        presenter.previousPage(currentPageNumber, pageCount);
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -106,12 +93,20 @@ public class MainView extends AppCompatActivity implements MainContract.View {
     }
 
     @Override
+    public void onBackPressed() {
+        moveTaskToBack(true);
+        android.os.Process.killProcess(android.os.Process.myPid());
+        System.exit(1);
+    }
+
+    @Override
     public void initialize() {
-        if(prefs.getBoolean("FirstRun", true) || prefs.getInt("SpinnerDefault", -1)==-1){
+        if (prefs.getBoolean("FirstRun", true) || prefs.getInt("SpinnerDefault", -1) == -1) {
             prefs.edit().putBoolean("FirstRun", false).apply();
-            showInfo(View.VISIBLE);
+            showMessage(View.VISIBLE, INFO_MESSAGE);
         }
         setPagerProperties();
+        setHours();
         setThreadPolicy();
         setActionBarProperties();
         setRefreshLayoutProperties();
@@ -122,10 +117,10 @@ public class MainView extends AppCompatActivity implements MainContract.View {
     @Override
     public void checkContent() {
         startAnimation();
-        if (new File(getFilesDir().getAbsolutePath() + "/raspored.pdf").exists()) {
-            presenter.getRaspored(prefs.getInt("curentPageNumber", 1));
+        if (new File(getFilesDir() + "/raspored.json").exists()) {
+            presenter.getRaspored();
         }
-        presenter.refresh(prefs.getInt("SpinnerDefault", -1), prefs.getInt("curentPageNumber", 1));
+        presenter.refresh(prefs.getInt("SpinnerDefault", -1));
     }
 
     @Override
@@ -135,117 +130,85 @@ public class MainView extends AppCompatActivity implements MainContract.View {
     }
 
     @Override
-    public void nextPage(int newPageNumber) {
-        prefs.edit().putInt("curentPageNumber", newPageNumber).apply();
-        if (pageCount > 1) {
-            presenter.getRaspored(newPageNumber);
-        }
-    }
-
-    @Override
-    public void previousPage(int newPageNumber) {
-        prefs.edit().putInt("curentPageNumber", newPageNumber).apply();
-        if (pageCount > 1) {
-            presenter.getRaspored(newPageNumber);
-        }
-    }
-
-    @Override
-    public void setRaspored(final Bitmap raspored, int pageCounts, List<TableColumn> rasporedColumns) {
-        pageCount = pageCounts;
-        columns = rasporedColumns;
+    public void setRaspored(final List<List<TableColumn>> rasporedColumns) {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                hoursView.setImageBitmap(Bitmap.createBitmap(raspored, columns.get(0).getX(), columns.get(0).getY(), columns.get(0).getWidth(), columns.get(0).getHeight()));
-                landView.setImageBitmap(Bitmap.createBitmap(raspored, columns.get(0).getX(), columns.get(0).getY(), columns.get(columns.size() - 1).getX() - columns.get(0).getX() + columns.get(columns.size() - 1).getWidth(), columns.get(columns.size() - 1).getY() - columns.get(0).getY() + columns.get(columns.size() - 1).getHeight()));
-                mAdapter.setRasporedBitmap(raspored);
+                mAdapter.setColumns(rasporedColumns);
                 refreshPages();
-                showError(View.INVISIBLE, ERROR_INTERNAL, ERROR_INTERNET);
-                showInfo(View.INVISIBLE);
+                stopAnimation();
             }
         });
     }
 
     @Override
     public void stopAnimation() {
-       runOnUiThread(new Runnable() {
-           @Override
-           public void run() {
-               mRefresh.post(new Runnable() {
-                   @Override
-                   public void run() {
-                       mRefresh.setRefreshing(false);
-                   }
-               });
-           }
-       });
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mRefresh.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        mRefresh.setRefreshing(false);
+                    }
+                });
+            }
+        });
     }
 
     @Override
     public void startAnimation() {
-       runOnUiThread(new Runnable() {
-           @Override
-           public void run() {
-               if (!mRefresh.isRefreshing()) {
-                   mRefresh.post(new Runnable() {
-                       @Override
-                       public void run() {
-                           mRefresh.setRefreshing(true);
-                       }
-                   });
-               }
-           }
-       });
-    }
-
-    @Override
-    public void update(String date, String id) {
-        prefs.edit().putString("UpdateDate", date).apply();
-        prefs.edit().putString("CurrentRasporedId", id).apply();
-        mToolbar.setTitle(date);
-    }
-
-    @Override
-    public void showError(final int visibility,final int... types) {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                for (int type : types) {
-                    if (type == ERROR_INTERNET) {
-                        if(!new File(getFilesDir().getAbsolutePath() + "/raspored.pdf").exists()){
-                            errorMessageI.setVisibility(visibility);
-                        }else{
-                            if(visibility==View.VISIBLE){
-                                Toast.makeText(getApplicationContext(), "Niste povezani s internetom", Toast.LENGTH_SHORT).show();
-                            }
+                if (!mRefresh.isRefreshing()) {
+                    mRefresh.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            mRefresh.setRefreshing(true);
                         }
-                    }
-                    if (type == ERROR_INTERNAL) {
-                        errorMessageE.setVisibility(visibility);
-                    }
+                    });
                 }
             }
         });
     }
 
     @Override
-    public void showInfo(int visibility) {
-        infoMessage.setVisibility(visibility);
-    }
-
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            landView.setVisibility(View.VISIBLE);
-            mPager.setVisibility(View.GONE);
-            mPager.setClickable(false);
-        } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
-            landView.setVisibility(View.GONE);
-            mPager.setVisibility(View.VISIBLE);
-            mPager.setClickable(true);
-        }
+    public void showMessage(final int visibility, final int type) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (visibility == View.VISIBLE) {
+                    String message = "";
+                    switch (type) {
+                        case ERROR_INTERNAL:
+                            message = getResources().getString(R.string.error_msg_e);
+                            break;
+                        case ERROR_INTERNET:
+                            message = getResources().getString(R.string.error_msg_i);
+                            break;
+                        case ERROR_UNAVAILABLE:
+                            message = getResources().getString(R.string.error_msg_u);
+                            break;
+                        case INFO_MESSAGE:
+                            message = getResources().getString(R.string.info_msg);
+                            break;
+                        case INFO_FINISHED:
+                            message = getResources().getString(R.string.info_end);
+                            break;
+                    }
+                    if (new File(getFilesDir() + "/raspored.json").exists()) {
+                        Toast.makeText(MainView.this, message, Toast.LENGTH_SHORT).show();
+                        infoMessage.setVisibility(View.INVISIBLE);
+                    } else {
+                        infoMessage.setText(message);
+                        infoMessage.setVisibility(View.VISIBLE);
+                    }
+                } else {
+                    infoMessage.setVisibility(View.INVISIBLE);
+                }
+            }
+        });
     }
 
     @Override
@@ -267,7 +230,7 @@ public class MainView extends AppCompatActivity implements MainContract.View {
                     public void onFinish(int spinnerItem) {
                         item.setEnabled(true);
                         if (spinnerItem != prefs.getInt("SpinnerDefault", -1)) {
-                            presenter.refresh(spinnerItem, prefs.getInt("curentPageNumber", 1));
+                            presenter.refresh(spinnerItem);
                         }
                     }
                 });
@@ -296,6 +259,7 @@ public class MainView extends AppCompatActivity implements MainContract.View {
 
     public void setPagerProperties() {
         mAdapter = new MyPagerAdapter(getSupportFragmentManager());
+        mTabs.setupWithViewPager(mPager);
         if (mAdapter != null) {
             mPager.setAdapter(mAdapter);
         }
@@ -304,14 +268,43 @@ public class MainView extends AppCompatActivity implements MainContract.View {
     }
 
     public void setPagerActivePage() {
-        int day = Calendar.getInstance(TimeZone.getTimeZone("Europe/Sarajevo")).get(Calendar.DAY_OF_WEEK) - 2;
-        if (day == -1) {
-            day = 5;
+        int day = Calendar.getInstance(TimeZone.getTimeZone("Europe/Sarajevo")).get(Calendar.DAY_OF_WEEK);
+        if (day == 1) {
+            day = 0;
+        } else {
+            day -= 2;
         }
-        if (day == -2) {
-            day = 6;
+        if (Calendar.getInstance(TimeZone.getTimeZone("Europe/Sarajevo")).get(Calendar.HOUR_OF_DAY) > 19) {
+            if (day == 7) {
+                day = 0;
+            } else {
+                day += 1;
+            }
         }
         mPager.setCurrentItem(day);
+    }
+
+    public void setHours() {
+        hoursView.post(new Runnable() {
+            @Override
+            public void run() {
+                for (int i = 0; i < 13; i++) {
+                    TextView textView = new TextView(getApplicationContext());
+                    textView.setGravity(Gravity.CENTER);
+                    textView.setText(String.format("%02d", 7 + i) + ":00");
+                    textView.setTypeface(Typeface.DEFAULT_BOLD);
+                    int[] attribute = new int[]{R.attr.textColorPrimary};
+                    TypedArray array = getTheme().obtainStyledAttributes(attribute);
+                    textView.setTextColor(array.getColor(0, Color.TRANSPARENT));
+                    array.recycle();
+                    textView.setBackgroundDrawable(getResources().getDrawable(R.drawable.separator));
+                    RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, i == 12 ? ViewGroup.LayoutParams.MATCH_PARENT : hoursView.getHeight() / 13);
+                    params.topMargin = (hoursView.getHeight() / 13) * i;
+                    textView.setLayoutParams(params);
+                    hoursView.addView(textView);
+                }
+            }
+        });
     }
 
     public void setThreadPolicy() {
@@ -325,7 +318,6 @@ public class MainView extends AppCompatActivity implements MainContract.View {
 
     public void setActionBarProperties() {
         mToolbar.setTitleTextColor(getResources().getColor(android.R.color.white));
-        mToolbar.setTitle(prefs.getString("UpdateDate", "Raspored"));
         setSupportActionBar(mToolbar);
     }
 
@@ -334,27 +326,32 @@ public class MainView extends AppCompatActivity implements MainContract.View {
             @Override
             public void onRefresh() {
                 if (prefs.getInt("SpinnerDefault", -1) != -1) {
-                    presenter.refresh(prefs.getInt("SpinnerDefault", -1), prefs.getInt("curentPageNumber", 1));
+                    presenter.refresh(prefs.getInt("SpinnerDefault", -1));
                 } else {
                     Toast.makeText(MainView.this, "Odaberite godinu studija", Toast.LENGTH_SHORT).show();
                 }
             }
         });
-        mRefresh.setColorScheme(R.color.blue, R.color.green, R.color.red, R.color.orange);
+        int[] attribute = new int[]{R.attr.colorAccent, R.attr.dialogBackground};
+        TypedArray array = getTheme().obtainStyledAttributes(attribute);
+        mRefresh.setColorSchemeColors(array.getColor(0, Color.TRANSPARENT));
+        mRefresh.setProgressBackgroundColorSchemeColor(array.getColor(1, Color.TRANSPARENT));
+        array.recycle();
     }
 
     // Inner classes
 
     public class MyPagerAdapter extends FragmentStatePagerAdapter {
 
-        Bitmap rasporedBitmap;
+        List<List<TableColumn>> columns;
+        String[] days = new String[]{"Ponedjeljak", "Utorak", "Srijeda", "Četvrtak", "Petak", "Subota"};
 
         public MyPagerAdapter(FragmentManager fm) {
             super(fm);
         }
 
-        public void setRasporedBitmap(Bitmap rasporedBitmap) {
-            this.rasporedBitmap = rasporedBitmap;
+        public void setColumns(List<List<TableColumn>> columns) {
+            this.columns = columns;
         }
 
         @Override
@@ -365,8 +362,15 @@ public class MainView extends AppCompatActivity implements MainContract.View {
         @Override
         public Fragment getItem(int i) {
             ImageFragment fragment = new ImageFragment();
-            fragment.setParams(i, rasporedBitmap, columns);
+            if (columns != null) {
+                fragment.setParams(columns.get(i));
+            }
             return fragment;
+        }
+
+        @Override
+        public float getPageWidth(int position) {
+            return pageWidth;
         }
 
         @Override
@@ -376,7 +380,7 @@ public class MainView extends AppCompatActivity implements MainContract.View {
 
         @Override
         public CharSequence getPageTitle(int position) {
-            return "DAY- " + (position + 1);
+            return days[position];
         }
     }
 }

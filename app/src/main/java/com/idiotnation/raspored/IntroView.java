@@ -25,7 +25,6 @@ public class IntroView extends AppCompatActivity {
                 public void onClick(View view) {
                     prefs.edit().putBoolean("FirstRun", false).apply();
                     startActivity(new Intent(getApplicationContext(), MainView.class));
-                    finish();
                 }
             });
         }else {

@@ -21,21 +21,31 @@
             android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
             app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
 
+        <android.support.design.widget.TabLayout
+            android:id="@+id/dayTabs"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:layout_below="@+id/action_bar"
+            app:tabIndicatorColor="?attr/colorAccent"
+            app:tabBackground="?attr/colorSecondary"
+            app:tabTextColor="?attr/textColorActionBarSecondary"
+            app:tabIndicatorHeight="5dp"
+            app:tabSelectedTextColor="?attr/textColorActionBarPrimary"
+            app:tabMode="scrollable" />
+
         <RelativeLayout
             android:id="@+id/rl_1"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_below="@+id/action_bar"
+            android:layout_below="@+id/dayTabs"
             android:clickable="true">
 
-            <ImageView
+            <RelativeLayout
                 android:id="@+id/sati"
+                android:background="?attr/windowBackgroundSecondary"
                 android:layout_width="130dp"
-                android:layout_height="fill_parent"
-                android:layout_alignParentLeft="true"
-                android:background="?attr/colorBackground"
-                android:clickable="true"
-                android:scaleType="fitXY" />
+                android:layout_height="match_parent"
+                android:layout_alignParentLeft="true" />
 
             <android.support.v4.view.ViewPager
                 android:id="@+id/pager"
@@ -44,66 +54,19 @@
                 android:layout_alignParentRight="true"
                 android:layout_toEndOf="@+id/sati"
                 android:layout_toRightOf="@+id/sati"
-                android:background="?attr/colorBackground"
+                android:background="?attr/windowBackgroundPrimary"
                 android:overScrollMode="never" />
 
-            <ImageView
-                android:id="@+id/land_view"
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
-                android:background="?attr/colorAccent"
-                android:scaleType="fitXY"
-                android:clickable="true" />
-
-            <TextView
-                android:id="@+id/info_msg"
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
-                android:layout_centerInParent="true"
-                android:gravity="center"
-                android:padding="15dp"
-                android:background="?attr/colorBackground"
-                android:text="@string/info_msg"
-                android:textColor="?attr/textColorSecondary"
-                android:textSize="14dp"
-                android:textStyle="bold"
-                android:visibility="invisible" />
-
-            <TextView
-                android:id="@+id/err_msg_i"
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
-                android:layout_centerInParent="true"
-                android:gravity="center"
-                android:padding="15dp"
-                android:background="?attr/colorBackground"
-                android:text="@string/error_msg_i"
-                android:textColor="?attr/textColorSecondary"
-                android:textSize="14dp"
-                android:textStyle="bold"
-                android:visibility="invisible" />
-
-            <TextView
-                android:id="@+id/err_msg_e"
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
-                android:layout_centerInParent="true"
-                android:gravity="center"
-                android:padding="15dp"
-                android:background="?attr/colorBackground"
-                android:text="@string/error_msg_e"
-                android:textColor="?attr/textColorSecondary"
-                android:textSize="14dp"
-                android:textStyle="bold"
-                android:visibility="invisible" />
         </RelativeLayout>
 
+        <!--
         <com.github.clans.fab.FloatingActionMenu
             android:id="@+id/pages_menu"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_alignParentRight="true"
+            android:visibility="gone"
             fab:menu_animationDelayPerItem="0"
             fab:menu_colorNormal="?attr/colorPrimary"
             fab:menu_colorPressed="?attr/colorPrimary"
@@ -135,14 +98,35 @@
 
 
         </com.github.clans.fab.FloatingActionMenu>
+        -->
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@id/action_bar">
+
+            <TextView
+                android:id="@+id/info_msg"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_centerInParent="true"
+                android:background="?attr/windowBackgroundPrimary"
+                android:gravity="center"
+                android:padding="15dp"
+                android:textColor="?attr/textColorSecondary"
+                android:textSize="14dp"
+                android:textStyle="bold"
+                android:visibility="invisible" />
+
+        </RelativeLayout>
 
         <FrameLayout
             android:id="@+id/easter_egg_bg"
-            android:layout_marginTop="?attr/actionBarSize"
-            android:clickable="true"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:visibility="gone"
-            android:background="@drawable/spooderman"/>
+            android:layout_marginTop="?attr/actionBarSize"
+            android:background="@drawable/spooderman"
+            android:clickable="true"
+            android:visibility="gone" />
     </RelativeLayout>
 </com.idiotnation.raspored.CustomSwipeToRefresh>

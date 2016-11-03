@@ -5,15 +5,23 @@
         <item>Strojarstvo</item>
         <item>1. preddiplomski</item>
         <item>2. preddiplomski</item>
-        <item>3. preddiplomski</item>
-        <item>1. diplomski</item>
-        <item>2. diplomski</item>
+        <item>3. preddiplomski(KiRP)</item>
+        <item>3. preddiplomski(PI)</item>
+        <item>3. preddiplomski(MEH)</item>
+        <item>1. diplomski(KiRP)</item>
+        <item>1. diplomski(PI)</item>
+        <item>1. diplomski(MEH)</item>
+        <item>2. diplomski(KiRP)</item>
+        <item>2. diplomski(PI)</item>
+        <item>2. diplomski(MEH)</item>
         <item>Računarstvo</item>
         <item>1. preddiplomski</item>
         <item>2. preddiplomski</item>
         <item>3. preddiplomski</item>
-        <item>1. diplomski</item>
-        <item>2. diplomski</item>
+        <item>1. diplomski(PIiIS)</item>
+        <item>1. diplomski(RSiM)</item>
+        <item>2. diplomski(PIiIS)</item>
+        <item>2. diplomski(RSiM)</item>
         <item>Elektrotehnika</item>
         <item>1. preddiplomski</item>
     </string-array>

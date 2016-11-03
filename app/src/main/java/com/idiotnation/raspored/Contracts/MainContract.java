@@ -1,7 +1,6 @@
 package com.idiotnation.raspored.Contracts;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 
 import com.idiotnation.raspored.TableColumn;
 
@@ -13,23 +12,17 @@ public class MainContract {
         void initialize();
         void checkContent();
         void refreshPages();
-        void setRaspored(Bitmap raspored, int pageCount, List<TableColumn> columns);
-        void nextPage(int newPageNumber);
-        void previousPage(int newPageNumber);
+        void setRaspored(List<List<TableColumn>> columns);
         void startAnimation();
         void stopAnimation();
-        void showError(int visibility, int... type);
-        void showInfo(int visibility);
-        void update(String date, String id);
+        void showMessage(int visibility, int type);
     }
 
     public interface Presenter {
         void start(View view, Context context);
-        void nextPage(int pageNumber, int pageCount);
-        void previousPage(int pageNumber, int pageCount);
-        void getRaspored( int pageNumber);
         void download(String url);
-        void refresh(int idNumber, int pageNumber);
+        void getRaspored();
+        void refresh(int idNumber);
     }
 
 }

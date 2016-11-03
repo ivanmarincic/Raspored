@@ -1,27 +1,38 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
     <!-- Base application theme. -->
     <style name="AppTheme.Light" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorDark">@color/colorDarkL</item>
         <item name="colorPrimary">@color/colorPrimaryL</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDarkL</item>
-        <item name="colorBackground">@color/colorBackgroundL</item>
+        <item name="colorSecondary">@color/colorSecondaryL</item>
         <item name="colorAccent">@color/colorAccentL</item>
-        <item name="android:textColorSecondary">@color/colorAccentL</item>
+        <item name="android:colorAccent" tools:targetApi="lollipop">@color/colorAccentL</item>
+        <item name="android:windowBackground">@color/windowBackgroundPrimaryL</item>
+        <item name="windowBackgroundPrimary">@color/windowBackgroundPrimaryL</item>
+        <item name="windowBackgroundSecondary">@color/windowBackgroundSecondaryL</item>
+        <item name="dialogBackground">@color/dialogBackgroundL</item>
         <item name="textColorPrimary">@color/textColorPrimaryL</item>
         <item name="textColorSecondary">@color/textColorSecondaryL</item>
-        <item name="textDisabled">@color/textDisabledL</item>
-        <item name="textColorAlertDialogListItem">@color/textColorPrimaryL</item>
+        <item name="textColorDisabled">@color/textColorDisabledL</item>
+        <item name="textColorActionBarPrimary">@color/textColorActionBarPrimaryL</item>
+        <item name="textColorActionBarSecondary">@color/textColorActionBarSecondaryL</item>
+        <item name="android:statusBarColor" tools:targetApi="lollipop">@color/colorDarkL</item>
     </style>
     <style name="AppTheme.Dark" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorDark">@color/colorDarkD</item>
         <item name="colorPrimary">@color/colorPrimaryD</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDarkD</item>
-        <item name="colorBackground">@color/colorBackgroundD</item>
+        <item name="colorSecondary">@color/colorSecondaryD</item>
         <item name="colorAccent">@color/colorAccentD</item>
-        <item name="android:textColorSecondary">@color/colorAccentD</item>
+        <item name="android:windowBackground">@color/windowBackgroundPrimaryD</item>
+        <item name="windowBackgroundPrimary">@color/windowBackgroundPrimaryD</item>
+        <item name="windowBackgroundSecondary">@color/windowBackgroundSecondaryD</item>
+        <item name="dialogBackground">@color/dialogBackgroundD</item>
         <item name="textColorPrimary">@color/textColorPrimaryD</item>
         <item name="textColorSecondary">@color/textColorSecondaryD</item>
-        <item name="textDisabled">@color/textDisabledD</item>
-        <item name="textColorAlertDialogListItem">@color/textColorPrimaryD</item>
+        <item name="textColorDisabled">@color/textColorDisabledD</item>
+        <item name="textColorActionBarPrimary">@color/textColorActionBarPrimaryD</item>
+        <item name="textColorActionBarSecondary">@color/textColorActionBarSecondaryD</item>
+        <item name="android:statusBarColor" tools:targetApi="lollipop">@color/colorDarkD</item>
     </style>
 
     <style name="SpinnerDropdownTheme">

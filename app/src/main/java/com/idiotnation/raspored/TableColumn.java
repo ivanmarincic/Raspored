@@ -1,14 +1,10 @@
 package com.idiotnation.raspored;
 
 public class TableColumn {
-    int x, y;
-    int width, height;
+    int height, top;
+    String text;
 
-    public TableColumn(int x, int y, int width, int height) {
-        this.height = height;
-        this.x = x;
-        this.y = y;
-        this.width = width;
+    public TableColumn() {
     }
 
     public int getHeight() {
@@ -19,32 +15,24 @@ public class TableColumn {
         this.height = height;
     }
 
-    public int getX() {
-        return x;
+    public int getTop() {
+        return top;
     }
 
-    public void setX(int x) {
-        this.x = x;
+    public void setTop(int top) {
+        this.top = top;
     }
 
-    public int getY() {
-        return y;
+    public String getText() {
+        return text;
     }
 
-    public void setY(int y) {
-        this.y = y;
-    }
-
-    public int getWidth() {
-        return width;
-    }
-
-    public void setWidth(int width) {
-        this.width = width;
+    public void setText(String text) {
+        this.text = text;
     }
 
     @Override
     public String toString() {
-        return "tableColumn[x=" + x + ",y=" + y + ",width=" + width + ",height=" + height + "]";
+        return "tableColumn[height=" + height + ",text=\"" + text + "\"" + ",top=" + top + "]";
     }
 }

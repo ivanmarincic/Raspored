@@ -2,7 +2,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="?attr/colorBackground"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="?attr/dialogBackground"
     android:orientation="vertical"
     android:padding="10dp"
     android:weightSum="15">
@@ -14,8 +15,9 @@
         android:layout_marginBottom="5dp"
         android:layout_marginTop="5dp"
         android:layout_weight="0.5"
-        android:popupBackground="?attr/colorBackground" />
+        android:popupBackground="?attr/windowBackgroundSecondary" />
 
+    <!--
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -40,6 +42,7 @@
             android:textColor="?attr/textColorPrimary"
             android:textSize="25dp" />
     </RelativeLayout>
+    -->
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -47,14 +50,12 @@
         android:layout_marginBottom="5dp"
         android:layout_marginTop="5dp"
         android:layout_weight="0.5">
-
-        <android.support.v7.widget.AppCompatCheckBox
+        <android.support.v7.widget.SwitchCompat
             android:id="@+id/night_mode"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true" />
-
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -80,11 +81,12 @@
             android:layout_weight="0.8"
             android:clickable="true"
             android:gravity="center|left"
-            android:text="Verzija: 4.4"
+            android:text="Verzija: 5.1"
             android:textColor="?attr/textColorPrimary"
             android:textSize="15dp" />
 
         <ImageView
+            android:visibility="invisible"
             android:id="@+id/tipButton"
             android:layout_width="0dp"
             android:layout_height="32dp"

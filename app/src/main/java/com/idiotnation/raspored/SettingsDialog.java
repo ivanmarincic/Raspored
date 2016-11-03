@@ -10,35 +10,48 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.support.v7.widget.SwitchCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 import static android.content.Context.MODE_PRIVATE;
 
 public class SettingsDialog extends Dialog {
 
     Activity activity;
-    TextView easterEgg;
-    CheckBox autoUpdate, nightMode;
-    ImageView gitHub, tipButton;
-    Spinner godineSpinner;
     SharedPreferences prefs;
     onEggsterListener eggsterListener;
     onFinishListner finishListner;
     int egg = 0, newPosition;
+
+    @BindView(R.id.spinner)
+    Spinner godineSpinner;
+
+    @BindView(R.id.night_mode)
+    SwitchCompat nightMode;
+
+    @BindView(R.id.gitButton)
+    ImageView gitHub;
+
+    @BindView(R.id.easter_egg)
+    TextView easterEgg;
 
     public SettingsDialog(Activity activity) {
         super(activity);
@@ -55,51 +68,42 @@ public class SettingsDialog extends Dialog {
     }
 
     public void init() {
-        godineSpinner = (Spinner) findViewById(R.id.spinner);
-        autoUpdate = (CheckBox) findViewById(R.id.auto_update);
-        nightMode = (CheckBox) findViewById(R.id.night_mode);
-        easterEgg = (TextView) findViewById(R.id.easter_egg);
-        gitHub = (ImageView) findViewById(R.id.gitButton);
-        tipButton = (ImageView) findViewById(R.id.tipButton);
+        ButterKnife.bind(this);
         prefs = activity.getSharedPreferences("com.idiotnation.raspored", MODE_PRIVATE);
     }
 
     public void properties() {
-        autoUpdate.setChecked(prefs.getBoolean("AutoUpdate", false));
         nightMode.setChecked(prefs.getBoolean("DarkMode", false));
         if (nightMode.isChecked()) {
             gitHub.setImageBitmap(Utils.createInvertedBitmap(BitmapFactory.decodeResource(activity.getResources(), R.drawable.git), true));
-            tipButton.setImageBitmap(Utils.createInvertedBitmap(BitmapFactory.decodeResource(activity.getResources(), R.drawable.tip), true));
         }
-        autoUpdate.setVisibility(View.VISIBLE);
         nightMode.setVisibility(View.VISIBLE);
-        autoUpdate.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                prefs.edit().putBoolean("AutoUpdate", isChecked).apply();
-                activity.startService(new Intent(activity.getApplicationContext(), AutoUpdateService.class));
-            }
-        });
         nightMode.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                prefs.edit().putBoolean("DarkMode", isChecked).apply();
-                if (isChecked) {
-                    prefs.edit().putInt("CurrentTheme", R.style.AppTheme_Dark).apply();
-                } else {
-                    prefs.edit().putInt("CurrentTheme", R.style.AppTheme_Light).apply();
-                }
-                activity.finish();
-                activity.startActivity(activity.getIntent());
+            public void onCheckedChanged(CompoundButton compoundButton, final boolean b) {
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        prefs.edit().putBoolean("DarkMode", b).apply();
+                        if (b) {
+                            prefs.edit().putInt("CurrentTheme", R.style.AppTheme_Dark).apply();
+                        } else {
+                            prefs.edit().putInt("CurrentTheme", R.style.AppTheme_Light).apply();
+                        }
+                        activity.finish();
+                        activity.startActivity(activity.getIntent());
+                    }
+                }, 1500);
+                Toast.makeText(activity, "Aplikacija će se ponovno pokrenuti", Toast.LENGTH_SHORT).show();
             }
         });
         final ArrayAdapter<String> dataAdapter = new SpinnerArrayAdapter(activity.getApplicationContext(), R.layout.spinner_selected_item, activity.getResources().getStringArray(R.array.godine_array));
         godineSpinner.setAdapter(dataAdapter);
-        godineSpinner.setSelection(prefs.getInt("SpinnerDefault", 0) + ((prefs.getInt("SpinnerDefault", 0) / 6) + 1));
+        godineSpinner.setSelection(prefs.getInt("SpinnerDefault", 0) + getNewPositionOffset(prefs.getInt("SpinnerDefault", 0)));
         godineSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                newPosition = position - ((position / 6) + 1);
+                newPosition = position - getNewPositionOffset(position);
             }
 
             @Override
@@ -132,6 +136,16 @@ public class SettingsDialog extends Dialog {
         finishListner.onFinish(newPosition);
     }
 
+    public int getNewPositionOffset(int position){
+        if(position<12){
+            return 1;
+        }else if(position<20){
+            return 2;
+        }else {
+            return 3;
+        }
+    }
+
     public class SpinnerArrayAdapter extends ArrayAdapter<String> {
 
         String[] items;
@@ -140,7 +154,7 @@ public class SettingsDialog extends Dialog {
         public SpinnerArrayAdapter(Context context, int resource, String[] items) {
             super(context, resource, items);
             this.items = items;
-            headers = new ArrayList(Arrays.asList(0, 6, 12));
+            headers = new ArrayList(Arrays.asList(0, 12, 20));
         }
 
         @Override
@@ -175,14 +189,13 @@ public class SettingsDialog extends Dialog {
         }
 
         public String getHeader(int position) {
-            if (position < 6) {
+            if (position < 12) {
                 return "S. ";
-            } else if (position < 12) {
+            } else if (position < 20) {
                 return "R. ";
-            } else if (position < 18) {
+            } else {
                 return "E. ";
             }
-            return "";
         }
     }
 

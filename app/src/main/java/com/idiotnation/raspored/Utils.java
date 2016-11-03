@@ -8,16 +8,12 @@ import android.graphics.ColorMatrix;
 import android.graphics.ColorMatrixColorFilter;
 import android.graphics.Paint;
 import android.graphics.Point;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 
 import org.jsoup.Jsoup;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
 
 public class Utils {
 
@@ -26,6 +22,9 @@ public class Utils {
     public static final String lineColor = "ff000000";
     public static final int ERROR_INTERNET = 1;
     public static final int ERROR_INTERNAL = 2;
+    public static final int INFO_MESSAGE = 3;
+    public static final int ERROR_UNAVAILABLE = 4;
+    public static final int INFO_FINISHED = 5;
 
     public static String getGDiskId(String url) {
 
@@ -43,7 +42,7 @@ public class Utils {
         return output;
     }
 
-    public static ArrayList<TableColumn> getColumns(Bitmap bmp, List<Integer> xs, List<Integer> ys) {
+/*    public static ArrayList<TableColumn> getColumns(Bitmap bmp, List<Integer> xs, List<Integer> ys) {
         if (bmp != null) {
             ArrayList<TableColumn> columns = new ArrayList<>();
             for (int i = 0; i < 7; i++) {
@@ -60,7 +59,7 @@ public class Utils {
             return columns;
         }
         return null;
-    }
+    }*/
 
     public static int getLineThickness(Bitmap sourceImage, Point coord, int mode) {
         for (int i = 0; i <= 50; i++) {
@@ -115,22 +114,13 @@ public class Utils {
         return url;
     }
 
-    public static boolean isNetworkAvailable(Context context) {
-        ConnectivityManager connectivityManager
-                = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
-        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
-    }
-
     public static boolean checkActiveInternetConnection(Context context) {
-        if (isNetworkAvailable(context)) {
             try {
                 Jsoup.connect("https://www.google.com").timeout(3000).get();
                 return true;
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        }
         return false;
     }
 

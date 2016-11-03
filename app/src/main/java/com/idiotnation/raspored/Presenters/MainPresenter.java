@@ -1,24 +1,21 @@
 package com.idiotnation.raspored.Presenters;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.view.View;
-import android.widget.Toast;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.idiotnation.raspored.Contracts.MainContract;
 import com.idiotnation.raspored.DegreeLoader;
-import com.idiotnation.raspored.PDFConverter;
+import com.idiotnation.raspored.HTMLConverter;
 import com.idiotnation.raspored.TableColumn;
 
+import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -26,8 +23,9 @@ import javax.inject.Inject;
 import static android.content.Context.MODE_PRIVATE;
 import static com.idiotnation.raspored.Utils.ERROR_INTERNAL;
 import static com.idiotnation.raspored.Utils.ERROR_INTERNET;
-import static com.idiotnation.raspored.Utils.getFinalURL;
-import static com.idiotnation.raspored.Utils.getGDiskId;
+import static com.idiotnation.raspored.Utils.ERROR_UNAVAILABLE;
+import static com.idiotnation.raspored.Utils.INFO_FINISHED;
+import static com.idiotnation.raspored.Utils.INFO_MESSAGE;
 
 public class MainPresenter implements MainContract.Presenter {
 
@@ -46,78 +44,59 @@ public class MainPresenter implements MainContract.Presenter {
     }
 
     @Override
-    public void nextPage(int currnetPage, int pageCount) {
-        if (currnetPage < pageCount) {
-            currnetPage++;
-        } else {
-            currnetPage = 1;
-        }
-        view.nextPage(currnetPage);
-    }
-
-    @Override
-    public void previousPage(int currnetPage, int pageCount) {
-        if (currnetPage > 1) {
-            currnetPage--;
-        } else {
-            currnetPage = pageCount;
-        }
-        view.previousPage(currnetPage);
-    }
-
-    @Override
-    public void getRaspored(int pageNumber) {
+    public void download(String url) {
         try {
-            PDFConverter pdfConverterf = new PDFConverter(context, pageNumber);
-            pdfConverterf.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-            pdfConverterf.setFinishListener(new PDFConverter.PDFConverterListener() {
-                @Override
-                public void onFinish(final Bitmap result, int pageCount, List<TableColumn> rasporedColumns) {
-                    view.setRaspored(result, pageCount, rasporedColumns);
+            if(url!="NN"){
+                HTMLConverter htmlConverter = new HTMLConverter(context, url);
+                htmlConverter.setFinishListener(new HTMLConverter.HTMLConverterListener() {
+                    @Override
+                    public void onFinish(List<List<TableColumn>> columns) {
+                        if(columns!=null){
+                            getRaspored();
+                        }else {
+                            view.stopAnimation();
+                            view.showMessage(View.VISIBLE, ERROR_INTERNAL);
+                        }
+                    }
+                });
+                if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.HONEYCOMB){
+                    htmlConverter.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                }else {
+                    htmlConverter.execute();
                 }
-            });
+            }else{
+                view.showMessage(View.VISIBLE, ERROR_UNAVAILABLE);
+                view.stopAnimation();
+            }
         } catch (Exception e) {
             e.printStackTrace();
-            view.showError(View.VISIBLE, ERROR_INTERNAL);
+            view.showMessage(View.VISIBLE, ERROR_INTERNAL);
             view.stopAnimation();
         }
     }
 
     @Override
-    public void download(String downloadUrl) {
+    public void getRaspored() {
+        StringBuilder text = new StringBuilder();
         try {
-            if (new File(context.getFilesDir().getAbsolutePath() + "/raspored.pdf").exists()) {
-                new File(context.getFilesDir().getAbsolutePath() + "/raspored.pdf").delete();
+            BufferedReader br = new BufferedReader(new FileReader(new File(context.getFilesDir(), "raspored.json")));
+            String line;
+
+            while ((line = br.readLine()) != null) {
+                text.append(line);
+                text.append('\n');
             }
-
-            String fileName = "raspored.pdf";
-
-            // download pdf file.
-            URL url = new URL(getFinalURL(downloadUrl));
-            HttpURLConnection c = (HttpURLConnection) url.openConnection();
-            c.setRequestMethod("GET");
-            c.setDoOutput(false);
-            c.connect();
-            File file = context.getFilesDir();
-            file.mkdirs();
-            FileOutputStream fos = context.openFileOutput(fileName.toString(), MODE_PRIVATE);
-            InputStream is = c.getInputStream();
-            byte[] buffer = new byte[1024];
-            int len1 = 0;
-            while ((len1 = is.read(buffer)) != -1) {
-                fos.write(buffer, 0, len1);
-            }
-            fos.close();
-            is.close();
-            System.gc();
-        } catch (Exception e) {
-            e.printStackTrace();
-
+            br.close();
+        } catch (IOException e) {
+        }finally {
+            view.showMessage(View.VISIBLE, INFO_FINISHED);
+            view.setRaspored((List<List<TableColumn>>)new Gson().fromJson(text.toString(), new TypeToken<List<List<TableColumn>>>() {
+            }.getType()));
         }
     }
 
     @Override
-    public void refresh(final int idNumber, final int pageNumber) {
+    public void refresh(final int idNumber) {
         if (idNumber!=-1){
             view.startAnimation();
             DegreeLoader degreeLoader = new DegreeLoader(context);
@@ -125,66 +104,23 @@ public class MainPresenter implements MainContract.Presenter {
                 @Override
                 public void onFinish(List list) {
                     if (list != null) {
-                        downloadTask task = new downloadTask(idNumber, pageNumber, list);
-                        task.execute();
+                        context.getSharedPreferences("com.idiotnation.raspored", MODE_PRIVATE).edit().putInt("SpinnerDefault", idNumber).apply();
+                        download(list.get(idNumber).toString());
                     }else{
                         view.stopAnimation();
-                        view.showError(View.VISIBLE, ERROR_INTERNET);
+                        view.showMessage(View.VISIBLE, ERROR_INTERNET);
                     }
                 }
             });
-            degreeLoader.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+            if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.HONEYCOMB){
+                degreeLoader.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+            }else {
+                degreeLoader.execute();
+            }
         }else {
+            view.showMessage(View.VISIBLE, INFO_MESSAGE);
             view.stopAnimation();
         }
-    }
 
-    public class downloadTask extends AsyncTask<Void, Void, Void> {
-
-        boolean executePost;
-        String result;
-        int idNumber, pageNumber;
-        List<String> rasporedUrls = new ArrayList<>(10);
-
-        public downloadTask(int idNumber, int pageNumber, List<String> rasporedUrls){
-            this.rasporedUrls = rasporedUrls;
-            this.idNumber = idNumber;
-            this.pageNumber = pageNumber;
-        }
-
-        @Override
-        protected Void doInBackground(Void... params) {
-            executePost = true;
-            result = "";
-            if (rasporedUrls.size() >= 10) {
-                if (!context.getSharedPreferences("com.idiotnation.raspored", MODE_PRIVATE).getString("CurrentRasporedId", "NN").equals(getGDiskId(rasporedUrls.get(idNumber))) || !new File(context.getFilesDir().getAbsolutePath() + "/raspored.pdf").exists()) {
-                    download("https://docs.google.com/uc?export=download&id=" + getGDiskId(rasporedUrls.get(idNumber)));
-                    result = "Preuzimanje dovršeno";
-                } else {
-                    executePost = false;
-                    if(getGDiskId(rasporedUrls.get(idNumber)).equals("NN")){
-                        result = "Raspored nije dostupan";
-                    }else {
-                        result = "Raspored nije izmjenjen";
-                    }
-                }
-            } else {
-                result = "Pokušajte ponovno doslo je do greške";
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            if (executePost) {
-                getRaspored(pageNumber);
-                view.update(new SimpleDateFormat("dd.MM.yyyy").format(new Date()), getGDiskId(rasporedUrls.get(idNumber)));
-            }
-            if(result!="Raspored nije dostupan"){
-                context.getSharedPreferences("com.idiotnation.raspored", MODE_PRIVATE).edit().putInt("SpinnerDefault", idNumber).apply();
-            }
-            view.stopAnimation();
-            Toast.makeText(context, result, Toast.LENGTH_SHORT).show();
-        }
     }
 }

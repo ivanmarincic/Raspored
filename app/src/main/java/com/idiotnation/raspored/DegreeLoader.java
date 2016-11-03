@@ -17,20 +17,17 @@ public class DegreeLoader extends AsyncTask<Void, Void, Void> {
     onFinihListener onFinishListener;
     Context context;
 
-    public  DegreeLoader(Context context){
+    public DegreeLoader(Context context) {
         this.context = context;
     }
 
     @Override
     protected Void doInBackground(Void... voids) {
-        try{
-            if(Utils.checkActiveInternetConnection(context)){
-                onFinishListener.onFinish(getDegrees());
-            }else {
-                onFinishListener.onFinish(null);
-            }
-        }catch (Exception e){
+        try {
+            onFinishListener.onFinish(getDegrees());
+        } catch (Exception e) {
             e.printStackTrace();
+            onFinishListener.onFinish(null);
         }
         return null;
     }
@@ -38,8 +35,9 @@ public class DegreeLoader extends AsyncTask<Void, Void, Void> {
     public List getDegrees() throws IOException {
         List rasporedUrls = new ArrayList();
         String url = "http://www.fsr.ba/index.php?option=com_content&view=article&id=125&Itemid=1198";
-        try{
-            Document doc = Jsoup.connect(url).get();
+        String matchUrl = "http://intranet.fsr.ba/intranetfsr/teamworks.dll/calendar/";
+        try {
+            Document doc = Jsoup.connect(url).timeout(3000).get();
             Elements links1 = doc.select("table.raspored_str").select("tbody").select("tr").get(1).select("td");
             Elements links2 = doc.select("table.raspored_rac").select("tbody").get(1).select("tr").get(1).select("td");
             Elements links3 = doc.select("table.raspored_rac").select("tbody").get(3).select("tr").get(1).select("td");
@@ -50,10 +48,8 @@ public class DegreeLoader extends AsyncTask<Void, Void, Void> {
                     rasporedUrls.add("NN");
                 } else {
                     Element link = ps.get(j).select("a").get(0);
-                    if (link.attr("abs:href").toString().length() >= 32) {
-                        if (link.attr("abs:href").toString().substring(0, 32).equals("https://drive.google.com/file/d/")) {
-                            rasporedUrls.add(link.attr("abs:href").toString());
-                        }
+                    if (link.attr("abs:href").toString().contains(matchUrl)) {
+                        rasporedUrls.add(link.attr("abs:href").toString());
                     }
                 }
             }
@@ -65,10 +61,8 @@ public class DegreeLoader extends AsyncTask<Void, Void, Void> {
                     rasporedUrls.add("NN");
                 } else {
                     Element link = ps.get(j).select("a").get(0);
-                    if (link.attr("abs:href").toString().length() >= 32) {
-                        if (link.attr("abs:href").toString().substring(0, 32).equals("https://drive.google.com/file/d/")) {
-                            rasporedUrls.add(link.attr("abs:href").toString());
-                        }
+                    if (link.attr("abs:href").toString().contains(matchUrl)) {
+                        rasporedUrls.add(link.attr("abs:href").toString());
                     }
                 }
             }
@@ -79,24 +73,23 @@ public class DegreeLoader extends AsyncTask<Void, Void, Void> {
                     rasporedUrls.add("NN");
                 } else {
                     Element link = ps.get(j).select("a").get(0);
-                    if (link.attr("abs:href").toString().length() >= 32) {
-                        if (link.attr("abs:href").toString().substring(0, 32).equals("https://drive.google.com/file/d/")) {
-                            rasporedUrls.add(link.attr("abs:href").toString());
-                        }
+                    if (link.attr("abs:href").toString().contains(matchUrl)) {
+                        rasporedUrls.add(link.attr("abs:href").toString());
                     }
                 }
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
+
         return rasporedUrls;
     }
 
-    public void setOnFinishListener(onFinihListener onFinishListener){
+    public void setOnFinishListener(onFinihListener onFinishListener) {
         this.onFinishListener = onFinishListener;
     }
 
-    public interface onFinihListener{
+    public interface onFinihListener {
         void onFinish(List list);
     }
 
