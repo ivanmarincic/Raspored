@@ -47,6 +47,9 @@ public class SettingsDialog extends Dialog {
     @BindView(R.id.night_mode)
     SwitchCompat nightMode;
 
+    @BindView(R.id.updateOnBoot)
+    SwitchCompat updateOnBoot;
+
     @BindView(R.id.gitButton)
     ImageView gitHub;
 
@@ -74,6 +77,7 @@ public class SettingsDialog extends Dialog {
 
     public void properties() {
         nightMode.setChecked(prefs.getBoolean("DarkMode", false));
+        updateOnBoot.setChecked(prefs.getBoolean("UpdateOnBoot", false));
         if (nightMode.isChecked()) {
             gitHub.setImageBitmap(Utils.createInvertedBitmap(BitmapFactory.decodeResource(activity.getResources(), R.drawable.git), true));
         }
@@ -93,13 +97,20 @@ public class SettingsDialog extends Dialog {
                         activity.finish();
                         activity.startActivity(activity.getIntent());
                     }
-                }, 1500);
+                }, 1000);
                 Toast.makeText(activity, "Aplikacija će se ponovno pokrenuti", Toast.LENGTH_SHORT).show();
+            }
+        });
+        updateOnBoot.setVisibility(View.VISIBLE);
+        updateOnBoot.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                prefs.edit().putBoolean("UpdateOnBoot", b).apply();
             }
         });
         final ArrayAdapter<String> dataAdapter = new SpinnerArrayAdapter(activity.getApplicationContext(), R.layout.spinner_selected_item, activity.getResources().getStringArray(R.array.godine_array));
         godineSpinner.setAdapter(dataAdapter);
-        godineSpinner.setSelection(prefs.getInt("SpinnerDefault", 0) + getNewPositionOffset(prefs.getInt("SpinnerDefault", 0)));
+        godineSpinner.setSelection(prefs.getInt("SpinnerDefault", 0) + setNewPositionOffset(prefs.getInt("SpinnerDefault", 0)));
         godineSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -140,6 +151,16 @@ public class SettingsDialog extends Dialog {
         if(position<12){
             return 1;
         }else if(position<20){
+            return 2;
+        }else {
+            return 3;
+        }
+    }
+
+    public int setNewPositionOffset(int position){
+        if(position<=10){
+            return 1;
+        }else if(position<=17){
             return 2;
         }else {
             return 3;

@@ -8,6 +8,7 @@
     <attr name="windowBackgroundPrimary" format="reference" />
     <attr name="windowBackgroundSecondary" format="reference" />
     <attr name="dialogBackground" format="reference" />
+    <attr name="dialogBackgroundSecondary" format="reference" />
     <attr name="accentColor" format="reference" />
     <attr name="colorSecondary" format="reference" />
     <attr name="colorDark" format="reference" />

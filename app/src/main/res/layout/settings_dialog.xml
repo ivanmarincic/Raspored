@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="?attr/dialogBackground"
     android:orientation="vertical"
     android:padding="10dp"
@@ -43,6 +43,30 @@
             android:textSize="25dp" />
     </RelativeLayout>
     -->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="5dp"
+        android:layout_marginTop="5dp"
+        android:layout_weight="0.5">
+
+        <android.support.v7.widget.SwitchCompat
+            android:id="@+id/updateOnBoot"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="10dp"
+            android:layout_toRightOf="@+id/updateOnBoot"
+            android:text="Aržuriraj pri pokretanju"
+            android:textColor="?attr/textColorPrimary"
+            android:textSize="25dp" />
+    </RelativeLayout>
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -50,12 +74,14 @@
         android:layout_marginBottom="5dp"
         android:layout_marginTop="5dp"
         android:layout_weight="0.5">
+
         <android.support.v7.widget.SwitchCompat
             android:id="@+id/night_mode"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true" />
+
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -81,25 +107,25 @@
             android:layout_weight="0.8"
             android:clickable="true"
             android:gravity="center|left"
-            android:text="Verzija: 5.1"
+            android:text="Verzija: 5.2"
             android:textColor="?attr/textColorPrimary"
             android:textSize="15dp" />
 
         <ImageView
-            android:visibility="invisible"
             android:id="@+id/tipButton"
             android:layout_width="0dp"
             android:layout_height="32dp"
-            android:layout_weight="0.1"
             android:layout_marginRight="15dp"
-            android:src="@drawable/tip"/>
+            android:layout_weight="0.1"
+            android:src="@drawable/tip"
+            android:visibility="invisible" />
 
         <ImageView
             android:id="@+id/gitButton"
             android:layout_width="0dp"
             android:layout_height="32dp"
             android:layout_weight="0.1"
-            android:src="@drawable/git"/>
+            android:src="@drawable/git" />
     </LinearLayout>
 
 </LinearLayout>

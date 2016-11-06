@@ -42,7 +42,7 @@
 
             <RelativeLayout
                 android:id="@+id/sati"
-                android:background="?attr/windowBackgroundSecondary"
+                android:background="@android:color/transparent"
                 android:layout_width="130dp"
                 android:layout_height="match_parent"
                 android:layout_alignParentLeft="true" />

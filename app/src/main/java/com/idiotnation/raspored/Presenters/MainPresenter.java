@@ -52,6 +52,7 @@ public class MainPresenter implements MainContract.Presenter {
                     @Override
                     public void onFinish(List<List<TableColumn>> columns) {
                         if(columns!=null){
+                            view.showMessage(View.VISIBLE, INFO_FINISHED);
                             getRaspored();
                         }else {
                             view.stopAnimation();
@@ -89,7 +90,6 @@ public class MainPresenter implements MainContract.Presenter {
             br.close();
         } catch (IOException e) {
         }finally {
-            view.showMessage(View.VISIBLE, INFO_FINISHED);
             view.setRaspored((List<List<TableColumn>>)new Gson().fromJson(text.toString(), new TypeToken<List<List<TableColumn>>>() {
             }.getType()));
         }

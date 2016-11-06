@@ -11,6 +11,7 @@
         <item name="windowBackgroundPrimary">@color/windowBackgroundPrimaryL</item>
         <item name="windowBackgroundSecondary">@color/windowBackgroundSecondaryL</item>
         <item name="dialogBackground">@color/dialogBackgroundL</item>
+        <item name="dialogBackgroundSecondary">@color/dialogBackgroundSecondaryL</item>
         <item name="textColorPrimary">@color/textColorPrimaryL</item>
         <item name="textColorSecondary">@color/textColorSecondaryL</item>
         <item name="textColorDisabled">@color/textColorDisabledL</item>
@@ -27,6 +28,7 @@
         <item name="windowBackgroundPrimary">@color/windowBackgroundPrimaryD</item>
         <item name="windowBackgroundSecondary">@color/windowBackgroundSecondaryD</item>
         <item name="dialogBackground">@color/dialogBackgroundD</item>
+        <item name="dialogBackgroundSecondary">@color/dialogBackgroundSecondaryD</item>
         <item name="textColorPrimary">@color/textColorPrimaryD</item>
         <item name="textColorSecondary">@color/textColorSecondaryD</item>
         <item name="textColorDisabled">@color/textColorDisabledD</item>
@@ -38,5 +40,12 @@
     <style name="SpinnerDropdownTheme">
         <item name="android:textColor">?attr/textColorPrimary</item>
     </style>
-
+    <style name="AutoScrollTextView">
+        <item name="android:singleLine">true</item>
+        <item name="android:ellipsize">marquee</item>
+        <item name="android:marqueeRepeatLimit">marquee_forever</item>
+        <item name="android:focusable">true</item>
+        <item name="android:focusableInTouchMode">true</item>
+        <item name="android:scrollHorizontally">true</item>
+    </style>
 </resources>

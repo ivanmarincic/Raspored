@@ -9,6 +9,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 
+import java.io.File;
+
 public class IntroView extends AppCompatActivity {
 
     SharedPreferences prefs;
@@ -17,6 +19,13 @@ public class IntroView extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         prefs = getSharedPreferences("com.idiotnation.raspored", MODE_PRIVATE);
+        if(prefs.getInt("DeleteData", -2)==-2){
+            prefs.edit().putInt("DeleteData", 1).apply();
+            if(new File(getFilesDir() + "/raspored.json").exists()){
+                new File(getFilesDir() + "/raspored.json").delete();
+            }
+            prefs.edit().remove("SpinnerDefault").apply();
+        }
         if(prefs.getBoolean("FirstRun", true)){
             setContentView(R.layout.intro_layout);
             next = (Button)findViewById(R.id.next_intro);

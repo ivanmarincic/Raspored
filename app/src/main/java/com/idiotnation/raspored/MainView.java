@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.os.Vibrator;
@@ -116,17 +117,25 @@ public class MainView extends AppCompatActivity implements MainContract.View {
 
     @Override
     public void checkContent() {
-        startAnimation();
         if (new File(getFilesDir() + "/raspored.json").exists()) {
+            startAnimation();
             presenter.getRaspored();
         }
-        presenter.refresh(prefs.getInt("SpinnerDefault", -1));
+        if(prefs.getBoolean("UpdateOnBoot", false)){
+            startAnimation();
+            presenter.refresh(prefs.getInt("SpinnerDefault", -1));
+        }
     }
 
     @Override
     public void refreshPages() {
-        mAdapter.notifyDataSetChanged();
-        mRefresh.requestLayout();
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mAdapter.notifyDataSetChanged();
+                mRefresh.requestLayout();
+            }
+        });
     }
 
     @Override
@@ -293,9 +302,13 @@ public class MainView extends AppCompatActivity implements MainContract.View {
                     textView.setGravity(Gravity.CENTER);
                     textView.setText(String.format("%02d", 7 + i) + ":00");
                     textView.setTypeface(Typeface.DEFAULT_BOLD);
-                    int[] attribute = new int[]{R.attr.textColorPrimary};
+                    int[] attribute = new int[]{R.attr.textColorPrimary, R.attr.windowBackgroundSecondary, R.attr.dialogBackgroundSecondary};
                     TypedArray array = getTheme().obtainStyledAttributes(attribute);
                     textView.setTextColor(array.getColor(0, Color.TRANSPARENT));
+                    float scale = getResources().getDisplayMetrics().density;
+                    GradientDrawable textViewBg = (GradientDrawable) getResources().getDrawable(R.drawable.separator).getConstantState().newDrawable();
+                    textViewBg.setStroke((int) (1 * scale + 0.5f), array.getColor(2, Color.TRANSPARENT));
+                    textViewBg.setColor(array.getColor(1, Color.TRANSPARENT));
                     array.recycle();
                     textView.setBackgroundDrawable(getResources().getDrawable(R.drawable.separator));
                     RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, i == 12 ? ViewGroup.LayoutParams.MATCH_PARENT : hoursView.getHeight() / 13);

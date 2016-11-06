@@ -4,9 +4,8 @@ package com.idiotnation.raspored;
 import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
-import android.support.percent.PercentLayoutHelper;
-import android.support.percent.PercentRelativeLayout;
 import android.support.v4.app.Fragment;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -30,32 +29,48 @@ public class ImageFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        PercentRelativeLayout rootView = new PercentRelativeLayout(getContext());
-        rootView.setBackgroundDrawable(getResources().getDrawable(R.drawable.separator));
-        float scale = getResources().getDisplayMetrics().density;
-        rootView.setPadding((int) (1 * scale + 0.5f), (int) (1 * scale + 0.5f), (int) (1 * scale + 0.5f), (int) (1 * scale + 0.5f));
+    public View onCreateView(final LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        final RelativeLayout rootView = new RelativeLayout(getContext());
         rootView.setLayoutParams(new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         if (columns != null) {
-            for (int i = 0; i < columns.size(); i++) {
-                TextView textView = new TextView(getContext());
-                textView.setGravity(Gravity.CENTER);
-                textView.setText(columns.get(i).getText());
-                textView.setTypeface(Typeface.DEFAULT_BOLD);
-                PercentRelativeLayout.LayoutParams params = new PercentRelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0);
-                PercentLayoutHelper.PercentLayoutInfo info = params.getPercentLayoutInfo();
-                info.heightPercent = (float) ((1.0 / 13.0) * columns.get(i).height)*0.98f;
-                info.widthPercent = 1f;
-                info.topMarginPercent = (float) ((1.0 / 13.0) * columns.get(i).top);
-                info.leftMarginPercent = 0;
-                int[] attribute = new int[]{R.attr.windowBackgroundSecondary, R.attr.textColorPrimary};
-                TypedArray array = getContext().getTheme().obtainStyledAttributes(attribute);
-                textView.setBackgroundColor(array.getColor(0, Color.TRANSPARENT));
-                textView.setTextColor(array.getColor(1, Color.TRANSPARENT));
-                array.recycle();
-                textView.setLayoutParams(params);
-                rootView.addView(textView);
-            }
+            rootView.post(new Runnable() {
+                @Override
+                public void run() {
+                    float scale = getResources().getDisplayMetrics().density;
+                    int[] attribute = new int[]{R.attr.textColorPrimary, R.attr.windowBackgroundSecondary, R.attr.dialogBackgroundSecondary};
+                    TypedArray array = getContext().getTheme().obtainStyledAttributes(attribute);
+                    GradientDrawable textViewBg = (GradientDrawable) getResources().getDrawable(R.drawable.separator).getConstantState().newDrawable();
+                    textViewBg.setStroke((int) (1 * scale + 0.5f), array.getColor(2, Color.TRANSPARENT));
+                    textViewBg.setColor(array.getColor(1, Color.TRANSPARENT));
+                    for (int i = 0; i < columns.size(); i++) {
+                        TextView textView = new TextView(getContext());
+                        textView.setGravity(Gravity.CENTER);
+                        textView.setTypeface(Typeface.DEFAULT_BOLD);
+                        textView.setTextColor(array.getColor(0, Color.TRANSPARENT));
+                        textView.setBackgroundDrawable(textViewBg);
+                        textView.setMaxLines(2);
+                        int padding = columns.get(i).getColCount()>1?(int) (rootView.getWidth()*0.01f):(int) (rootView.getWidth()*0.05f);
+                        textView.setPadding(padding, padding, padding, padding);
+                        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, i == 12 ? ViewGroup.LayoutParams.MATCH_PARENT : rootView.getHeight() / 13);
+                        params.topMargin = (int)((rootView.getHeight() / 13) * columns.get(i).getTop());
+                        params.leftMargin = (int)((rootView.getWidth() / columns.get(i).getColCount()) * (columns.get(i).getLeft()-1));
+                        params.height = (int)((rootView.getHeight() / 13) * columns.get(i).getHeight());
+                        params.width = (rootView.getWidth() / columns.get(i).getColCount()) * columns.get(i).getWidth();
+                        textView.setLayoutParams(params);
+                        final int current = i;
+                        textView.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                InfoDialog infoDialog = new InfoDialog(getActivity(), columns.get(current));
+                                infoDialog.show();
+                            }
+                        });
+                        textView.setText(columns.get(i).getText());
+                        rootView.addView(textView);
+                    }
+                    array.recycle();
+                }
+            });
         }
         return rootView;
     }
