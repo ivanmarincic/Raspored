@@ -2,7 +2,8 @@ package com.idiotnation.raspored.Contracts;
 
 import android.content.Context;
 
-import com.idiotnation.raspored.TableColumn;
+import com.idiotnation.raspored.Modules.FilterOption;
+import com.idiotnation.raspored.Modules.TableColumn;
 
 import java.util.List;
 
@@ -21,8 +22,10 @@ public class MainContract {
     public interface Presenter {
         void start(View view, Context context);
         void download(String url);
-        void getRaspored();
+        List<List<TableColumn>> getRaspored();
         void refresh(int idNumber);
+        void refreshNotifications();
+        void refreshFilters();
     }
 
 }

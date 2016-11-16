@@ -1,6 +1,9 @@
 package com.idiotnation.raspored.Presenters;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.view.View;
@@ -8,9 +11,13 @@ import android.view.View;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.idiotnation.raspored.Contracts.MainContract;
-import com.idiotnation.raspored.DegreeLoader;
-import com.idiotnation.raspored.HTMLConverter;
-import com.idiotnation.raspored.TableColumn;
+import com.idiotnation.raspored.Modules.DegreeLoader;
+import com.idiotnation.raspored.Modules.FilterOption;
+import com.idiotnation.raspored.Modules.FiltersLoader;
+import com.idiotnation.raspored.Modules.HTMLConverter;
+import com.idiotnation.raspored.Modules.NotificationLoader;
+import com.idiotnation.raspored.Modules.NotificationReciever;
+import com.idiotnation.raspored.Modules.TableColumn;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -35,6 +42,7 @@ public class MainPresenter implements MainContract.Presenter {
 
     MainContract.View view;
     Context context;
+    List<List<TableColumn>> columns;
 
     @Override
     public void start(MainContract.View view, Context context) {
@@ -46,26 +54,29 @@ public class MainPresenter implements MainContract.Presenter {
     @Override
     public void download(String url) {
         try {
-            if(url!="NN"){
+            if (url != "NN") {
                 HTMLConverter htmlConverter = new HTMLConverter(context, url);
                 htmlConverter.setFinishListener(new HTMLConverter.HTMLConverterListener() {
                     @Override
                     public void onFinish(List<List<TableColumn>> columns) {
-                        if(columns!=null){
+                        if (columns != null) {
                             view.showMessage(View.VISIBLE, INFO_FINISHED);
-                            getRaspored();
-                        }else {
+                            if (context.getSharedPreferences("com.idiotnation.raspored", MODE_PRIVATE).getBoolean("NotificationsEnabled", false)) {
+                                refreshNotifications();
+                            }
+                            refreshFilters();
+                        } else {
                             view.stopAnimation();
                             view.showMessage(View.VISIBLE, ERROR_INTERNAL);
                         }
                     }
                 });
-                if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.HONEYCOMB){
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
                     htmlConverter.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-                }else {
+                } else {
                     htmlConverter.execute();
                 }
-            }else{
+            } else {
                 view.showMessage(View.VISIBLE, ERROR_UNAVAILABLE);
                 view.stopAnimation();
             }
@@ -77,7 +88,7 @@ public class MainPresenter implements MainContract.Presenter {
     }
 
     @Override
-    public void getRaspored() {
+    public List<List<TableColumn>> getRaspored() {
         StringBuilder text = new StringBuilder();
         try {
             BufferedReader br = new BufferedReader(new FileReader(new File(context.getFilesDir(), "raspored.json")));
@@ -89,15 +100,15 @@ public class MainPresenter implements MainContract.Presenter {
             }
             br.close();
         } catch (IOException e) {
-        }finally {
-            view.setRaspored((List<List<TableColumn>>)new Gson().fromJson(text.toString(), new TypeToken<List<List<TableColumn>>>() {
-            }.getType()));
+        } finally {
+            return (List<List<TableColumn>>) new Gson().fromJson(text.toString(), new TypeToken<List<List<TableColumn>>>() {
+            }.getType());
         }
     }
 
     @Override
     public void refresh(final int idNumber) {
-        if (idNumber!=-1){
+        if (idNumber != -1) {
             view.startAnimation();
             DegreeLoader degreeLoader = new DegreeLoader(context);
             degreeLoader.setOnFinishListener(new DegreeLoader.onFinihListener() {
@@ -106,21 +117,46 @@ public class MainPresenter implements MainContract.Presenter {
                     if (list != null) {
                         context.getSharedPreferences("com.idiotnation.raspored", MODE_PRIVATE).edit().putInt("SpinnerDefault", idNumber).apply();
                         download(list.get(idNumber).toString());
-                    }else{
+                    } else {
                         view.stopAnimation();
                         view.showMessage(View.VISIBLE, ERROR_INTERNET);
                     }
                 }
             });
-            if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.HONEYCOMB){
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
                 degreeLoader.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-            }else {
+            } else {
                 degreeLoader.execute();
             }
-        }else {
+        } else {
             view.showMessage(View.VISIBLE, INFO_MESSAGE);
             view.stopAnimation();
         }
+    }
 
+    @Override
+    public void refreshNotifications() {
+        NotificationLoader notificationLoader = new NotificationLoader(context, getRaspored());
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+            notificationLoader.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        } else {
+            notificationLoader.execute();
+        }
+    }
+
+    @Override
+    public void refreshFilters() {
+        FiltersLoader filtersLoader = new FiltersLoader(context, getRaspored());
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+            filtersLoader.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        } else {
+            filtersLoader.execute();
+        }
+        filtersLoader.setOnFinishListener(new FiltersLoader.onFinishListner() {
+            @Override
+            public void onFinish() {
+                view.setRaspored(getRaspored());
+            }
+        });
     }
 }

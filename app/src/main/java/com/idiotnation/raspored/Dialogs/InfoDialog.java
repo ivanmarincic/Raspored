@@ -1,9 +1,13 @@
-package com.idiotnation.raspored;
+package com.idiotnation.raspored.Dialogs;
 
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
+import android.view.Window;
 import android.widget.TextView;
+
+import com.idiotnation.raspored.R;
+import com.idiotnation.raspored.Modules.TableColumn;
 
 import java.text.SimpleDateFormat;
 
@@ -20,6 +24,7 @@ public class InfoDialog extends Dialog {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.info_dialog);
         textContent = (TextView) findViewById(R.id.text_content);

@@ -1,4 +1,4 @@
-package com.idiotnation.raspored;
+package com.idiotnation.raspored.Modules;
 
 import java.util.Date;
 
@@ -7,6 +7,7 @@ public class TableColumn {
     float top, left, height;
     Date start, end;
     String text;
+    boolean visible;
 
     public TableColumn() {
     }
@@ -75,6 +76,14 @@ public class TableColumn {
         this.text = text;
     }
 
+    public boolean isVisible() {
+        return visible;
+    }
+
+    public void setVisibility(boolean visibility) {
+        this.visible = visibility;
+    }
+
     @Override
     public String toString() {
         return "TableColumn{" +
@@ -86,6 +95,7 @@ public class TableColumn {
                 ", start=" + start +
                 ", end=" + end +
                 ", text='" + text + '\'' +
+                ", visible=" + visible +
                 '}';
     }
 }

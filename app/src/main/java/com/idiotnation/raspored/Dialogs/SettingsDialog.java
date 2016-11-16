@@ -1,4 +1,4 @@
-package com.idiotnation.raspored;
+package com.idiotnation.raspored.Dialogs;
 
 import android.app.Activity;
 import android.app.Dialog;
@@ -24,6 +24,9 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.idiotnation.raspored.R;
+import com.idiotnation.raspored.Utils;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -40,6 +43,7 @@ public class SettingsDialog extends Dialog {
     onEggsterListener eggsterListener;
     onFinishListner finishListner;
     int egg = 0, newPosition;
+    boolean refreshNotifications;
 
     @BindView(R.id.spinner)
     Spinner godineSpinner;
@@ -49,6 +53,9 @@ public class SettingsDialog extends Dialog {
 
     @BindView(R.id.updateOnBoot)
     SwitchCompat updateOnBoot;
+
+    @BindView(R.id.notifications)
+    SwitchCompat notificationsEnabled;
 
     @BindView(R.id.gitButton)
     ImageView gitHub;
@@ -70,6 +77,12 @@ public class SettingsDialog extends Dialog {
         properties();
     }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+        finishListner.onFinish(newPosition, refreshNotifications);
+    }
+
     public void init() {
         ButterKnife.bind(this);
         prefs = activity.getSharedPreferences("com.idiotnation.raspored", MODE_PRIVATE);
@@ -78,6 +91,7 @@ public class SettingsDialog extends Dialog {
     public void properties() {
         nightMode.setChecked(prefs.getBoolean("DarkMode", false));
         updateOnBoot.setChecked(prefs.getBoolean("UpdateOnBoot", false));
+        notificationsEnabled.setChecked(prefs.getBoolean("NotificationsEnabled", false));
         if (nightMode.isChecked()) {
             gitHub.setImageBitmap(Utils.createInvertedBitmap(BitmapFactory.decodeResource(activity.getResources(), R.drawable.git), true));
         }
@@ -106,6 +120,14 @@ public class SettingsDialog extends Dialog {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 prefs.edit().putBoolean("UpdateOnBoot", b).apply();
+            }
+        });
+        notificationsEnabled.setVisibility(View.VISIBLE);
+        notificationsEnabled.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                prefs.edit().putBoolean("NotificationsEnabled", b).apply();
+                refreshNotifications = true;
             }
         });
         final ArrayAdapter<String> dataAdapter = new SpinnerArrayAdapter(activity.getApplicationContext(), R.layout.spinner_selected_item, activity.getResources().getStringArray(R.array.godine_array));
@@ -139,12 +161,6 @@ public class SettingsDialog extends Dialog {
                 }
             }
         });
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        finishListner.onFinish(newPosition);
     }
 
     public int getNewPositionOffset(int position){
@@ -228,11 +244,11 @@ public class SettingsDialog extends Dialog {
         this.finishListner = finishListener;
     }
 
-    interface onEggsterListener {
+    public interface onEggsterListener {
         void onEgg();
     }
 
-    interface onFinishListner {
-        void onFinish(int spinnerItem);
+    public interface onFinishListner {
+        void onFinish(int spinnerItem, boolean refreshNotifications);
     }
 }

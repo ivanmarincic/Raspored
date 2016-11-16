@@ -1,4 +1,4 @@
-package com.idiotnation.raspored;
+package com.idiotnation.raspored.Views;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -29,12 +29,17 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.idiotnation.raspored.Contracts.MainContract;
+import com.idiotnation.raspored.Dialogs.FiltersDialog;
+import com.idiotnation.raspored.Dialogs.SettingsDialog;
+import com.idiotnation.raspored.Modules.FilterOption;
 import com.idiotnation.raspored.Presenters.MainPresenter;
+import com.idiotnation.raspored.R;
+import com.idiotnation.raspored.RasporedApplication;
+import com.idiotnation.raspored.Modules.TableColumn;
+import com.idiotnation.raspored.Utils;
 
 import java.io.File;
-import java.util.Calendar;
 import java.util.List;
-import java.util.TimeZone;
 
 import javax.inject.Inject;
 
@@ -119,9 +124,9 @@ public class MainView extends AppCompatActivity implements MainContract.View {
     public void checkContent() {
         if (new File(getFilesDir() + "/raspored.json").exists()) {
             startAnimation();
-            presenter.getRaspored();
+            setRaspored(presenter.getRaspored());
         }
-        if(prefs.getBoolean("UpdateOnBoot", false)){
+        if (prefs.getBoolean("UpdateOnBoot", false)) {
             startAnimation();
             presenter.refresh(prefs.getInt("SpinnerDefault", -1));
         }
@@ -231,15 +236,17 @@ public class MainView extends AppCompatActivity implements MainContract.View {
     public boolean onOptionsItemSelected(final MenuItem item) {
         switch (item.getItemId()) {
             case R.id.ab_settings:
-                item.setEnabled(false);
                 SettingsDialog settingsDialog = new SettingsDialog(MainView.this);
                 settingsDialog.show();
                 settingsDialog.setOnFinishListener(new SettingsDialog.onFinishListner() {
                     @Override
-                    public void onFinish(int spinnerItem) {
+                    public void onFinish(int spinnerItem, boolean refreshNotifications) {
                         item.setEnabled(true);
                         if (spinnerItem != prefs.getInt("SpinnerDefault", -1)) {
                             presenter.refresh(spinnerItem);
+                        }
+                        if (refreshNotifications) {
+                            presenter.refreshNotifications();
                         }
                     }
                 });
@@ -259,6 +266,18 @@ public class MainView extends AppCompatActivity implements MainContract.View {
                     }
                 });
                 return true;
+            case R.id.ab_filters:
+                FiltersDialog filtersDialog = new FiltersDialog(MainView.this);
+                filtersDialog.setOnFinishListener(new FiltersDialog.onFinishListner() {
+                    @Override
+                    public void onFinish(boolean refreshFilters) {
+                        if(refreshFilters){
+                            presenter.refreshFilters();
+                        }
+                    }
+                });
+                filtersDialog.show();
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -273,24 +292,7 @@ public class MainView extends AppCompatActivity implements MainContract.View {
             mPager.setAdapter(mAdapter);
         }
         mPager.setOffscreenPageLimit(6);
-        setPagerActivePage();
-    }
-
-    public void setPagerActivePage() {
-        int day = Calendar.getInstance(TimeZone.getTimeZone("Europe/Sarajevo")).get(Calendar.DAY_OF_WEEK);
-        if (day == 1) {
-            day = 0;
-        } else {
-            day -= 2;
-        }
-        if (Calendar.getInstance(TimeZone.getTimeZone("Europe/Sarajevo")).get(Calendar.HOUR_OF_DAY) > 19) {
-            if (day == 7) {
-                day = 0;
-            } else {
-                day += 1;
-            }
-        }
-        mPager.setCurrentItem(day);
+        mPager.setCurrentItem(Utils.getPagerActivePage());
     }
 
     public void setHours() {

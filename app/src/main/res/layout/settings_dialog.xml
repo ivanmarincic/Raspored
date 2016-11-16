@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="?attr/dialogBackground"
@@ -93,6 +92,58 @@
             android:textSize="25dp" />
     </RelativeLayout>
 
+    <!--<RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="5dp"
+        android:layout_marginTop="5dp"
+        android:layout_weight="0.5">
+
+        <android.support.v7.widget.SwitchCompat
+            android:id="@+id/partial"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true" />
+
+        <TextView
+            android:id="@+id/partial_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="10dp"
+            android:layout_toRightOf="@+id/partial"
+            android:text="Parcijala"
+            android:textColor="?attr/textColorPrimary"
+            android:textSize="25dp" />
+    </RelativeLayout>-->
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="5dp"
+        android:layout_marginTop="5dp"
+        android:layout_weight="0.5">
+
+        <android.support.v7.widget.SwitchCompat
+            android:id="@+id/notifications"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true" />
+
+        <TextView
+            android:id="@+id/notifications_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="10dp"
+            android:layout_toRightOf="@+id/notifications"
+            android:text="Notifikacije"
+            android:textColor="?attr/textColorPrimary"
+            android:textSize="25dp" />
+    </RelativeLayout>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -107,7 +158,7 @@
             android:layout_weight="0.8"
             android:clickable="true"
             android:gravity="center|left"
-            android:text="Verzija: 5.2"
+            android:text="Verzija: 5.3"
             android:textColor="?attr/textColorPrimary"
             android:textSize="15dp" />
 

@@ -19,7 +19,7 @@
         android:largeHeap="true"
         android:theme="@style/AppTheme.Light">
         <activity
-            android:name="com.idiotnation.raspored.IntroView"
+            android:name="com.idiotnation.raspored.Views.IntroView"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -27,8 +27,18 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.idiotnation.raspored.MainView"
+            android:name="com.idiotnation.raspored.Views.MainView"
             android:screenOrientation="portrait"></activity>
+
+        <receiver android:name=".Modules.NotificationReciever" />
+        <receiver android:name=".Widget.RasporedWidgetProvider">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/raspored_widget_info" />
+        </receiver>
     </application>
 
 </manifest>

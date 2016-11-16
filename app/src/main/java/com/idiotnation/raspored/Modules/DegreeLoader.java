@@ -1,4 +1,4 @@
-package com.idiotnation.raspored;
+package com.idiotnation.raspored.Modules;
 
 import android.content.Context;
 import android.os.AsyncTask;

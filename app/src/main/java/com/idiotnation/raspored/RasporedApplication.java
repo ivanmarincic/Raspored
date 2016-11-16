@@ -2,7 +2,9 @@ package com.idiotnation.raspored;
 
 import android.app.Application;
 
+import com.idiotnation.raspored.DaggerRasporedApplication_ApplicationComponent;
 import com.idiotnation.raspored.Presenters.MainPresenter;
+import com.idiotnation.raspored.Views.MainView;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
