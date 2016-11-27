@@ -54,18 +54,8 @@ public class NotificationLoader extends AsyncTask<Void, Void, Void> {
         void onFinish(List<List<TableColumn>> columns);
     }
 
-    private Notification getLessonNotification(String text){
-        NotificationCompat.Builder mBuilder =
-                new NotificationCompat.Builder(context)
-                        .setDefaults(DEFAULT_SOUND | DEFAULT_VIBRATE | DEFAULT_LIGHTS)
-                        .setSmallIcon(notification_icon)
-                        .setContentTitle("Predavanje")
-                        .setContentText(text + " za pola sata");
-        return mBuilder.build();
-    }
-
-    private void scheduleNotification(Notification notification, long delay, int id) {
-        delay = delay - (30*600000);
+    private void scheduleNotification(String notification, long delay, int id) {
+        delay = delay - (30*60000);
         if(delay>0){
             Intent notificationIntent = new Intent(context, NotificationReciever.class);
             notificationIntent.putExtra(NotificationReciever.NOTIFICATION_ID, id);
@@ -82,9 +72,11 @@ public class NotificationLoader extends AsyncTask<Void, Void, Void> {
         int idNumber = 2020;
         for(int i=0; i< columns.size(); i++){
             for (TableColumn tableColumn : columns.get(i)){
-                tableColumn.getStart();
-                scheduleNotification(getLessonNotification(tableColumn.getText()), Utils.getDelayInMiliseconds(tableColumn.getStart()), idNumber);
-                idNumber++;
+                if(tableColumn.isVisible()){
+                    tableColumn.getStart();
+                    scheduleNotification(tableColumn.getText(), Utils.getDelayInMiliseconds(tableColumn.getStart()), idNumber);
+                    idNumber++;
+                }
             }
         }
     }

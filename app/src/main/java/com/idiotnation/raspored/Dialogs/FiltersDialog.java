@@ -3,14 +3,22 @@ package com.idiotnation.raspored.Dialogs;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.widget.AppCompatCheckBox;
+import android.view.Window;
 import android.widget.CompoundButton;
+import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.idiotnation.raspored.Modules.FilterOption;
 import com.idiotnation.raspored.R;
+import com.idiotnation.raspored.Utils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -45,6 +53,18 @@ public class FiltersDialog extends Dialog {
     @BindView(R.id.filter_group_option_b)
     AppCompatCheckBox optionB;
 
+    @BindView(R.id.filters_dialog_bg)
+    LinearLayout rootView;
+
+    @BindView(R.id.filter_group_option_number)
+    TextView titleOptions;
+
+    @BindView(R.id.filter_group_option_number_options)
+    RelativeLayout numberOptionsGroup;
+
+    @BindView(R.id.filter_group_option_letters_options)
+    RelativeLayout letterOptionsGroup;
+
     public FiltersDialog(Context context) {
         super(context);
         this.context = context;
@@ -52,8 +72,9 @@ public class FiltersDialog extends Dialog {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.filters_layout);
+        setContentView(R.layout.filters_dialog);
         ButterKnife.bind(this);
         init();
         properties();
@@ -67,20 +88,36 @@ public class FiltersDialog extends Dialog {
 
     public void init() {
         prefs = context.getSharedPreferences("com.idiotnation.raspored", MODE_PRIVATE);
+        setColors();
         filterOptions = new ArrayList();
         loadOptionsList();
     }
 
     public void properties() {
+        ColorStateList colorStateList = new ColorStateList(
+                new int[][]{
+                        new int[]{-android.R.attr.state_checked},
+                        new int[]{android.R.attr.state_checked}
+                },
+                new int[]{
+                        Utils.getColor(R.color.textColorPrimary, context),
+                        Utils.getColor(R.color.colorAccent, context)
+                }
+        );
         option1.setChecked(filterOptions.get(0).isValue());
+        option1.setSupportButtonTintList(colorStateList);
         option1.setOnCheckedChangeListener(checkedChangeListener);
         option2.setChecked(filterOptions.get(1).isValue());
+        option2.setSupportButtonTintList(colorStateList);
         option2.setOnCheckedChangeListener(checkedChangeListener);
         option3.setChecked(filterOptions.get(2).isValue());
+        option3.setSupportButtonTintList(colorStateList);
         option3.setOnCheckedChangeListener(checkedChangeListener);
         optionA.setChecked(filterOptions.get(3).isValue());
+        optionA.setSupportButtonTintList(colorStateList);
         optionA.setOnCheckedChangeListener(checkedChangeListener);
         optionB.setChecked(filterOptions.get(4).isValue());
+        optionB.setSupportButtonTintList(colorStateList);
         optionB.setOnCheckedChangeListener(checkedChangeListener);
     }
 
@@ -93,6 +130,17 @@ public class FiltersDialog extends Dialog {
             saveOptionsList();
         }
     };
+
+    private void setColors(){
+        rootView.setBackgroundColor(Utils.getColor(R.color.windowBackgroundColor, context));
+        titleOptions.setTextColor(Utils.getColor(R.color.textColorPrimary, context));
+        for (int i = 0; i < numberOptionsGroup.getChildCount(); i++)
+            if (numberOptionsGroup.getChildAt(i) instanceof TextView)
+                ((TextView) numberOptionsGroup.getChildAt(i)).setTextColor(Utils.getColor(R.color.textColorPrimary, context));
+        for (int i = 0; i < letterOptionsGroup.getChildCount(); i++)
+            if (letterOptionsGroup.getChildAt(i) instanceof TextView)
+                ((TextView) letterOptionsGroup.getChildAt(i)).setTextColor(Utils.getColor(R.color.textColorPrimary, context));
+    }
 
     public void loadOptionsList() {
         filterOptions = (List<FilterOption>) new Gson().fromJson(prefs.getString("FilterOptions", ""), new TypeToken<List<FilterOption>>() {

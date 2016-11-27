@@ -4,12 +4,16 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.TypedArray;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.graphics.Typeface;
+import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.os.Vibrator;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
@@ -18,12 +22,16 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -51,6 +59,7 @@ import static com.idiotnation.raspored.Utils.ERROR_INTERNET;
 import static com.idiotnation.raspored.Utils.ERROR_UNAVAILABLE;
 import static com.idiotnation.raspored.Utils.INFO_FINISHED;
 import static com.idiotnation.raspored.Utils.INFO_MESSAGE;
+import static com.idiotnation.raspored.Utils.getColor;
 
 public class MainView extends AppCompatActivity implements MainContract.View {
 
@@ -88,8 +97,6 @@ public class MainView extends AppCompatActivity implements MainContract.View {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        prefs = getSharedPreferences("com.idiotnation.raspored", MODE_PRIVATE);
-        setTheme(prefs.getInt("CurrentTheme", R.style.AppTheme_Light));
         super.onCreate(savedInstanceState);
         ((RasporedApplication) getApplication()).component().inject(this);
         setContentView(R.layout.activity_main);
@@ -100,6 +107,7 @@ public class MainView extends AppCompatActivity implements MainContract.View {
 
     @Override
     public void onBackPressed() {
+        ActivityCompat.finishAffinity(this);
         moveTaskToBack(true);
         android.os.Process.killProcess(android.os.Process.myPid());
         System.exit(1);
@@ -107,12 +115,19 @@ public class MainView extends AppCompatActivity implements MainContract.View {
 
     @Override
     public void initialize() {
+        prefs = getSharedPreferences("com.idiotnation.raspored", MODE_PRIVATE);
+        setColors();
         if (prefs.getBoolean("FirstRun", true) || prefs.getInt("SpinnerDefault", -1) == -1) {
             prefs.edit().putBoolean("FirstRun", false).apply();
             showMessage(View.VISIBLE, INFO_MESSAGE);
         }
         setPagerProperties();
-        setHours();
+        hoursView.post(new Runnable() {
+            @Override
+            public void run() {
+                presenter.populateHours(hoursView, getApplicationContext());
+            }
+        });
         setThreadPolicy();
         setActionBarProperties();
         setRefreshLayoutProperties();
@@ -229,6 +244,13 @@ public class MainView extends AppCompatActivity implements MainContract.View {
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.main, menu);
+        for (int i = 0; i < menu.size(); i++) {
+            Drawable drawable = menu.getItem(i).getIcon();
+            if (drawable != null) {
+                drawable.mutate();
+                drawable.setColorFilter(Utils.getColor(R.color.actionBarTextColorPrimary, getApplicationContext()), PorterDuff.Mode.SRC_ATOP);
+            }
+        }
         return true;
     }
 
@@ -271,7 +293,7 @@ public class MainView extends AppCompatActivity implements MainContract.View {
                 filtersDialog.setOnFinishListener(new FiltersDialog.onFinishListner() {
                     @Override
                     public void onFinish(boolean refreshFilters) {
-                        if(refreshFilters){
+                        if (refreshFilters) {
                             presenter.refreshFilters();
                         }
                     }
@@ -287,39 +309,18 @@ public class MainView extends AppCompatActivity implements MainContract.View {
 
     public void setPagerProperties() {
         mAdapter = new MyPagerAdapter(getSupportFragmentManager());
+        int bgColor = Utils.getColor(R.color.tabsBarBackgroundColor, getApplicationContext()),
+                textColor = Utils.getColor(R.color.tabsBarTextColorPrimary, getApplicationContext()),
+                indicatorColor = Utils.getColor(R.color.colorAccent, getApplicationContext());
         mTabs.setupWithViewPager(mPager);
+        mTabs.setBackgroundColor(bgColor);
+        mTabs.setSelectedTabIndicatorColor(indicatorColor);
+        mTabs.setTabTextColors(Utils.manipulateColor(textColor, 0.75f), textColor);
         if (mAdapter != null) {
             mPager.setAdapter(mAdapter);
         }
         mPager.setOffscreenPageLimit(6);
         mPager.setCurrentItem(Utils.getPagerActivePage());
-    }
-
-    public void setHours() {
-        hoursView.post(new Runnable() {
-            @Override
-            public void run() {
-                for (int i = 0; i < 13; i++) {
-                    TextView textView = new TextView(getApplicationContext());
-                    textView.setGravity(Gravity.CENTER);
-                    textView.setText(String.format("%02d", 7 + i) + ":00");
-                    textView.setTypeface(Typeface.DEFAULT_BOLD);
-                    int[] attribute = new int[]{R.attr.textColorPrimary, R.attr.windowBackgroundSecondary, R.attr.dialogBackgroundSecondary};
-                    TypedArray array = getTheme().obtainStyledAttributes(attribute);
-                    textView.setTextColor(array.getColor(0, Color.TRANSPARENT));
-                    float scale = getResources().getDisplayMetrics().density;
-                    GradientDrawable textViewBg = (GradientDrawable) getResources().getDrawable(R.drawable.separator).getConstantState().newDrawable();
-                    textViewBg.setStroke((int) (1 * scale + 0.5f), array.getColor(2, Color.TRANSPARENT));
-                    textViewBg.setColor(array.getColor(1, Color.TRANSPARENT));
-                    array.recycle();
-                    textView.setBackgroundDrawable(getResources().getDrawable(R.drawable.separator));
-                    RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, i == 12 ? ViewGroup.LayoutParams.MATCH_PARENT : hoursView.getHeight() / 13);
-                    params.topMargin = (hoursView.getHeight() / 13) * i;
-                    textView.setLayoutParams(params);
-                    hoursView.addView(textView);
-                }
-            }
-        });
     }
 
     public void setThreadPolicy() {
@@ -332,7 +333,11 @@ public class MainView extends AppCompatActivity implements MainContract.View {
     }
 
     public void setActionBarProperties() {
-        mToolbar.setTitleTextColor(getResources().getColor(android.R.color.white));
+        mToolbar.setTitleTextColor(Utils.getColor(R.color.actionBarTextColorPrimary, getApplicationContext()));
+        mToolbar.setBackgroundColor(Utils.getColor(R.color.actionBarBackgroundColor, getApplicationContext()));
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            getWindow().setStatusBarColor(Utils.manipulateColor(Utils.getColor(R.color.actionBarBackgroundColor, getApplicationContext()), 0.75f));
+        }
         setSupportActionBar(mToolbar);
     }
 
@@ -352,6 +357,12 @@ public class MainView extends AppCompatActivity implements MainContract.View {
         mRefresh.setColorSchemeColors(array.getColor(0, Color.TRANSPARENT));
         mRefresh.setProgressBackgroundColorSchemeColor(array.getColor(1, Color.TRANSPARENT));
         array.recycle();
+    }
+
+    public void setColors() {
+        mToolbar.getRootView().setBackgroundColor(Utils.getColor(R.color.windowBackgroundColor, getApplicationContext()));
+        infoMessage.setTextColor(Utils.getColor(R.color.textColorPrimary, getApplicationContext()));
+        infoMessage.setBackgroundColor(Utils.getColor(R.color.windowBackgroundColor, getApplicationContext()));
     }
 
     // Inner classes

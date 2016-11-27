@@ -2,7 +2,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="?attr/dialogBackground"
+    android:background="@color/windowBackgroundColor"
+    android:id="@+id/filters_dialog_bg"
     android:orientation="vertical"
     android:padding="10dp"
     android:weightSum="15">
@@ -13,7 +14,7 @@
         android:layout_height="wrap_content"
         android:layout_weight="0.5"
         android:text="Grupa:"
-        android:textColor="?attr/textColorPrimary"
+        android:textColor="@color/textColorPrimary"
         android:textSize="25dp" />
 
     <RelativeLayout
@@ -40,7 +41,7 @@
             android:layout_marginLeft="10dp"
             android:layout_toRightOf="@+id/filter_group_option_1"
             android:text="1"
-            android:textColor="?attr/textColorPrimary"
+            android:textColor="@color/textColorPrimary"
             android:textSize="18dp" />
 
         <android.support.v7.widget.AppCompatCheckBox
@@ -60,7 +61,7 @@
             android:layout_marginLeft="10dp"
             android:layout_toRightOf="@+id/filter_group_option_2"
             android:text="2"
-            android:textColor="?attr/textColorPrimary"
+            android:textColor="@color/textColorPrimary"
             android:textSize="18dp" />
 
         <android.support.v7.widget.AppCompatCheckBox
@@ -80,7 +81,7 @@
             android:layout_marginLeft="10dp"
             android:layout_toRightOf="@+id/filter_group_option_3"
             android:text="3"
-            android:textColor="?attr/textColorPrimary"
+            android:textColor="@color/textColorPrimary"
             android:textSize="18dp" />
 
     </RelativeLayout>
@@ -109,7 +110,7 @@
             android:layout_marginLeft="10dp"
             android:layout_toRightOf="@+id/filter_group_option_a"
             android:text="A"
-            android:textColor="?attr/textColorPrimary"
+            android:textColor="@color/textColorPrimary"
             android:textSize="18dp" />
 
         <android.support.v7.widget.AppCompatCheckBox
@@ -129,7 +130,7 @@
             android:layout_marginLeft="10dp"
             android:layout_toRightOf="@+id/filter_group_option_b"
             android:text="B"
-            android:textColor="?attr/textColorPrimary"
+            android:textColor="@color/textColorPrimary"
             android:textSize="18dp" />
 
     </RelativeLayout>

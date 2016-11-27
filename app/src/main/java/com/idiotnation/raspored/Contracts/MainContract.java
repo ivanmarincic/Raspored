@@ -1,6 +1,7 @@
 package com.idiotnation.raspored.Contracts;
 
 import android.content.Context;
+import android.widget.RelativeLayout;
 
 import com.idiotnation.raspored.Modules.FilterOption;
 import com.idiotnation.raspored.Modules.TableColumn;
@@ -26,6 +27,7 @@ public class MainContract {
         void refresh(int idNumber);
         void refreshNotifications();
         void refreshFilters();
+        void populateHours(RelativeLayout layout, Context context);
     }
 
 }

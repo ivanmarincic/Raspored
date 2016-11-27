@@ -6,7 +6,7 @@
     android:paddingBottom="2dp"
     android:paddingLeft="5dp"
     android:paddingRight="25dp"
-    android:textColor="@color/textColorPrimaryL"
+    android:textColor="@color/textColorPrimary"
     android:paddingTop="2dp"
     android:textSize="18dp"
     android:textStyle="bold" />

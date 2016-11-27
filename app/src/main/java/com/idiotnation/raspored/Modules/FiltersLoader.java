@@ -34,10 +34,11 @@ public class FiltersLoader extends AsyncTask<Void, Void, Void> {
         try {
             if (filterOptions.size() > 0) {
                 setupFilters();
-                finishListener.onFinish();
             }
         } catch (Exception e) {
             e.printStackTrace();
+        }finally {
+            finishListener.onFinish();
         }
         return null;
     }
@@ -65,6 +66,7 @@ public class FiltersLoader extends AsyncTask<Void, Void, Void> {
         if (filterOptions == null) {
             return true;
         }
+        text.replaceAll(" ", "");
         for (int i = 0; i < filterOptions.size(); i++) {
             FilterOption filterOption = filterOptions.get(i);
             if (filterOption.isValue()) {
@@ -74,9 +76,9 @@ public class FiltersLoader extends AsyncTask<Void, Void, Void> {
                     if (text.contains("grupa " + filterOption.getFilter())) {
                         return true;
                     } else {
-                        if (i <= 2 && (text.contains("grupa a") || text.contains("grupa b") || text.contains("grupa c"))) {
+                        if (i <= 2 && (text.contains("grupaa") || text.contains("grupab") || text.contains("grupac"))) {
                             return true;
-                        } else if (i > 2 && (text.contains("grupa 1") || text.contains("grupa 2") || text.contains("grupa 3") || text.contains("grupa 4"))) {
+                        } else if (i > 2 && (text.contains("grupa1") || text.contains("grupa2") || text.contains("grupa3"))) {
                             return true;
                         }
                         return false;

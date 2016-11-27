@@ -2,8 +2,8 @@ package com.idiotnation.raspored;
 
 import android.app.Application;
 
-import com.idiotnation.raspored.DaggerRasporedApplication_ApplicationComponent;
 import com.idiotnation.raspored.Presenters.MainPresenter;
+import com.idiotnation.raspored.Views.ColorSetupView;
 import com.idiotnation.raspored.Views.MainView;
 
 import javax.inject.Inject;
@@ -18,6 +18,7 @@ public class RasporedApplication extends Application {
     public interface ApplicationComponent {
         void inject(RasporedApplication application);
         void inject(MainView activity);
+        void inject(ColorSetupView activity);
     }
 
     @Inject

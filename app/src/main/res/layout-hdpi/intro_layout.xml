@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="?attr/windowBackgroundPrimary"
+    android:background="@color/windowBackgroundColor"
     android:orientation="vertical">
 
     <TextView
@@ -13,7 +13,7 @@
         android:layout_centerHorizontal="true"
         android:gravity="center"
         android:text="Raspored"
-        android:textColor="?attr/textColorPrimary"
+        android:textColor="@color/textColorPrimary"
         android:textSize="35dp" />
 
     <RelativeLayout
@@ -21,7 +21,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:background="?attr/windowBackgroundPrimary"
+        android:background="@color/windowBackgroundColor"
         android:gravity="center"
         android:orientation="vertical">
 
@@ -64,7 +64,7 @@
         android:layout_marginTop="25dp"
         android:gravity="center"
         android:text="1. Odaberite godinu studija"
-        android:textColor="?attr/textColorPrimary" />
+        android:textColor="@color/textColorPrimary" />
 
     <TextView
         android:id="@+id/intro5"
@@ -75,7 +75,7 @@
         android:layout_margin="10dp"
         android:gravity="center"
         android:text="2. Povucite prema dolje preko ekrana za osvježavanje"
-        android:textColor="?attr/textColorPrimary" />
+        android:textColor="@color/textColorPrimary" />
 
     <Button
         android:id="@+id/next_intro"

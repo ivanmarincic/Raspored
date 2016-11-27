@@ -4,6 +4,9 @@ buildscript {
     repositories {
         jcenter()
         mavenCentral()
+        maven{
+            url 'https://dl.bintray.com/azeesoft/maven'
+        }
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:2.2.2'

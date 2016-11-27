@@ -4,9 +4,17 @@ import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.TypedArray;
+import android.graphics.Color;
+import android.graphics.Typeface;
+import android.graphics.drawable.GradientDrawable;
 import android.os.AsyncTask;
 import android.os.Build;
+import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -18,6 +26,8 @@ import com.idiotnation.raspored.Modules.HTMLConverter;
 import com.idiotnation.raspored.Modules.NotificationLoader;
 import com.idiotnation.raspored.Modules.NotificationReciever;
 import com.idiotnation.raspored.Modules.TableColumn;
+import com.idiotnation.raspored.R;
+import com.idiotnation.raspored.Utils;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -61,9 +71,6 @@ public class MainPresenter implements MainContract.Presenter {
                     public void onFinish(List<List<TableColumn>> columns) {
                         if (columns != null) {
                             view.showMessage(View.VISIBLE, INFO_FINISHED);
-                            if (context.getSharedPreferences("com.idiotnation.raspored", MODE_PRIVATE).getBoolean("NotificationsEnabled", false)) {
-                                refreshNotifications();
-                            }
                             refreshFilters();
                         } else {
                             view.stopAnimation();
@@ -155,8 +162,29 @@ public class MainPresenter implements MainContract.Presenter {
         filtersLoader.setOnFinishListener(new FiltersLoader.onFinishListner() {
             @Override
             public void onFinish() {
+                refreshNotifications();
                 view.setRaspored(getRaspored());
             }
         });
+    }
+
+    @Override
+    public void populateHours(RelativeLayout parentView, Context context) {
+        for (int i = 0; i < 13; i++) {
+            TextView textView = new TextView(context);
+            textView.setGravity(Gravity.CENTER);
+            textView.setText(String.format("%02d", 7 + i) + ":00");
+            textView.setTypeface(Typeface.DEFAULT_BOLD);
+            textView.setTextColor(Utils.getColor(R.color.hoursTextColorPrimary, context));
+            float scale = context.getResources().getDisplayMetrics().density;
+            GradientDrawable textViewBg = (GradientDrawable) context.getResources().getDrawable(R.drawable.separator).getConstantState().newDrawable();
+            textViewBg.setStroke((int) (1 * scale + 0.5f), Utils.getColor(R.color.hoursBackgroundStrokeColor, context));
+            textViewBg.setColor(Utils.getColor(R.color.hoursBackgroundColor, context));
+            textView.setBackgroundDrawable(textViewBg);
+            RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, i == 12 ? ViewGroup.LayoutParams.MATCH_PARENT : parentView.getHeight() / 13);
+            params.topMargin = (parentView.getHeight() / 13) * i;
+            textView.setLayoutParams(params);
+            parentView.addView(textView);
+        }
     }
 }

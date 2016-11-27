@@ -5,12 +5,13 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v7.widget.SwitchCompat;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,12 +21,14 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.idiotnation.raspored.R;
 import com.idiotnation.raspored.Utils;
+import com.idiotnation.raspored.Views.ColorSetupView;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -48,9 +51,6 @@ public class SettingsDialog extends Dialog {
     @BindView(R.id.spinner)
     Spinner godineSpinner;
 
-    @BindView(R.id.night_mode)
-    SwitchCompat nightMode;
-
     @BindView(R.id.updateOnBoot)
     SwitchCompat updateOnBoot;
 
@@ -62,6 +62,24 @@ public class SettingsDialog extends Dialog {
 
     @BindView(R.id.easter_egg)
     TextView easterEgg;
+
+    @BindView(R.id.updateOnBoot_text)
+    TextView updateOnBootText;
+
+    @BindView(R.id.notifications_text)
+    TextView notificationsEnabledText;
+
+    @BindView(R.id.setup_colors_text)
+    TextView colorsText;
+
+    @BindView(R.id.setup_colors)
+    ImageView colorsImage;
+
+    @BindView(R.id.setup_colors_container)
+    RelativeLayout setupColors;
+
+    @BindView(R.id.settings_dialog_bg)
+    LinearLayout rootView;
 
     public SettingsDialog(Activity activity) {
         super(activity);
@@ -86,35 +104,12 @@ public class SettingsDialog extends Dialog {
     public void init() {
         ButterKnife.bind(this);
         prefs = activity.getSharedPreferences("com.idiotnation.raspored", MODE_PRIVATE);
+        setColors();
     }
 
     public void properties() {
-        nightMode.setChecked(prefs.getBoolean("DarkMode", false));
         updateOnBoot.setChecked(prefs.getBoolean("UpdateOnBoot", false));
         notificationsEnabled.setChecked(prefs.getBoolean("NotificationsEnabled", false));
-        if (nightMode.isChecked()) {
-            gitHub.setImageBitmap(Utils.createInvertedBitmap(BitmapFactory.decodeResource(activity.getResources(), R.drawable.git), true));
-        }
-        nightMode.setVisibility(View.VISIBLE);
-        nightMode.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, final boolean b) {
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        prefs.edit().putBoolean("DarkMode", b).apply();
-                        if (b) {
-                            prefs.edit().putInt("CurrentTheme", R.style.AppTheme_Dark).apply();
-                        } else {
-                            prefs.edit().putInt("CurrentTheme", R.style.AppTheme_Light).apply();
-                        }
-                        activity.finish();
-                        activity.startActivity(activity.getIntent());
-                    }
-                }, 1000);
-                Toast.makeText(activity, "Aplikacija će se ponovno pokrenuti", Toast.LENGTH_SHORT).show();
-            }
-        });
         updateOnBoot.setVisibility(View.VISIBLE);
         updateOnBoot.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -128,6 +123,12 @@ public class SettingsDialog extends Dialog {
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 prefs.edit().putBoolean("NotificationsEnabled", b).apply();
                 refreshNotifications = true;
+            }
+        });
+        setupColors.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                activity.startActivity(new Intent(activity.getApplicationContext(), ColorSetupView.class));
             }
         });
         final ArrayAdapter<String> dataAdapter = new SpinnerArrayAdapter(activity.getApplicationContext(), R.layout.spinner_selected_item, activity.getResources().getStringArray(R.array.godine_array));
@@ -161,6 +162,40 @@ public class SettingsDialog extends Dialog {
                 }
             }
         });
+    }
+
+    public void setColors(){
+        int[][] states = new int[][]{
+                new int[]{-android.R.attr.state_checked},
+                new int[]{android.R.attr.state_checked}
+        };
+        int[] colorsThumb= new int[]{
+                Utils.getColor(R.color.textColorPrimary, activity),
+                Utils.getColor(R.color.colorAccent, activity)
+        };
+        int[] colorsTrack = new int[]{
+                Utils.manipulateAlpha(Utils.getColor(R.color.textColorPrimary, activity), 0.75f),
+                Utils.manipulateAlpha(Utils.getColor(R.color.colorAccent, activity), 0.75f)
+        };
+        rootView.setBackgroundColor(Utils.getColor(R.color.windowBackgroundColor, activity));
+        updateOnBoot.setThumbTintList(new ColorStateList(states, colorsThumb));
+        updateOnBoot.setTrackTintList(new ColorStateList(states, colorsTrack));
+        notificationsEnabled.setThumbTintList(new ColorStateList(states, colorsThumb));
+        notificationsEnabled.setTrackTintList(new ColorStateList(states, colorsTrack));
+        Drawable colorsDrawable = colorsImage.getDrawable();
+        if (colorsDrawable != null) {
+            colorsDrawable.mutate();
+            colorsDrawable.setColorFilter(Utils.getColor(R.color.textColorPrimary, activity), PorterDuff.Mode.SRC_ATOP);
+        }
+        Drawable gitDrawable = gitHub.getDrawable();
+        if (gitDrawable != null) {
+            gitDrawable.mutate();
+            gitDrawable.setColorFilter(Utils.getColor(R.color.textColorPrimary, activity), PorterDuff.Mode.SRC_ATOP);
+        }
+        easterEgg.setTextColor(Utils.getColor(R.color.textColorPrimary, activity));
+        updateOnBootText.setTextColor(Utils.getColor(R.color.textColorPrimary, activity));
+        notificationsEnabledText.setTextColor(Utils.getColor(R.color.textColorPrimary, activity));
+        colorsText.setTextColor(Utils.getColor(R.color.textColorPrimary, activity));
     }
 
     public int getNewPositionOffset(int position){
@@ -199,11 +234,10 @@ public class SettingsDialog extends Dialog {
             if (convertView == null) {
                 convertView = LayoutInflater.from(getContext()).inflate(R.layout.spinner_selected_item, null);
             }
-            int[] attrs = {R.attr.textColorPrimary};
-            TypedArray ta = activity.getApplicationContext().obtainStyledAttributes(prefs.getInt("CurrentTheme", R.style.AppTheme_Light), attrs);
+            parent.setBackgroundColor(Utils.getColor(R.color.windowBackgroundColor, getContext()));
             TextView tv = (TextView) convertView.findViewById(R.id.ssi_item);
             tv.setText(getHeader(position) + items[position]);
-            tv.setTextColor(ta.getColor(0, Color.BLACK));
+            tv.setTextColor(Utils.getColor(R.color.textColorPrimary, getContext()));
             return convertView;
         }
 
@@ -217,11 +251,10 @@ public class SettingsDialog extends Dialog {
             if (convertView == null) {
                 convertView = LayoutInflater.from(getContext()).inflate(R.layout.spinner_item, null);
             }
-            int[] attrs = {headers.contains(position) ? R.attr.textColorSecondary : R.attr.textColorPrimary};
-            TypedArray ta = activity.getApplicationContext().obtainStyledAttributes(prefs.getInt("CurrentTheme", R.style.AppTheme_Light), attrs);
+            parent.setBackgroundColor(Utils.getColor(R.color.windowBackgroundColor, getContext()));
             TextView tv = (TextView) convertView.findViewById(R.id.si_item);
             tv.setText(items[position]);
-            tv.setTextColor(ta.getColor(0, Color.BLACK));
+            tv.setTextColor(Utils.getColor(R.color.textColorPrimary, getContext()));
             return convertView;
         }
 

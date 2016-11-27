@@ -16,7 +16,7 @@
             android:id="@+id/action_bar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
+            android:background="@color/colorPrimary"
             android:elevation="4dp"
             android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
             app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
@@ -26,12 +26,12 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:layout_below="@+id/action_bar"
-            app:tabIndicatorColor="?attr/colorAccent"
-            app:tabBackground="?attr/colorSecondary"
-            app:tabTextColor="?attr/textColorActionBarSecondary"
+            app:tabBackground="@android:color/transparent"
+            app:tabIndicatorColor="@color/colorAccent"
             app:tabIndicatorHeight="5dp"
-            app:tabSelectedTextColor="?attr/textColorActionBarPrimary"
-            app:tabMode="scrollable" />
+            app:tabMode="scrollable"
+            app:tabSelectedTextColor="@color/tabsBarTextColorPrimary"
+            app:tabTextColor="@color/tabsBarTextColorSecondary"/>
 
         <RelativeLayout
             android:id="@+id/rl_1"
@@ -42,7 +42,6 @@
 
             <RelativeLayout
                 android:id="@+id/sati"
-                android:background="@android:color/transparent"
                 android:layout_width="130dp"
                 android:layout_height="match_parent"
                 android:layout_alignParentLeft="true" />
@@ -54,51 +53,9 @@
                 android:layout_alignParentRight="true"
                 android:layout_toEndOf="@+id/sati"
                 android:layout_toRightOf="@+id/sati"
-                android:background="?attr/windowBackgroundPrimary"
                 android:overScrollMode="never" />
 
         </RelativeLayout>
-
-        <!--
-        <com.github.clans.fab.FloatingActionMenu
-            android:id="@+id/pages_menu"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentRight="true"
-            android:visibility="gone"
-            fab:menu_animationDelayPerItem="0"
-            fab:menu_colorNormal="?attr/colorPrimary"
-            fab:menu_colorPressed="?attr/colorPrimary"
-            fab:menu_colorRipple="?attr/colorPrimary"
-            fab:menu_icon="@drawable/pages"
-            fab:menu_shadowColor="#000">
-
-            <com.github.clans.fab.FloatingActionButton
-                android:id="@+id/menu_next"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/next"
-                fab:fab_colorNormal="?attr/colorPrimary"
-                fab:fab_colorPressed="?attr/colorPrimary"
-                fab:fab_label="Sljedeca"
-                fab:fab_shadowColor="#000"
-                fab:fab_size="mini" />
-
-            <com.github.clans.fab.FloatingActionButton
-                android:id="@+id/menu_prev"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/previous"
-                fab:fab_colorNormal="?attr/colorPrimary"
-                fab:fab_colorPressed="?attr/colorPrimary"
-                fab:fab_label="Prethodna"
-                fab:fab_shadowColor="#000"
-                fab:fab_size="mini" />
-
-
-        </com.github.clans.fab.FloatingActionMenu>
-        -->
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -110,10 +67,10 @@
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
                 android:layout_centerInParent="true"
-                android:background="?attr/windowBackgroundPrimary"
                 android:gravity="center"
                 android:padding="15dp"
-                android:textColor="?attr/textColorSecondary"
+                android:textColor="@color/textColorPrimary"
+                android:background="@color/windowBackgroundColor"
                 android:textSize="14dp"
                 android:textStyle="bold"
                 android:visibility="invisible" />
@@ -124,7 +81,6 @@
             android:id="@+id/easter_egg_bg"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:layout_marginTop="?attr/actionBarSize"
             android:background="@drawable/spooderman"
             android:clickable="true"
             android:visibility="gone" />

@@ -7,6 +7,7 @@ import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,6 +20,7 @@ import com.idiotnation.raspored.Dialogs.InfoDialog;
 import com.idiotnation.raspored.Modules.FilterOption;
 import com.idiotnation.raspored.R;
 import com.idiotnation.raspored.Modules.TableColumn;
+import com.idiotnation.raspored.Utils;
 
 import java.util.List;
 
@@ -43,19 +45,19 @@ public class ImageFragment extends Fragment {
                 @Override
                 public void run() {
                     float scale = getResources().getDisplayMetrics().density;
-                    int[] attribute = new int[]{R.attr.textColorPrimary, R.attr.windowBackgroundSecondary, R.attr.dialogBackgroundSecondary};
-                    TypedArray array = getContext().getTheme().obtainStyledAttributes(attribute);
+                    int bgColor = Utils.getColor(R.color.lessonsBackgroundColor, getContext()), textColor = Utils.getColor(R.color.lessonsTextColorPrimary, getContext()), strokeColor = Utils.getColor(R.color.lessonsBackgroundStrokeColor, getContext());
                     GradientDrawable textViewBg = (GradientDrawable) getResources().getDrawable(R.drawable.separator).getConstantState().newDrawable();
-                    textViewBg.setStroke((int) (1 * scale + 0.5f), array.getColor(2, Color.TRANSPARENT));
-                    textViewBg.setColor(array.getColor(1, Color.TRANSPARENT));
+                    textViewBg.setStroke((int) (1 * scale + 0.5f), strokeColor);
+                    textViewBg.setColor(bgColor);
                     for (int i = 0; i < columns.size(); i++) {
                        if(columns.get(i).isVisible()){
                            TextView textView = new TextView(getContext());
                            textView.setGravity(Gravity.CENTER);
                            textView.setTypeface(Typeface.DEFAULT_BOLD);
-                           textView.setTextColor(array.getColor(0, Color.TRANSPARENT));
+                           textView.setTextColor(textColor);
                            textView.setBackgroundDrawable(textViewBg);
-                           textView.setMaxLines(2);
+                           textView.setMaxLines((int)columns.get(i).getHeight());
+                           textView.setEllipsize(TextUtils.TruncateAt.END);
                            int padding = columns.get(i).getColCount()>1?(int) (rootView.getWidth()*0.01f):(int) (rootView.getWidth()*0.05f);
                            textView.setPadding(padding, padding, padding, padding);
                            RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, i == 12 ? ViewGroup.LayoutParams.MATCH_PARENT : rootView.getHeight() / 13);
@@ -76,7 +78,6 @@ public class ImageFragment extends Fragment {
                            rootView.addView(textView);
                        }
                     }
-                    array.recycle();
                 }
             });
         }

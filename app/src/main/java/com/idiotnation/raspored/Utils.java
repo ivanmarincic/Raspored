@@ -1,13 +1,27 @@
 package com.idiotnation.raspored;
 
 import android.content.Context;
+import android.content.res.Resources;
+import android.content.res.TypedArray;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.ColorFilter;
 import android.graphics.ColorMatrix;
 import android.graphics.ColorMatrixColorFilter;
+import android.graphics.LightingColorFilter;
 import android.graphics.Paint;
 import android.graphics.Point;
+import android.graphics.Typeface;
+import android.graphics.drawable.GradientDrawable;
+import android.util.DisplayMetrics;
+import android.view.Gravity;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import org.jsoup.Jsoup;
 
@@ -19,32 +33,15 @@ import java.util.Date;
 import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 
+import static android.content.Context.MODE_PRIVATE;
+
 public class Utils {
 
-    public static final int MODE_HORIZONTAL = 0;
-    public static final int MODE_VERTICAL = 1;
-    public static final String lineColor = "ff000000";
     public static final int ERROR_INTERNET = 1;
     public static final int ERROR_INTERNAL = 2;
     public static final int INFO_MESSAGE = 3;
     public static final int ERROR_UNAVAILABLE = 4;
     public static final int INFO_FINISHED = 5;
-
-    public static String getGDiskId(String url) {
-
-        String output = "NN";
-        int slash = 0;
-        if (url.length() >= 32) {
-            for (int i = 32; i < url.length(); i++) {
-                if (url.substring(i, (i + 1)).equals("/")) {
-                    slash = i;
-                    break;
-                }
-            }
-            output = url.substring(32, slash);
-        }
-        return output;
-    }
 
     public static int getPagerActivePage() {
         int day = Calendar.getInstance(TimeZone.getTimeZone("Europe/Sarajevo")).get(Calendar.DAY_OF_WEEK);
@@ -63,91 +60,46 @@ public class Utils {
         return day;
     }
 
+    public static int manipulateColor(int color, float factor) {
+        int a = Color.alpha(color);
+        int r = Math.round(Color.red(color) * factor);
+        int g = Math.round(Color.green(color) * factor);
+        int b = Math.round(Color.blue(color) * factor);
+        return Color.argb(a,
+                Math.min(r,255),
+                Math.min(g,255),
+                Math.min(b,255));
+    }
+
+    public static int manipulateAlpha(int color, float factor) {
+        int alpha = Math.round(Color.alpha(color) * factor);
+        int red = Color.red(color);
+        int green = Color.green(color);
+        int blue = Color.blue(color);
+        return Color.argb(alpha, red, green, blue);
+    }
+
     public static long getDelayInMiliseconds(Date date) {
         long diffInMillies = date.getTime() - new Date().getTime();
         return TimeUnit.MILLISECONDS.convert(diffInMillies, TimeUnit.MILLISECONDS);
     }
 
-/*    public static ArrayList<TableColumn> getColumns(Bitmap bmp, List<Integer> xs, List<Integer> ys) {
-        if (bmp != null) {
-            ArrayList<TableColumn> columns = new ArrayList<>();
-            for (int i = 0; i < 7; i++) {
-                Point topLeftCorner = new Point(xs.get(i), ys.get(0));
-                int wThickness = 0;
-                if (i != 0) {
-                    wThickness = getLineThickness(bmp, new Point(xs.get(i + 1), ys.get(0) + 20), MODE_HORIZONTAL);
-                }
-                int hThickness = getLineThickness(bmp, new Point(xs.get(0) + 20, ys.get(ys.size() - 1)), MODE_VERTICAL);
-                int columnWidth = (xs.get(i + 1) - xs.get(i)) + wThickness;
-                int columnHeight = (ys.get(ys.size() - 1) - ys.get(0)) + hThickness;
-                columns.add(new TableColumn(topLeftCorner.x, topLeftCorner.y, columnWidth, columnHeight));
-            }
-            return columns;
-        }
-        return null;
-    }*/
-
-    public static int getLineThickness(Bitmap sourceImage, Point coord, int mode) {
-        for (int i = 0; i <= 50; i++) {
-            if (mode == MODE_HORIZONTAL) {
-                if (!Integer.toHexString(sourceImage.getPixel(coord.x + i, coord.y)).equals(lineColor)) {
-                    return i;
-                }
-            } else if (mode == MODE_VERTICAL) {
-                if (!Integer.toHexString(sourceImage.getPixel(coord.x, coord.y + i)).equals(lineColor)) {
-                    return i;
-                }
-            }
-        }
-        return 3;
+    public static int getColor(int colorId, Context context) {
+        return context.getSharedPreferences("com.idiotnation.raspored", MODE_PRIVATE).getInt(context.getResources().getResourceName(colorId), context.getResources().getColor(colorId));
     }
 
-    public static Bitmap createInvertedBitmap(Bitmap src, boolean darkMode) {
-        if (src != null) {
-            if (darkMode) {
-                ColorMatrix colorMatrix_Inverted =
-                        new ColorMatrix(new float[]{
-                                -1, 0, 0, 0, 255,
-                                0, -1, 0, 0, 255,
-                                0, 0, -1, 0, 255,
-                                0, 0, 0, 1, 0});
-                ColorFilter ColorFilter_Sepia = new ColorMatrixColorFilter(
-                        colorMatrix_Inverted);
-                Bitmap bitmap = Bitmap.createBitmap(src.getWidth(), src.getHeight(),
-                        Bitmap.Config.ARGB_8888);
-                Canvas canvas = new Canvas(bitmap);
-                Paint paint = new Paint();
-                paint.setColorFilter(ColorFilter_Sepia);
-                canvas.drawBitmap(src, 0, 0, paint);
-                return bitmap;
-            } else {
-                return src;
-            }
-        }
-        return null;
+    public static int convertDpToPixel(float dp, Context context) {
+        Resources resources = context.getResources();
+        DisplayMetrics metrics = resources.getDisplayMetrics();
+        int px = (int) (dp * ((float) metrics.densityDpi / DisplayMetrics.DENSITY_DEFAULT));
+        return px;
     }
 
-    public static String getFinalURL(String url) throws IOException {
-        HttpURLConnection con = (HttpURLConnection) new URL(url).openConnection();
-        con.setInstanceFollowRedirects(false);
-        con.connect();
-        con.getInputStream();
-
-        if (con.getResponseCode() == HttpURLConnection.HTTP_MOVED_PERM || con.getResponseCode() == HttpURLConnection.HTTP_MOVED_TEMP) {
-            String redirectUrl = con.getHeaderField("Location");
-            return getFinalURL(redirectUrl);
-        }
-        return url;
-    }
-
-    public static boolean checkActiveInternetConnection(Context context) {
-        try {
-            Jsoup.connect("https://www.google.com").timeout(3000).get();
-            return true;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return false;
+    public static float convertPixelsToDp(float px, Context context) {
+        Resources resources = context.getResources();
+        DisplayMetrics metrics = resources.getDisplayMetrics();
+        float dp = px / ((float) metrics.densityDpi / DisplayMetrics.DENSITY_DEFAULT);
+        return dp;
     }
 
 }
