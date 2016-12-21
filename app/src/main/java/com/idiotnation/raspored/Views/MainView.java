@@ -34,13 +34,10 @@ import com.idiotnation.raspored.Dialogs.SettingsDialog;
 import com.idiotnation.raspored.Modules.TableCell;
 import com.idiotnation.raspored.Presenters.MainPresenter;
 import com.idiotnation.raspored.R;
-import com.idiotnation.raspored.RasporedApplication;
 import com.idiotnation.raspored.Utils;
 
 import java.io.File;
 import java.util.List;
-
-import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -57,12 +54,10 @@ public class MainView extends AppCompatActivity implements MainContract.View {
 
     MyPagerAdapter mAdapter;
     SharedPreferences prefs;
+    MainPresenter presenter;
     float pageWidth = 1;
 
     // Initialization
-
-    @Inject
-    MainPresenter presenter;
 
     @BindView(R.id.easter_egg_bg)
     FrameLayout easterEgg;
@@ -88,7 +83,6 @@ public class MainView extends AppCompatActivity implements MainContract.View {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ((RasporedApplication) getApplication()).component().inject(this);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
         presenter = new MainPresenter();

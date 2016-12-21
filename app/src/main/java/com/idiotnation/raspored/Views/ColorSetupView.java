@@ -1,17 +1,12 @@
 package com.idiotnation.raspored.Views;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.graphics.PorterDuff;
-import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Vibrator;
-import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -20,42 +15,29 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.FrameLayout;
-import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
-import android.widget.ListAdapter;
 import android.widget.ListView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.idiotnation.raspored.Contracts.ColorSetupContract;
-import com.idiotnation.raspored.Dialogs.FiltersDialog;
-import com.idiotnation.raspored.Dialogs.SettingsDialog;
 import com.idiotnation.raspored.Presenters.ColorSetupPresenter;
 import com.idiotnation.raspored.R;
-import com.idiotnation.raspored.RasporedApplication;
 import com.idiotnation.raspored.Utils;
 
 import java.util.Arrays;
 import java.util.List;
 
-import javax.inject.Inject;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import me.priyesh.chroma.ChromaDialog;
-import me.priyesh.chroma.ColorMode;
 
 
 public class ColorSetupView extends AppCompatActivity implements ColorSetupContract.View {
 
 
+    ColorSetupPresenter presenter;
     ColorsListAdapter colorsListAdapter;
 
     // Initialization
-
-    @Inject
-    ColorSetupPresenter presenter;
 
     @BindView(R.id.color_setup_action_bar)
     Toolbar mToolbar;
@@ -66,7 +48,6 @@ public class ColorSetupView extends AppCompatActivity implements ColorSetupContr
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ((RasporedApplication) getApplication()).component().inject(this);
         setContentView(R.layout.color_setup_layout);
         ButterKnife.bind(this);
         presenter = new ColorSetupPresenter();

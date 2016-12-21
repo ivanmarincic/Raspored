@@ -2,24 +2,16 @@ package com.idiotnation.raspored.Presenters;
 
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
-import android.support.annotation.ColorInt;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.FragmentManager;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.FrameLayout;
-import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 
 import com.idiotnation.raspored.Contracts.ColorSetupContract;
 import com.idiotnation.raspored.Dialogs.ColorPickerDialog;
@@ -27,19 +19,13 @@ import com.idiotnation.raspored.R;
 import com.idiotnation.raspored.Utils;
 import com.idiotnation.raspored.Views.MainView;
 
-import javax.inject.Inject;
-
 import de.hdodenhof.circleimageview.CircleImageView;
-import me.priyesh.chroma.ChromaDialog;
-import me.priyesh.chroma.ColorMode;
-import me.priyesh.chroma.ColorSelectListener;
 
 import static android.content.Context.MODE_PRIVATE;
 import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
 
 public class ColorSetupPresenter implements ColorSetupContract.Presenter {
 
-    @Inject
     public ColorSetupPresenter() {};
 
     ColorSetupContract.View view;

@@ -21,11 +21,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
 
-import javax.inject.Inject;
-
 public class UpdateWidgetService extends Service {
 
-    @Inject
     MainPresenter presenter;
 
     @Override

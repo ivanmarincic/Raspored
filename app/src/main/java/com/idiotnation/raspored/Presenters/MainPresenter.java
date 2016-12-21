@@ -18,7 +18,6 @@ import com.idiotnation.raspored.Modules.FiltersLoader;
 import com.idiotnation.raspored.Modules.HTMLConverter;
 import com.idiotnation.raspored.Modules.NotificationLoader;
 import com.idiotnation.raspored.Modules.TableCell;
-import com.idiotnation.raspored.Modules.WidgetLoader;
 import com.idiotnation.raspored.R;
 import com.idiotnation.raspored.Utils;
 
@@ -30,7 +29,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
-import javax.inject.Inject;
 
 import static android.content.Context.MODE_PRIVATE;
 import static com.idiotnation.raspored.Utils.ERROR_INTERNAL;
@@ -41,12 +39,8 @@ import static com.idiotnation.raspored.Utils.INFO_MESSAGE;
 
 public class MainPresenter implements MainContract.Presenter {
 
-    @Inject
     public MainPresenter() {
-    }
-
-    ;
-
+    };
 
     MainContract.View view;
     Context context;
@@ -138,12 +132,6 @@ public class MainPresenter implements MainContract.Presenter {
             notificationLoader.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         } else {
             notificationLoader.execute();
-        }
-        WidgetLoader widgetLoader = new WidgetLoader(context, getRaspored());
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-            widgetLoader.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-        } else {
-            widgetLoader.execute();
         }
     }
 
