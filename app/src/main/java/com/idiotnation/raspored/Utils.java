@@ -1,35 +1,16 @@
 package com.idiotnation.raspored;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
-import android.content.res.TypedArray;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.ColorFilter;
-import android.graphics.ColorMatrix;
-import android.graphics.ColorMatrixColorFilter;
-import android.graphics.LightingColorFilter;
-import android.graphics.Paint;
-import android.graphics.Point;
-import android.graphics.Typeface;
-import android.graphics.drawable.GradientDrawable;
+import android.preference.PreferenceManager;
 import android.util.DisplayMetrics;
-import android.view.Gravity;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
 
-import org.jsoup.Jsoup;
-
-import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.URL;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 
@@ -42,6 +23,8 @@ public class Utils {
     public static final int INFO_MESSAGE = 3;
     public static final int ERROR_UNAVAILABLE = 4;
     public static final int INFO_FINISHED = 5;
+    public static final String WIDGET_ACTIVE = "com.idiotnation.RasporedWidgetActive";
+    public static final int UNIQUE_ID = 291096;
 
     public static int getPagerActivePage() {
         int day = Calendar.getInstance(TimeZone.getTimeZone("Europe/Sarajevo")).get(Calendar.DAY_OF_WEEK);
@@ -66,9 +49,9 @@ public class Utils {
         int g = Math.round(Color.green(color) * factor);
         int b = Math.round(Color.blue(color) * factor);
         return Color.argb(a,
-                Math.min(r,255),
-                Math.min(g,255),
-                Math.min(b,255));
+                Math.min(r, 255),
+                Math.min(g, 255),
+                Math.min(b, 255));
     }
 
     public static int manipulateAlpha(int color, float factor) {
@@ -77,6 +60,14 @@ public class Utils {
         int green = Color.green(color);
         int blue = Color.blue(color);
         return Color.argb(alpha, red, green, blue);
+    }
+
+    public static <T> List<T> shrinkList(List<List<T>> shrink) {
+        List<T> list = new ArrayList<>();
+        for(int i=0; i<shrink.size(); i++){
+            list.addAll(shrink.get(i));
+        }
+        return list;
     }
 
     public static long getDelayInMiliseconds(Date date) {
@@ -100,6 +91,11 @@ public class Utils {
         DisplayMetrics metrics = resources.getDisplayMetrics();
         float dp = px / ((float) metrics.densityDpi / DisplayMetrics.DENSITY_DEFAULT);
         return dp;
+    }
+
+    public static boolean isWidgetActive(Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        return prefs.getBoolean(WIDGET_ACTIVE, false);
     }
 
 }

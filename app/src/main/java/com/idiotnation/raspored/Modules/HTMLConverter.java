@@ -44,14 +44,14 @@ public class HTMLConverter extends AsyncTask<Void, Void, Void> {
         return null;
     }
 
-    public List<List<TableColumn>> parseRaspored(String url) throws IOException, ParseException {
-        List<List<TableColumn>> columns = new ArrayList<>();
+    public List<List<TableCell>> parseRaspored(String url) throws IOException, ParseException {
+        List<List<TableCell>> columns = new ArrayList<>();
         Document doc = Jsoup.connect(url).timeout(0).get();
         Element days = doc.select("#WeekTablee1 tbody tr").get(0);
         Elements head = doc.select("head").get(0).select("script");
         List<String[]> properties = getElementsArray(head.get(head.size() - 1).html());
         for (int i = 0; i < properties.size(); i++) {
-            TableColumn tableColumn = new TableColumn();
+            TableCell tableCell = new TableCell();
             String id = properties.get(i)[2].split("=")[1].replaceAll("\"", "").replaceAll(" ", "");
             Date startDate = new SimpleDateFormat("yyy-MM-dd,HH:mm:ss").parse(properties.get(i)[7].split("=")[1].replaceAll("\"", "").replaceAll(" ", "")),
                     endDate = new SimpleDateFormat("yyy-MM-dd,HH:mm:ss").parse(properties.get(i)[6].split("=")[1].replaceAll("\"", "").replaceAll(" ", ""));
@@ -62,28 +62,28 @@ public class HTMLConverter extends AsyncTask<Void, Void, Void> {
                     colCount = Integer.parseInt(properties.get(i)[3].split("=")[1].replaceAll("\"", "").replaceAll(" ", "")),
                     left = Integer.parseInt(properties.get(i)[5].split("=")[1].replaceAll("\"", "").replaceAll(" ", "")),
                     day = Integer.parseInt(properties.get(i)[8].split("=")[1].replaceAll("\"", "").replaceAll(" ", ""));
-            tableColumn.setWidth(width);
-            tableColumn.setHeight(height);
-            tableColumn.setLeft(left);
-            tableColumn.setTop(start);
-            tableColumn.setColCount(colCount);
-            tableColumn.setText(days.child(day).select("[id=\""+id+"\"]").get(0).select("span").get(0).text());
-            tableColumn.setStart(startDate);
-            tableColumn.setEnd(endDate);
-            tableColumn.setVisibility(true);
+            tableCell.setWidth(width);
+            tableCell.setHeight(height);
+            tableCell.setLeft(left);
+            tableCell.setTop(start);
+            tableCell.setColCount(colCount);
+            tableCell.setText(days.child(day).select("[id=\""+id+"\"]").get(0).select("span").get(0).text());
+            tableCell.setStart(startDate);
+            tableCell.setEnd(endDate);
+            tableCell.setVisibility(true);
             if (columns.size()<=day){
-                columns.add(new ArrayList<TableColumn>());
+                columns.add(new ArrayList<TableCell>());
             }
-            columns.get(day).add(tableColumn);
+            columns.get(day).add(tableCell);
         }
         while (columns.size()<6){
-            columns.add(new ArrayList<TableColumn>());
+            columns.add(new ArrayList<TableCell>());
         }
         saveColumnsToJson(columns);
         return columns;
     }
 
-    public void saveColumnsToJson(List<List<TableColumn>> columns) {
+    public void saveColumnsToJson(List<List<TableCell>> columns) {
         try {
             new File(context.getFilesDir() + "/raspored.json").delete();
             FileOutputStream fos = context.openFileOutput("raspored.json", MODE_PRIVATE);
@@ -110,7 +110,7 @@ public class HTMLConverter extends AsyncTask<Void, Void, Void> {
     }
 
     public interface HTMLConverterListener {
-        void onFinish(List<List<TableColumn>> columns);
+        void onFinish(List<List<TableCell>> columns);
     }
 
 }

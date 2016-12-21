@@ -5,9 +5,7 @@ import android.content.SharedPreferences;
 import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
-import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
-import android.graphics.drawable.GradientDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.StrictMode;
@@ -21,17 +19,11 @@ import android.support.v4.view.ViewPager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.Window;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -39,11 +31,10 @@ import android.widget.Toast;
 import com.idiotnation.raspored.Contracts.MainContract;
 import com.idiotnation.raspored.Dialogs.FiltersDialog;
 import com.idiotnation.raspored.Dialogs.SettingsDialog;
-import com.idiotnation.raspored.Modules.FilterOption;
+import com.idiotnation.raspored.Modules.TableCell;
 import com.idiotnation.raspored.Presenters.MainPresenter;
 import com.idiotnation.raspored.R;
 import com.idiotnation.raspored.RasporedApplication;
-import com.idiotnation.raspored.Modules.TableColumn;
 import com.idiotnation.raspored.Utils;
 
 import java.io.File;
@@ -59,7 +50,6 @@ import static com.idiotnation.raspored.Utils.ERROR_INTERNET;
 import static com.idiotnation.raspored.Utils.ERROR_UNAVAILABLE;
 import static com.idiotnation.raspored.Utils.INFO_FINISHED;
 import static com.idiotnation.raspored.Utils.INFO_MESSAGE;
-import static com.idiotnation.raspored.Utils.getColor;
 
 public class MainView extends AppCompatActivity implements MainContract.View {
 
@@ -159,7 +149,7 @@ public class MainView extends AppCompatActivity implements MainContract.View {
     }
 
     @Override
-    public void setRaspored(final List<List<TableColumn>> rasporedColumns) {
+    public void setRaspored(final List<List<TableCell>> rasporedColumns) {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -369,14 +359,14 @@ public class MainView extends AppCompatActivity implements MainContract.View {
 
     public class MyPagerAdapter extends FragmentStatePagerAdapter {
 
-        List<List<TableColumn>> columns;
+        List<List<TableCell>> columns;
         String[] days = new String[]{"Ponedjeljak", "Utorak", "Srijeda", "Četvrtak", "Petak", "Subota"};
 
         public MyPagerAdapter(FragmentManager fm) {
             super(fm);
         }
 
-        public void setColumns(List<List<TableColumn>> columns) {
+        public void setColumns(List<List<TableCell>> columns) {
             this.columns = columns;
         }
 

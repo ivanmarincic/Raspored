@@ -20,6 +20,8 @@
     <color name="lessonsBackgroundColor">#5262bc</color>
     <color name="lessonsBackgroundStrokeColor">#00000000</color>
     <color name="lessonsTextColorPrimary">#ffffff</color>
+    <color name="widgetBackgroundColor">#5262bc</color>
+    <color name="widgetTextColorPrimary">#ffffff</color>
     <color name="colorpicker__white">#ffffffff</color>
     <color name="colorpicker__red">#fff44336</color>
     <color name="colorpicker__green">#ff4caf50</color>

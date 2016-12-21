@@ -12,7 +12,7 @@ import static android.support.v4.app.NotificationCompat.DEFAULT_SOUND;
 import static android.support.v4.app.NotificationCompat.DEFAULT_VIBRATE;
 import static com.idiotnation.raspored.R.drawable.notification_icon;
 
-public class NotificationReciever extends BroadcastReceiver {
+public class NotificationReceiver extends BroadcastReceiver {
 
     public static String NOTIFICATION_ID = "RasporedNotification";
     public static String NOTIFICATION = "RasporedNotificationContent";

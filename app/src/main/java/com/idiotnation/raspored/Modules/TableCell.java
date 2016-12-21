@@ -1,15 +1,19 @@
 package com.idiotnation.raspored.Modules;
 
-import java.util.Date;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
-public class TableColumn {
+import java.util.Date;
+import java.util.List;
+
+public class TableCell {
     int width, colCount;
     float top, left, height;
     Date start, end;
     String text;
     boolean visible;
 
-    public TableColumn() {
+    public TableCell() {
     }
 
     public int getWidth() {
@@ -86,7 +90,7 @@ public class TableColumn {
 
     @Override
     public String toString() {
-        return "TableColumn{" +
+        return "TableCell{" +
                 "width=" + width +
                 ", colCount=" + colCount +
                 ", top=" + top +

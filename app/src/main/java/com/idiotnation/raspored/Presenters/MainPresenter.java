@@ -1,11 +1,6 @@
 package com.idiotnation.raspored.Presenters;
 
-import android.app.AlarmManager;
-import android.app.PendingIntent;
 import android.content.Context;
-import android.content.Intent;
-import android.content.res.TypedArray;
-import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
 import android.os.AsyncTask;
@@ -19,13 +14,11 @@ import android.widget.TextView;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.idiotnation.raspored.Contracts.MainContract;
-import com.idiotnation.raspored.Modules.DegreeLoader;
-import com.idiotnation.raspored.Modules.FilterOption;
 import com.idiotnation.raspored.Modules.FiltersLoader;
 import com.idiotnation.raspored.Modules.HTMLConverter;
 import com.idiotnation.raspored.Modules.NotificationLoader;
-import com.idiotnation.raspored.Modules.NotificationReciever;
-import com.idiotnation.raspored.Modules.TableColumn;
+import com.idiotnation.raspored.Modules.TableCell;
+import com.idiotnation.raspored.Modules.WidgetLoader;
 import com.idiotnation.raspored.R;
 import com.idiotnation.raspored.Utils;
 
@@ -33,6 +26,8 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -47,18 +42,23 @@ import static com.idiotnation.raspored.Utils.INFO_MESSAGE;
 public class MainPresenter implements MainContract.Presenter {
 
     @Inject
-    public MainPresenter() {};
+    public MainPresenter() {
+    }
+
+    ;
 
 
     MainContract.View view;
     Context context;
-    List<List<TableColumn>> columns;
+    List<List<TableCell>> columns;
 
     @Override
     public void start(MainContract.View view, Context context) {
         this.view = view;
         this.context = context;
-        view.initialize();
+        if(view!=null){
+            view.initialize();
+        }
     }
 
     @Override
@@ -68,7 +68,7 @@ public class MainPresenter implements MainContract.Presenter {
                 HTMLConverter htmlConverter = new HTMLConverter(context, url);
                 htmlConverter.setFinishListener(new HTMLConverter.HTMLConverterListener() {
                     @Override
-                    public void onFinish(List<List<TableColumn>> columns) {
+                    public void onFinish(List<List<TableCell>> columns) {
                         if (columns != null) {
                             view.showMessage(View.VISIBLE, INFO_FINISHED);
                             refreshFilters();
@@ -95,7 +95,7 @@ public class MainPresenter implements MainContract.Presenter {
     }
 
     @Override
-    public List<List<TableColumn>> getRaspored() {
+    public List<List<TableCell>> getRaspored() {
         StringBuilder text = new StringBuilder();
         try {
             BufferedReader br = new BufferedReader(new FileReader(new File(context.getFilesDir(), "raspored.json")));
@@ -108,7 +108,7 @@ public class MainPresenter implements MainContract.Presenter {
             br.close();
         } catch (IOException e) {
         } finally {
-            return (List<List<TableColumn>>) new Gson().fromJson(text.toString(), new TypeToken<List<List<TableColumn>>>() {
+            return (List<List<TableCell>>) new Gson().fromJson(text.toString(), new TypeToken<List<List<TableCell>>>() {
             }.getType());
         }
     }
@@ -117,23 +117,13 @@ public class MainPresenter implements MainContract.Presenter {
     public void refresh(final int idNumber) {
         if (idNumber != -1) {
             view.startAnimation();
-            DegreeLoader degreeLoader = new DegreeLoader(context);
-            degreeLoader.setOnFinishListener(new DegreeLoader.onFinihListener() {
-                @Override
-                public void onFinish(List list) {
-                    if (list != null) {
-                        context.getSharedPreferences("com.idiotnation.raspored", MODE_PRIVATE).edit().putInt("SpinnerDefault", idNumber).apply();
-                        download(list.get(idNumber).toString());
-                    } else {
-                        view.stopAnimation();
-                        view.showMessage(View.VISIBLE, ERROR_INTERNET);
-                    }
-                }
-            });
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-                degreeLoader.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+            String url = getRasporedUrl(idNumber);
+            if (url != null) {
+                context.getSharedPreferences("com.idiotnation.raspored", MODE_PRIVATE).edit().putInt("SpinnerDefault", idNumber).apply();
+                download(url);
             } else {
-                degreeLoader.execute();
+                view.stopAnimation();
+                view.showMessage(View.VISIBLE, ERROR_INTERNET);
             }
         } else {
             view.showMessage(View.VISIBLE, INFO_MESSAGE);
@@ -148,6 +138,12 @@ public class MainPresenter implements MainContract.Presenter {
             notificationLoader.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         } else {
             notificationLoader.execute();
+        }
+        WidgetLoader widgetLoader = new WidgetLoader(context, getRaspored());
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+            widgetLoader.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        } else {
+            widgetLoader.execute();
         }
     }
 
@@ -187,4 +183,55 @@ public class MainPresenter implements MainContract.Presenter {
             parentView.addView(textView);
         }
     }
+
+    @Override
+    public String getRasporedUrl(int index) {
+        String currentDate = new SimpleDateFormat("dd.MM.yyyy").format(new Date());
+        return new String("http://intranet.fsr.ba/intranetfsr/teamworks.dll/calendar/calendar" + getDegreeRasporedIndex(index) + "/calendar?StartDatee1=" + currentDate +"&DatePickerStartDatee1=&SelectDatee1="+currentDate+"&DayCounte1=7&ViewTypee1=day&OQS=3-49&parenttagid=e1");
+    }
+
+    private int getDegreeRasporedIndex(int index) {
+        switch (index) {
+            case 0:
+                return 6;
+            case 1:
+                return 16;
+            case 2:
+                return 17;
+            case 3:
+                return 18;
+            case 4:
+                return 20;
+            case 5:
+                return 21;
+            case 6:
+                return 22;
+            case 7:
+                return 24;
+            case 8:
+                return 25;
+            case 9:
+                return 26;
+            case 10:
+                return 28;
+            case 11:
+                return 1;
+            case 12:
+                return 2;
+            case 13:
+                return 3;
+            case 14:
+                return 7;
+            case 15:
+                return 4;
+            case 16:
+                return 8;
+            case 17:
+                return 5;
+            case 18:
+                return 44;
+        }
+        return 0;
+    }
+
 }

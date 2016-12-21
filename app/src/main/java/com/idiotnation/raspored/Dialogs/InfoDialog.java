@@ -7,8 +7,8 @@ import android.view.Window;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.idiotnation.raspored.Modules.TableCell;
 import com.idiotnation.raspored.R;
-import com.idiotnation.raspored.Modules.TableColumn;
 import com.idiotnation.raspored.Utils;
 
 import java.text.SimpleDateFormat;
@@ -16,12 +16,12 @@ import java.text.SimpleDateFormat;
 
 public class InfoDialog extends Dialog {
 
-    private TableColumn tableColumn;
+    private TableCell tableCell;
     private TextView textContent, textTime;
 
-    public InfoDialog(Context context, TableColumn tableColumn) {
+    public InfoDialog(Context context, TableCell tableCell) {
         super(context);
-        this.tableColumn = tableColumn;
+        this.tableCell = tableCell;
     }
 
     @Override
@@ -35,8 +35,8 @@ public class InfoDialog extends Dialog {
         textContent.setTextColor(Utils.getColor(R.color.textColorPrimary, getContext()));
         textTime = (TextView) findViewById(R.id.text_time);
         textTime.setTextColor(Utils.getColor(R.color.textColorPrimary, getContext()));
-        textContent.setText(tableColumn.getText());
+        textContent.setText(tableCell.getText());
         SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
-        textTime.setText(sdf.format(tableColumn.getStart()) + " - " + sdf.format(tableColumn.getEnd()));
+        textTime.setText(sdf.format(tableCell.getStart()) + " - " + sdf.format(tableCell.getEnd()));
     }
 }

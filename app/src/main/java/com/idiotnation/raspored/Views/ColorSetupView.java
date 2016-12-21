@@ -129,7 +129,7 @@ public class ColorSetupView extends AppCompatActivity implements ColorSetupContr
     }
 
     public void setColorsListProperties() {
-        colorsListAdapter = new ColorsListAdapter(getApplicationContext(), R.layout.colors_list_item, Arrays.asList(new String[]{"Prozor", "Alatna traka", "Dani", "Sati", "Predmeti"}));
+        colorsListAdapter = new ColorsListAdapter(getApplicationContext(), R.layout.colors_list_item, Arrays.asList(new String[]{"Prozor", "Alatna traka", "Dani", "Sati", "Predmeti", "Widget"}));
         colorsList.setAdapter(colorsListAdapter);
     }
 
@@ -153,9 +153,11 @@ public class ColorSetupView extends AppCompatActivity implements ColorSetupContr
                 case "Dani":
                     return new Integer[]{R.color.tabsBarBackgroundColor, R.color.tabsBarTextColorPrimary};
                 case "Sati":
-                    return new Integer[]{R.color.hoursBackgroundColor, R.color.hoursBackgroundStrokeColor, R.color.hoursTextColorPrimary};
+                    return new Integer[]{R.color.hoursBackgroundColor, R.color.hoursTextColorPrimary, R.color.hoursBackgroundStrokeColor};
                 case "Predmeti":
-                    return new Integer[]{R.color.lessonsBackgroundColor, R.color.lessonsBackgroundStrokeColor, R.color.lessonsTextColorPrimary};
+                    return new Integer[]{R.color.lessonsBackgroundColor, R.color.lessonsTextColorPrimary, R.color.lessonsBackgroundStrokeColor};
+                case "Widget":
+                    return new Integer[]{R.color.widgetBackgroundColor, R.color.widgetTextColorPrimary};
             }
             return null;
         }
@@ -164,9 +166,8 @@ public class ColorSetupView extends AppCompatActivity implements ColorSetupContr
         public View getView(int position, View convertView, ViewGroup parent) {
 
             View rootView = convertView;
-
+            LayoutInflater layoutInflater = LayoutInflater.from(getContext());
             if (rootView == null) {
-                LayoutInflater layoutInflater = LayoutInflater.from(getContext());
                 rootView = layoutInflater.inflate(R.layout.colors_list_item, null);
             }
 
@@ -177,7 +178,7 @@ public class ColorSetupView extends AppCompatActivity implements ColorSetupContr
                 textView.setText(text);
                 textView.setTextColor(Utils.getColor(R.color.textColorPrimary, getApplicationContext()));
                 LinearLayout colorsContainer = (LinearLayout) rootView.findViewById(R.id.color_setup_list_item_colors);
-                presenter.populateColorsContainer(colorsContainer, getItemColors(text), getSupportFragmentManager());
+                presenter.populateColorsContainer(layoutInflater, colorsContainer, getItemColors(text));
             }
 
             return rootView;

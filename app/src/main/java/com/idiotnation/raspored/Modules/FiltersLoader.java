@@ -2,12 +2,10 @@ package com.idiotnation.raspored.Modules;
 
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.AsyncTask;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.idiotnation.raspored.Dialogs.FiltersDialog;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -19,10 +17,10 @@ public class FiltersLoader extends AsyncTask<Void, Void, Void> {
 
     Context context;
     List<FilterOption> filterOptions;
-    List<List<TableColumn>> columns;
+    List<List<TableCell>> columns;
     onFinishListner finishListener;
 
-    public FiltersLoader(Context context, List<List<TableColumn>> columns) {
+    public FiltersLoader(Context context, List<List<TableCell>> columns) {
         this.context = context;
         this.columns = columns;
         filterOptions = (List<FilterOption>) new Gson().fromJson(context.getSharedPreferences("com.idiotnation.raspored", MODE_PRIVATE).getString("FilterOptions", ""), new TypeToken<List<FilterOption>>() {
@@ -45,14 +43,14 @@ public class FiltersLoader extends AsyncTask<Void, Void, Void> {
 
     public void setupFilters() {
         for (int i = 0; i < 6; i++) {
-            for (TableColumn tableColumn : columns.get(i)) {
-                tableColumn.setVisibility(getVisibilityFilter(tableColumn.getText().toLowerCase()));
+            for (TableCell tableCell : columns.get(i)) {
+                tableCell.setVisibility(getVisibilityFilter(tableCell.getText().toLowerCase()));
             }
         }
         saveColumnsToJson(columns);
     }
 
-    public void saveColumnsToJson(List<List<TableColumn>> columns) {
+    public void saveColumnsToJson(List<List<TableCell>> columns) {
         try {
             new File(context.getFilesDir() + "/raspored.json").delete();
             FileOutputStream fos = context.openFileOutput("raspored.json", MODE_PRIVATE);

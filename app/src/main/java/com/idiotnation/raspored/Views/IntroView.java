@@ -11,6 +11,7 @@ import android.view.Window;
 import android.widget.Button;
 
 import com.idiotnation.raspored.R;
+import com.idiotnation.raspored.Utils;
 
 import java.io.File;
 
@@ -28,6 +29,10 @@ public class IntroView extends AppCompatActivity {
                 new File(getFilesDir() + "/raspored.json").delete();
             }
             prefs.edit().remove("SpinnerDefault").apply();
+        }
+        if(prefs.getInt(getResources().getResourceName(R.color.widgetBackgroundColor), 665566) == 665566){
+            prefs.edit().putInt(getResources().getResourceName(R.color.widgetBackgroundColor), Utils.getColor(R.color.lessonsBackgroundColor, getApplicationContext())).apply();
+            prefs.edit().putInt(getResources().getResourceName(R.color.widgetTextColorPrimary), Utils.getColor(R.color.lessonsTextColorPrimary, getApplicationContext())).apply();
         }
         if(prefs.getBoolean("FirstRun", true)){
             setContentView(R.layout.intro_layout);

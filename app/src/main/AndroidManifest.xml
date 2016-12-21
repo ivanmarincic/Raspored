@@ -36,7 +36,9 @@
             android:name=".Views.ColorSetupView"
             android:screenOrientation="portrait"></activity>
 
-        <receiver android:name=".Modules.NotificationReciever" />
+        <receiver android:name=".Modules.NotificationReceiver" />
+
+        <service android:name=".Modules.UpdateWidgetService"></service>
 
         <receiver android:name=".Widget.RasporedWidgetProvider">
             <intent-filter>
