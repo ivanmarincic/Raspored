@@ -4,6 +4,7 @@ package com.idiotnation.raspored.Presenters;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
@@ -18,6 +19,7 @@ import com.idiotnation.raspored.Dialogs.ColorPickerDialog;
 import com.idiotnation.raspored.R;
 import com.idiotnation.raspored.Utils;
 import com.idiotnation.raspored.Views.MainView;
+import com.idiotnation.raspored.Widget.RasporedWidgetProvider;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -26,10 +28,12 @@ import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
 
 public class ColorSetupPresenter implements ColorSetupContract.Presenter {
 
-    public ColorSetupPresenter() {};
-
     ColorSetupContract.View view;
+    ;
     Activity activity;
+
+    public ColorSetupPresenter() {
+    }
 
     @Override
     public void start(ColorSetupContract.View view, Activity activity) {
@@ -62,6 +66,17 @@ public class ColorSetupPresenter implements ColorSetupContract.Presenter {
                         @Override
                         public void onFinish(int color) {
                             prefs.edit().putInt(colorIdName, color).apply();
+                            if (colorIdName.equals(activity.getResources().getResourceName(R.color.textColorPrimary))) {
+                                int secondary = Color.argb(178, Color.red(color), Color.green(color), Color.blue(color));
+                                int disabled = Color.argb(127, Color.red(color), Color.green(color), Color.blue(color));
+                                prefs.edit().putInt(activity.getResources().getResourceName(R.color.textColorSecondary), secondary).apply();
+                                prefs.edit().putInt(activity.getResources().getResourceName(R.color.textColorDisabled), disabled).apply();
+                            }
+                            if (colorIds[0] == R.color.widgetBackgroundColor) {
+                                Intent updateIntent = new Intent(activity, RasporedWidgetProvider.class);
+                                updateIntent.putExtra(Utils.WIDGET_INTENT, Utils.WIDGET_UPDATE);
+                                activity.sendBroadcast(updateIntent);
+                            }
                             view.refreshList();
                         }
                     });
@@ -77,9 +92,6 @@ public class ColorSetupPresenter implements ColorSetupContract.Presenter {
                     drawable = activity.getResources().getDrawable(R.drawable.text);
                     break;
                 case 2:
-                    drawable = activity.getResources().getDrawable(R.drawable.border);
-                    break;
-                case 3:
                     drawable = activity.getResources().getDrawable(R.drawable.border);
                     break;
             }

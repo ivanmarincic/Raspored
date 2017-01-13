@@ -1,17 +1,12 @@
-package com.idiotnation.raspored.Modules;
-
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
+package com.idiotnation.raspored.Objects;
 
 import java.util.Date;
-import java.util.List;
 
 public class TableCell {
     int width, colCount;
     float top, left, height;
     Date start, end;
     String text;
-    boolean visible;
 
     public TableCell() {
     }
@@ -80,14 +75,6 @@ public class TableCell {
         this.text = text;
     }
 
-    public boolean isVisible() {
-        return visible;
-    }
-
-    public void setVisibility(boolean visibility) {
-        this.visible = visibility;
-    }
-
     @Override
     public String toString() {
         return "TableCell{" +
@@ -99,7 +86,6 @@ public class TableCell {
                 ", start=" + start +
                 ", end=" + end +
                 ", text='" + text + '\'' +
-                ", visible=" + visible +
                 '}';
     }
 }

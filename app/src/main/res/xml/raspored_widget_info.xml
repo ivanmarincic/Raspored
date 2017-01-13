@@ -3,6 +3,6 @@
     android:initialLayout="@layout/raspored_widget_layout"
     android:minHeight="72dp"
     android:minWidth="300dp"
-    android:resizeMode="vertical"
     android:previewImage="@drawable/notification_icon"
-    android:updatePeriodMillis="86400000"></appwidget-provider>
+    android:resizeMode="vertical"
+    android:updatePeriodMillis="3600000"></appwidget-provider>

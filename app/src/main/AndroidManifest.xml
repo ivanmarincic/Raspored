@@ -18,6 +18,8 @@
         android:largeHeap="true"
         android:theme="@style/AppTheme.Light">
 
+        <!-- ACTIVITIES -->
+
         <activity
             android:name="com.idiotnation.raspored.Views.IntroView"
             android:screenOrientation="portrait">
@@ -35,9 +37,31 @@
             android:name=".Views.ColorSetupView"
             android:screenOrientation="portrait"></activity>
 
-        <receiver android:name=".Modules.NotificationReceiver" />
+        <!-- SERVICES -->
 
-        <service android:name=".Modules.UpdateWidgetService"></service>
+        <service
+            android:name=".Modules.UpdateWidgetService"
+            android:enabled="true"></service>
+
+        <service
+            android:name=".Modules.UpdateNotificationsService"
+            android:enabled="true"></service>
+
+        <!-- RECIEVERS -->
+
+        <receiver android:name=".Recievers.NotificationReceiver" />
+
+        <receiver android:name=".Recievers.ScreenUnlockReciever">
+            <intent-filter>
+                <action android:name="android.intent.action.USER_PRESENT" />
+            </intent-filter>
+        </receiver>
+
+        <receiver android:name=".Recievers.OnBootReciever">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
 
         <receiver android:name=".Widget.RasporedWidgetProvider">
             <intent-filter>

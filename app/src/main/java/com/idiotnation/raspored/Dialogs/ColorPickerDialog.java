@@ -2,15 +2,14 @@ package com.idiotnation.raspored.Dialogs;
 
 import android.app.Activity;
 import android.app.Dialog;
-import android.content.Context;
 import android.graphics.Color;
-import android.graphics.Rect;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.inputmethod.EditorInfo;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.SeekBar;
@@ -27,9 +26,9 @@ public class ColorPickerDialog extends Dialog implements SeekBar.OnSeekBarChange
     SeekBar redSeekBar, greenSeekBar, blueSeekBar, alphaSeekbar;
     TextView redToolTip, greenToolTip, blueToolTip, alphaToolTip;
     EditText codHex;
-    private int red, green, blue, alpha;
     Button select;
     onFinishListener onFinishListener;
+    private int red, green, blue, alpha;
 
 
     /**
@@ -153,7 +152,6 @@ public class ColorPickerDialog extends Dialog implements SeekBar.OnSeekBarChange
         blueSeekBar.setProgress(blue);
 
         colorView.setBackgroundColor(Color.argb(alpha, red, green, blue));
-
         codHex.setOnEditorActionListener(
                 new EditText.OnEditorActionListener() {
                     @Override
@@ -163,21 +161,43 @@ public class ColorPickerDialog extends Dialog implements SeekBar.OnSeekBarChange
                                 event.getAction() == KeyEvent.ACTION_DOWN &&
                                         event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
                             updateColorView(v.getText().toString());
-                            InputMethodManager imm = (InputMethodManager) c.getSystemService(Context.INPUT_METHOD_SERVICE);
-                            imm.hideSoftInputFromWindow(codHex.getWindowToken(), 0);
-
                             return true;
                         }
                         return false;
                     }
                 });
+        codHex.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (isColorValid() && s.length() == 8) {
+                    updateColorView(s.toString());
+                }
+                if (s.length() > 8) {
+                    codHex.setError("Neispravna vrijednost");
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
         codHex.setText(String.format("%02x%02x%02x%02x", alpha, red, green, blue));
 
         select.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                dismiss();
-                onFinishListener.onFinish(getColor());
+                if (isColorValid()) {
+                    dismiss();
+                    onFinishListener.onFinish(getColor());
+                } else {
+                    codHex.setError("Neispravna vrijednost");
+                }
             }
         });
 
@@ -196,8 +216,8 @@ public class ColorPickerDialog extends Dialog implements SeekBar.OnSeekBarChange
      * @param s HEX Code of the color.
      */
     private void updateColorView(String s) {
-        if (s.matches("-?[0-9a-fA-F]+")) {
-            int color = Color.alpha(Color.parseColor(s));
+        try {
+            int color = Color.parseColor("#" + s);
             alpha = Color.alpha(color);
             red = Color.red(color);
             green = Color.green(color);
@@ -208,8 +228,8 @@ public class ColorPickerDialog extends Dialog implements SeekBar.OnSeekBarChange
             redSeekBar.setProgress(red);
             greenSeekBar.setProgress(green);
             blueSeekBar.setProgress(blue);
-        } else {
-            codHex.setError("Error");
+        } catch (IllegalArgumentException e) {
+            codHex.setError("Neispravna vrijednost");
         }
     }
 
@@ -321,6 +341,15 @@ public class ColorPickerDialog extends Dialog implements SeekBar.OnSeekBarChange
      */
     public int getColor() {
         return Color.parseColor("#" + codHex.getText());
+    }
+
+    public boolean isColorValid() {
+        try {
+            Color.parseColor("#" + codHex.getText());
+        } catch (IllegalArgumentException e) {
+            return false;
+        }
+        return true;
     }
 
     public void setOnFinishListener(onFinishListener onFinishListener) {

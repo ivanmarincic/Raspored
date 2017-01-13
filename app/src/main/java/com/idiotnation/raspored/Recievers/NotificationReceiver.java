@@ -1,4 +1,4 @@
-package com.idiotnation.raspored.Modules;
+package com.idiotnation.raspored.Recievers;
 
 import android.app.Notification;
 import android.app.NotificationManager;

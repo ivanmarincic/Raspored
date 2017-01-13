@@ -9,7 +9,10 @@ import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.SystemClock;
 
+import com.idiotnation.raspored.Objects.TableCell;
+import com.idiotnation.raspored.Recievers.NotificationReceiver;
 import com.idiotnation.raspored.Utils;
+
 import java.util.List;
 
 import static android.content.Context.MODE_PRIVATE;
@@ -31,7 +34,7 @@ public class NotificationLoader extends AsyncTask<Void, Void, Void> {
     protected Void doInBackground(Void... params) {
         try {
             clearNotifications();
-            if(prefs.getBoolean("NotificationsEnabled", false)){
+            if (prefs.getBoolean("NotificationsEnabled", false)) {
                 setupNotifications();
             }
         } catch (Exception e) {
@@ -44,43 +47,37 @@ public class NotificationLoader extends AsyncTask<Void, Void, Void> {
         this.notificationLoaderListener = notificationLoaderListener;
     }
 
-    public interface NotificationLoaderListener {
-        void onFinish(List<List<TableCell>> columns);
-    }
-
     private void scheduleNotification(String notification, long delay, int id) {
-        delay = delay - (30*60000);
-        if(delay>0){
+        delay = delay - (30 * 60000);
+        if (delay > 0) {
             Intent notificationIntent = new Intent(context, NotificationReceiver.class);
             notificationIntent.putExtra(NotificationReceiver.NOTIFICATION_ID, id);
             notificationIntent.putExtra(NotificationReceiver.NOTIFICATION, notification);
             PendingIntent pendingIntent = PendingIntent.getBroadcast(context, id, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
             long futureInMillis = SystemClock.elapsedRealtime() + delay;
-            AlarmManager alarmManager = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
+            AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
             alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, futureInMillis, pendingIntent);
         }
     }
 
-    private void setupNotifications(){
+    private void setupNotifications() {
         int idNumber = 2020;
-        for(int i=0; i< columns.size(); i++){
-            for (TableCell tableCell : columns.get(i)){
-                if(tableCell.isVisible()){
-                    tableCell.getStart();
-                    scheduleNotification(tableCell.getText(), Utils.getDelayInMiliseconds(tableCell.getStart()), idNumber);
-                    idNumber++;
-                }
+        for (int i = 0; i < columns.size(); i++) {
+            for (TableCell tableCell : columns.get(i)) {
+                tableCell.getStart();
+                scheduleNotification(tableCell.getText(), Utils.getDelayInMiliseconds(tableCell.getStart()), idNumber);
+                idNumber++;
             }
         }
     }
 
-    public void clearNotifications(){
-        for(int i=0; i<160; i++){
+    public void clearNotifications() {
+        for (int i = 0; i < 160; i++) {
             AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 
             Intent updateServiceIntent = new Intent(context, NotificationReceiver.class);
-            PendingIntent pendingUpdateIntent = PendingIntent.getBroadcast(context, 2020+i, updateServiceIntent, 0);
+            PendingIntent pendingUpdateIntent = PendingIntent.getBroadcast(context, 2020 + i, updateServiceIntent, 0);
 
             try {
                 alarmManager.cancel(pendingUpdateIntent);
@@ -88,6 +85,10 @@ public class NotificationLoader extends AsyncTask<Void, Void, Void> {
                 e.printStackTrace();
             }
         }
+    }
+
+    public interface NotificationLoaderListener {
+        void onFinish(List<List<TableCell>> columns);
     }
 
 }

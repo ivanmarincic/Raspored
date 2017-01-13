@@ -6,8 +6,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
-import android.content.res.TypedArray;
-import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -30,6 +28,8 @@ import com.idiotnation.raspored.R;
 import com.idiotnation.raspored.Utils;
 import com.idiotnation.raspored.Views.ColorSetupView;
 
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -44,9 +44,8 @@ public class SettingsDialog extends Dialog {
     Activity activity;
     SharedPreferences prefs;
     onEggsterListener eggsterListener;
-    onFinishListner finishListner;
+    Listners listeners;
     int egg = 0, newPosition;
-    boolean refreshNotifications;
 
     @BindView(R.id.spinner)
     Spinner godineSpinner;
@@ -62,6 +61,9 @@ public class SettingsDialog extends Dialog {
 
     @BindView(R.id.easter_egg)
     TextView easterEgg;
+
+    @BindView(R.id.update_date)
+    TextView updateDate;
 
     @BindView(R.id.updateOnBoot_text)
     TextView updateOnBootText;
@@ -98,7 +100,7 @@ public class SettingsDialog extends Dialog {
     @Override
     protected void onStop() {
         super.onStop();
-        finishListner.onFinish(newPosition, refreshNotifications);
+        listeners.onFinish(newPosition);
     }
 
     public void init() {
@@ -115,6 +117,7 @@ public class SettingsDialog extends Dialog {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 prefs.edit().putBoolean("UpdateOnBoot", b).apply();
+                listeners.onUpdateChange(b);
             }
         });
         notificationsEnabled.setVisibility(View.VISIBLE);
@@ -122,7 +125,7 @@ public class SettingsDialog extends Dialog {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 prefs.edit().putBoolean("NotificationsEnabled", b).apply();
-                refreshNotifications = true;
+                listeners.onUpdateChange(b);
             }
         });
         setupColors.setOnClickListener(new View.OnClickListener() {
@@ -162,6 +165,11 @@ public class SettingsDialog extends Dialog {
                 }
             }
         });
+        try {
+            updateDate.setText("Datum: " + new SimpleDateFormat("dd.MM.yyyy").format(Timestamp.valueOf(prefs.getString("UpdateTimeStamp", "ažurirajte"))));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public void setColors(){
@@ -196,6 +204,7 @@ public class SettingsDialog extends Dialog {
         updateOnBootText.setTextColor(Utils.getColor(R.color.textColorPrimary, activity));
         notificationsEnabledText.setTextColor(Utils.getColor(R.color.textColorPrimary, activity));
         colorsText.setTextColor(Utils.getColor(R.color.textColorPrimary, activity));
+        updateDate.setTextColor(Utils.getColor(R.color.textColorSecondary, activity));
     }
 
     public int getNewPositionOffset(int position){
@@ -216,6 +225,27 @@ public class SettingsDialog extends Dialog {
         }else {
             return 3;
         }
+    }
+
+    public void setOnEggListener(onEggsterListener eggsterListener) {
+        this.eggsterListener = eggsterListener;
+    }
+
+    public void setListeners(Listners listeners) {
+        this.listeners = listeners;
+    }
+
+    public interface onEggsterListener {
+        void onEgg();
+    }
+
+    public interface Listners {
+        void onFinish(int spinnerItem);
+
+        void onNotificationChange(boolean notification);
+
+        void onUpdateChange(boolean update);
+
     }
 
     public class SpinnerArrayAdapter extends ArrayAdapter<String> {
@@ -254,7 +284,16 @@ public class SettingsDialog extends Dialog {
             parent.setBackgroundColor(Utils.getColor(R.color.windowBackgroundColor, getContext()));
             TextView tv = (TextView) convertView.findViewById(R.id.si_item);
             tv.setText(items[position]);
-            tv.setTextColor(Utils.getColor(R.color.textColorPrimary, getContext()));
+            int[][] states = new int[][]{
+                    new int[]{android.R.attr.state_enabled},
+                    new int[]{-android.R.attr.state_enabled}
+            };
+            int[] colors = new int[]{
+                    Utils.getColor(R.color.textColorPrimary, getContext()),
+                    Utils.getColor(R.color.textColorDisabled, getContext())
+            };
+            ColorStateList colorStateList = new ColorStateList(states, colors);
+            tv.setTextColor(colorStateList);
             return convertView;
         }
 
@@ -267,21 +306,5 @@ public class SettingsDialog extends Dialog {
                 return "E. ";
             }
         }
-    }
-
-    public void setOnEggListener(onEggsterListener eggsterListener) {
-        this.eggsterListener = eggsterListener;
-    }
-
-    public void setOnFinishListener(onFinishListner finishListener) {
-        this.finishListner = finishListener;
-    }
-
-    public interface onEggsterListener {
-        void onEgg();
-    }
-
-    public interface onFinishListner {
-        void onFinish(int spinnerItem, boolean refreshNotifications);
     }
 }

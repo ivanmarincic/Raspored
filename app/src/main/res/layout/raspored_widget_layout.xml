@@ -23,7 +23,6 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/widget_text_content"
         android:gravity="center"
-        android:text="00:00 - 00:00"
         android:textColor="@color/textColorPrimary"
         android:textStyle="bold" />
 
@@ -33,7 +32,6 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/widget_text_time"
         android:gravity="center"
-        android:text="Ispiti: 0/0"
         android:textColor="@color/textColorPrimary"
         android:textStyle="bold" />
 

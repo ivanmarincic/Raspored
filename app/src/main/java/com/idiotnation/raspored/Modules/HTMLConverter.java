@@ -5,6 +5,7 @@ import android.content.Context;
 import android.os.AsyncTask;
 
 import com.google.gson.Gson;
+import com.idiotnation.raspored.Objects.TableCell;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -50,31 +51,32 @@ public class HTMLConverter extends AsyncTask<Void, Void, Void> {
         Element days = doc.select("#WeekTablee1 tbody tr").get(0);
         Elements head = doc.select("head").get(0).select("script");
         List<String[]> properties = getElementsArray(head.get(head.size() - 1).html());
-        for (int i = 0; i < properties.size(); i++) {
-            TableCell tableCell = new TableCell();
-            String id = properties.get(i)[2].split("=")[1].replaceAll("\"", "").replaceAll(" ", "");
-            Date startDate = new SimpleDateFormat("yyy-MM-dd,HH:mm:ss").parse(properties.get(i)[7].split("=")[1].replaceAll("\"", "").replaceAll(" ", "")),
-                    endDate = new SimpleDateFormat("yyy-MM-dd,HH:mm:ss").parse(properties.get(i)[6].split("=")[1].replaceAll("\"", "").replaceAll(" ", ""));
-            float start = (float) ((float)startDate.getHours() - 7.0 + (startDate.getMinutes() * (1.0 / 60.0))),
-                    end = (float) ((float)endDate.getHours() - 7.0 + (endDate.getMinutes() * (1.0 / 60.0))),
-                    height = end - start;
-            int width = Integer.parseInt(properties.get(i)[4].split("=")[1].replaceAll("\"", "").replaceAll(" ", "")),
-                    colCount = Integer.parseInt(properties.get(i)[3].split("=")[1].replaceAll("\"", "").replaceAll(" ", "")),
-                    left = Integer.parseInt(properties.get(i)[5].split("=")[1].replaceAll("\"", "").replaceAll(" ", "")),
-                    day = Integer.parseInt(properties.get(i)[8].split("=")[1].replaceAll("\"", "").replaceAll(" ", ""));
-            tableCell.setWidth(width);
-            tableCell.setHeight(height);
-            tableCell.setLeft(left);
-            tableCell.setTop(start);
-            tableCell.setColCount(colCount);
-            tableCell.setText(days.child(day).select("[id=\""+id+"\"]").get(0).select("span").get(0).text());
-            tableCell.setStart(startDate);
-            tableCell.setEnd(endDate);
-            tableCell.setVisibility(true);
-            if (columns.size()<=day){
-                columns.add(new ArrayList<TableCell>());
+        if (properties != null) {
+            for (int i = 0; i < properties.size(); i++) {
+                TableCell tableCell = new TableCell();
+                String id = properties.get(i)[2].split("=")[1].replaceAll("\"", "").replaceAll(" ", "");
+                Date startDate = new SimpleDateFormat("yyy-MM-dd,HH:mm:ss").parse(properties.get(i)[7].split("=")[1].replaceAll("\"", "").replaceAll(" ", "")),
+                        endDate = new SimpleDateFormat("yyy-MM-dd,HH:mm:ss").parse(properties.get(i)[6].split("=")[1].replaceAll("\"", "").replaceAll(" ", ""));
+                float start = (float) ((float) startDate.getHours() - 7.0 + (startDate.getMinutes() * (1.0 / 60.0))),
+                        end = (float) ((float) endDate.getHours() - 7.0 + (endDate.getMinutes() * (1.0 / 60.0))),
+                        height = end - start;
+                int width = Integer.parseInt(properties.get(i)[4].split("=")[1].replaceAll("\"", "").replaceAll(" ", "")),
+                        colCount = Integer.parseInt(properties.get(i)[3].split("=")[1].replaceAll("\"", "").replaceAll(" ", "")),
+                        left = Integer.parseInt(properties.get(i)[5].split("=")[1].replaceAll("\"", "").replaceAll(" ", "")),
+                        day = Integer.parseInt(properties.get(i)[8].split("=")[1].replaceAll("\"", "").replaceAll(" ", ""));
+                tableCell.setWidth(width);
+                tableCell.setHeight(height);
+                tableCell.setLeft(left);
+                tableCell.setTop(start);
+                tableCell.setColCount(colCount);
+                tableCell.setText(days.child(day).select("[id=\"" + id + "\"]").get(0).select("span").get(0).text());
+                tableCell.setStart(startDate);
+                tableCell.setEnd(endDate);
+                if (columns.size() <= day) {
+                    columns.add(new ArrayList<TableCell>());
+                }
+                columns.get(day).add(tableCell);
             }
-            columns.get(day).add(tableCell);
         }
         while (columns.size()<6){
             columns.add(new ArrayList<TableCell>());
@@ -96,7 +98,11 @@ public class HTMLConverter extends AsyncTask<Void, Void, Void> {
     public List<String[]> getElementsArray(String js) {
         String start = "FInAppointment = false;\r\n}\r\n}\r\n\r\n";
         String end = "\r\n\r\nvar PosFurtherUp";
-        String javaScript = js.substring(js.indexOf(start) + start.length(), js.indexOf(end));
+        int indexOfStart = js.indexOf(start), indexOfEnd = js.indexOf(end);
+        if (indexOfStart == -1 || indexOfEnd == -1) {
+            return null;
+        }
+        String javaScript = js.substring(indexOfStart + start.length(), indexOfEnd);
         String[] list = javaScript.split("\r\n\r\n");
         List<String[]> strings = new ArrayList<>();
         for (String item : list) {

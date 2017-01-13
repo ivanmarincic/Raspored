@@ -7,31 +7,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
-import android.widget.RemoteViews;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-import com.idiotnation.raspored.Modules.TableCell;
 import com.idiotnation.raspored.Modules.UpdateWidgetService;
-import com.idiotnation.raspored.R;
 import com.idiotnation.raspored.Utils;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.Date;
-import java.util.List;
-
-import static android.content.Context.MODE_PRIVATE;
-
 public class RasporedWidgetProvider extends AppWidgetProvider {
-
-    public static String UPDATE_ID = "RasporedWidgetUpdate";
-    public static String UPDATE = "RasporedWidgetUpdateContent";
-    String content = "";
-    Date start, end;
 
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
@@ -51,6 +31,21 @@ public class RasporedWidgetProvider extends AppWidgetProvider {
         SharedPreferences.Editor edit = prefs.edit();
         edit.putBoolean(Utils.WIDGET_ACTIVE, active);
         edit.commit();
+    }
+
+    @Override
+    public void onReceive(Context context, Intent intent) {
+        String intentExtra = intent.getStringExtra(Utils.WIDGET_INTENT);
+        if (intentExtra != null) {
+            if (intentExtra.equals(Utils.WIDGET_UPDATE)) {
+                int[] appWidgetIds = new int[]{};
+                this.onUpdate(context, AppWidgetManager.getInstance(context), appWidgetIds);
+            } else if (intentExtra.equals(Utils.WIDGET_CLICK)) {
+                context.startActivity(context.getPackageManager().getLaunchIntentForPackage("com.idiotnation.raspored"));
+            }
+        } else {
+            super.onReceive(context, intent);
+        }
     }
 
     @Override

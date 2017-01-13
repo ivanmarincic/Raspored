@@ -3,7 +3,6 @@ package com.idiotnation.raspored.Views;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.TypedArray;
-import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
@@ -29,9 +28,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.idiotnation.raspored.Contracts.MainContract;
-import com.idiotnation.raspored.Dialogs.FiltersDialog;
 import com.idiotnation.raspored.Dialogs.SettingsDialog;
-import com.idiotnation.raspored.Modules.TableCell;
+import com.idiotnation.raspored.Objects.TableCell;
 import com.idiotnation.raspored.Presenters.MainPresenter;
 import com.idiotnation.raspored.R;
 import com.idiotnation.raspored.Utils;
@@ -225,6 +223,11 @@ public class MainView extends AppCompatActivity implements MainContract.View {
     }
 
     @Override
+    public SharedPreferences getPreferences() {
+        return prefs;
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.main, menu);
@@ -244,16 +247,22 @@ public class MainView extends AppCompatActivity implements MainContract.View {
             case R.id.ab_settings:
                 SettingsDialog settingsDialog = new SettingsDialog(MainView.this);
                 settingsDialog.show();
-                settingsDialog.setOnFinishListener(new SettingsDialog.onFinishListner() {
+                settingsDialog.setListeners(new SettingsDialog.Listners() {
                     @Override
-                    public void onFinish(int spinnerItem, boolean refreshNotifications) {
+                    public void onFinish(int spinnerItem) {
                         item.setEnabled(true);
                         if (spinnerItem != prefs.getInt("SpinnerDefault", -1)) {
                             presenter.refresh(spinnerItem);
                         }
-                        if (refreshNotifications) {
-                            presenter.refreshNotifications();
-                        }
+                    }
+
+                    @Override
+                    public void onNotificationChange(boolean notification) {
+                        presenter.refreshNotifications();
+                    }
+
+                    @Override
+                    public void onUpdateChange(boolean update) {
                     }
                 });
                 settingsDialog.setOnEggListener(new SettingsDialog.onEggsterListener() {
@@ -271,18 +280,6 @@ public class MainView extends AppCompatActivity implements MainContract.View {
                         });
                     }
                 });
-                return true;
-            case R.id.ab_filters:
-                FiltersDialog filtersDialog = new FiltersDialog(MainView.this);
-                filtersDialog.setOnFinishListener(new FiltersDialog.onFinishListner() {
-                    @Override
-                    public void onFinish(boolean refreshFilters) {
-                        if (refreshFilters) {
-                            presenter.refreshFilters();
-                        }
-                    }
-                });
-                filtersDialog.show();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -304,7 +301,7 @@ public class MainView extends AppCompatActivity implements MainContract.View {
             mPager.setAdapter(mAdapter);
         }
         mPager.setOffscreenPageLimit(6);
-        mPager.setCurrentItem(Utils.getPagerActivePage());
+        mPager.setCurrentItem(presenter.getPageNumber());
     }
 
     public void setThreadPolicy() {
@@ -338,8 +335,8 @@ public class MainView extends AppCompatActivity implements MainContract.View {
         });
         int[] attribute = new int[]{R.attr.colorAccent, R.attr.dialogBackground};
         TypedArray array = getTheme().obtainStyledAttributes(attribute);
-        mRefresh.setColorSchemeColors(array.getColor(0, Color.TRANSPARENT));
-        mRefresh.setProgressBackgroundColorSchemeColor(array.getColor(1, Color.TRANSPARENT));
+        mRefresh.setColorSchemeColors(Utils.getColor(R.color.colorAccent, getApplicationContext()));
+        mRefresh.setProgressBackgroundColorSchemeColor(Utils.getColor(R.color.windowBackgroundColor, getApplicationContext()));
         array.recycle();
     }
 

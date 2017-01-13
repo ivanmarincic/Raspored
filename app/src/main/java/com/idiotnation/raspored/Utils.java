@@ -8,10 +8,8 @@ import android.preference.PreferenceManager;
 import android.util.DisplayMetrics;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 
 import static android.content.Context.MODE_PRIVATE;
@@ -24,24 +22,11 @@ public class Utils {
     public static final int ERROR_UNAVAILABLE = 4;
     public static final int INFO_FINISHED = 5;
     public static final String WIDGET_ACTIVE = "com.idiotnation.RasporedWidgetActive";
-    public static final int UNIQUE_ID = 291096;
-
-    public static int getPagerActivePage() {
-        int day = Calendar.getInstance(TimeZone.getTimeZone("Europe/Sarajevo")).get(Calendar.DAY_OF_WEEK);
-        if (day == 1) {
-            day = 0;
-        } else {
-            day -= 2;
-        }
-        if (Calendar.getInstance(TimeZone.getTimeZone("Europe/Sarajevo")).get(Calendar.HOUR_OF_DAY) > 19) {
-            if (day == 7) {
-                day = 0;
-            } else {
-                day += 1;
-            }
-        }
-        return day;
-    }
+    public static final int UNIQUE_ID = 29109613;
+    public static final int WIDGET_CLICK_INTENT = 29109666;
+    public static final String WIDGET_INTENT = "com.idiotnation.RasporedWidgetIntent";
+    public static final String WIDGET_UPDATE = "com.idiotnation.RasporedWidgetUpdate";
+    public static final String WIDGET_CLICK = "com.idiotnation.RasporedWidgetClick";
 
     public static int manipulateColor(int color, float factor) {
         int a = Color.alpha(color);

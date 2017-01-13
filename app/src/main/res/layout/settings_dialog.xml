@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/settings_dialog_bg"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/windowBackgroundColor"
-    android:id="@+id/settings_dialog_bg"
     android:orientation="vertical"
     android:padding="10dp"
     android:weightSum="15">
@@ -16,6 +16,14 @@
         android:layout_marginTop="5dp"
         android:layout_weight="0.5"
         android:popupBackground="@color/windowBackgroundColor" />
+
+    <TextView
+        android:id="@+id/update_date"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Datum: "
+        android:textColor="@color/textColorSecondary"
+        android:textSize="12sp" />
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -98,35 +106,6 @@
 
     </RelativeLayout>
 
-    <RelativeLayout
-        android:id="@+id/setup_partial_container"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="5dp"
-        android:layout_marginTop="5dp"
-        android:layout_weight="0.5">
-
-        <ImageView
-            android:id="@+id/setup_partial"
-            android:layout_width="35dp"
-            android:layout_height="35dp"
-            android:layout_alignParentLeft="true"
-            android:layout_centerVertical="true"
-            android:src="@drawable/partial" />
-
-        <TextView
-            android:id="@+id/setup_partial_text"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="10dp"
-            android:layout_toRightOf="@+id/setup_partial"
-            android:text="Parcijala"
-            android:textColor="@color/textColorPrimary"
-            android:textSize="25dp" />
-
-    </RelativeLayout>
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -141,7 +120,7 @@
             android:layout_weight="0.8"
             android:clickable="true"
             android:gravity="center|left"
-            android:text="Verzija: 5.5"
+            android:text="Verzija: 5.8"
             android:textColor="@color/textColorPrimary"
             android:textSize="15dp" />
 

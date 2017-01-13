@@ -1,4 +1,4 @@
-package com.idiotnation.raspored.Modules;
+package com.idiotnation.raspored.Objects;
 
 public class FilterOption{
     String filter;

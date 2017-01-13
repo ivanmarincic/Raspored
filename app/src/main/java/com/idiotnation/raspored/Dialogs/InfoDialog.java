@@ -7,7 +7,7 @@ import android.view.Window;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.idiotnation.raspored.Modules.TableCell;
+import com.idiotnation.raspored.Objects.TableCell;
 import com.idiotnation.raspored.R;
 import com.idiotnation.raspored.Utils;
 
