@@ -197,9 +197,9 @@ public class MainPresenter implements MainContract.Presenter {
         List<List<TableCell>> raspored = getRaspored();
         if (raspored != null) {
             mainloop:
-            for (int i = raspored.size(); i >= 0; i--) {
-                for (int j = raspored.get(i).size(); j >= 0; j--) {
-                    if (raspored.get(i).get(j).getEnd().compareTo(new Date()) < 0 && day > 4) {
+            for (int i = raspored.size() - 1; i >= 0; i--) {
+                for (int j = raspored.get(i).size() - 1; j >= 0; j--) {
+                    if (raspored.get(i).get(j).getEnd().compareTo(new Date()) > 0 && day > 4) {
                         view.getPreferences().edit().putString("UpdateTimeStamp", new Timestamp(nextMonday(Calendar.MONDAY).getTimeInMillis()).toString()).apply();
                         return 0;
                     }

@@ -9,7 +9,7 @@ android {
         applicationId "com.idiotnation.raspored"
         minSdkVersion 14
         targetSdkVersion 25
-        versionCode 26000015
+        versionCode 26000016
         versionName "5.8"
     }
 }
