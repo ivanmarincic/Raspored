@@ -134,6 +134,7 @@ public class MainView extends AppCompatActivity implements MainContract.View {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                mPager.setCurrentItem(presenter.getPageNumber());
                 mAdapter.notifyDataSetChanged();
                 mRefresh.requestLayout();
             }

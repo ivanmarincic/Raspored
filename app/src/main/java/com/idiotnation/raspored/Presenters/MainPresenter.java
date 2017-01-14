@@ -164,6 +164,7 @@ public class MainPresenter implements MainContract.Presenter {
     @Override
     public String getRasporedUrl(int index) {
         try {
+            getPageNumber();
             String stringDate = view.getPreferences().getString("UpdateTimeStamp", "default");
             Date currentDate;
             if (stringDate.equals("default")) {
@@ -199,9 +200,9 @@ public class MainPresenter implements MainContract.Presenter {
             mainloop:
             for (int i = raspored.size() - 1; i >= 0; i--) {
                 for (int j = raspored.get(i).size() - 1; j >= 0; j--) {
-                    if (raspored.get(i).get(j).getEnd().compareTo(new Date()) > 0 && day > 4) {
+                    if ((raspored.get(i).get(j).getEnd().compareTo(new Date()) < 0 || raspored.get(i).get(j).getStart().compareTo(new Date()) > 0) && day > 4) {
                         view.getPreferences().edit().putString("UpdateTimeStamp", new Timestamp(nextMonday(Calendar.MONDAY).getTimeInMillis()).toString()).apply();
-                        return 0;
+                        day = 0;
                     }
                     break mainloop;
                 }
