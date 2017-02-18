@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.idiotnation.raspored.Views.CustomSwipeToRefresh xmlns:android="http://schemas.android.com/apk/res/android"
+<com.idiotnation.raspored.Helpers.CustomSwipeToRefresh xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:fab="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/refresh_layout"
     android:layout_width="fill_parent"
@@ -19,7 +18,13 @@
             android:background="@color/colorPrimary"
             android:elevation="4dp"
             android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
-            app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
+
+            <android.support.v7.widget.ActionMenuView
+                android:id="@+id/amvMenu"
+                android:layout_width="wrap_content"
+                android:layout_height="?attr/actionBarSize" />
+        </android.support.v7.widget.Toolbar>
 
         <android.support.design.widget.TabLayout
             android:id="@+id/dayTabs"
@@ -31,7 +36,7 @@
             app:tabIndicatorHeight="5dp"
             app:tabMode="scrollable"
             app:tabSelectedTextColor="@color/tabsBarTextColorPrimary"
-            app:tabTextColor="@color/tabsBarTextColorSecondary"/>
+            app:tabTextColor="@color/tabsBarTextColorSecondary" />
 
         <RelativeLayout
             android:id="@+id/rl_1"
@@ -67,22 +72,14 @@
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
                 android:layout_centerInParent="true"
+                android:background="@color/windowBackgroundColor"
                 android:gravity="center"
                 android:padding="15dp"
                 android:textColor="@color/textColorPrimary"
-                android:background="@color/windowBackgroundColor"
                 android:textSize="14dp"
                 android:textStyle="bold"
                 android:visibility="invisible" />
 
         </RelativeLayout>
-
-        <FrameLayout
-            android:id="@+id/easter_egg_bg"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:background="@drawable/spooderman"
-            android:clickable="true"
-            android:visibility="gone" />
     </RelativeLayout>
-</com.idiotnation.raspored.Views.CustomSwipeToRefresh>
+</com.idiotnation.raspored.Helpers.CustomSwipeToRefresh>

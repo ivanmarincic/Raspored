@@ -4,8 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
-import android.os.AsyncTask;
-import android.os.Build;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,10 +13,11 @@ import android.widget.TextView;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.idiotnation.raspored.Contracts.MainContract;
-import com.idiotnation.raspored.Modules.HTMLConverter;
-import com.idiotnation.raspored.Modules.NotificationLoader;
-import com.idiotnation.raspored.Objects.TableCell;
+import com.idiotnation.raspored.Helpers.BackgroundTask;
+import com.idiotnation.raspored.Models.LessonCell;
 import com.idiotnation.raspored.R;
+import com.idiotnation.raspored.Tasks.DownloadTask;
+import com.idiotnation.raspored.Tasks.NotificationLoaderTask;
 import com.idiotnation.raspored.Utils;
 import com.idiotnation.raspored.Widget.RasporedWidgetProvider;
 
@@ -43,9 +42,7 @@ public class MainPresenter implements MainContract.Presenter {
 
     MainContract.View view;
 
-    ;
     Context context;
-    List<List<TableCell>> columns;
 
     public MainPresenter() {
     }
@@ -60,14 +57,14 @@ public class MainPresenter implements MainContract.Presenter {
     }
 
     @Override
-    public void download(String url) {
+    public void download(String url, int index) {
         try {
-            if (url != "NN") {
-                HTMLConverter htmlConverter = new HTMLConverter(context, url);
-                htmlConverter.setFinishListener(new HTMLConverter.HTMLConverterListener() {
+            if (!url.equals("NN")) {
+                DownloadTask downloadTask = new DownloadTask(context, url, getDegreeRasporedIndex(index));
+                downloadTask.setFinishListener(new BackgroundTask.onFinishListener() {
                     @Override
-                    public void onFinish(List<List<TableCell>> columns) {
-                        if (columns != null) {
+                    public <Type> void onFinish(Type t) {
+                        if (t != null) {
                             view.showMessage(View.VISIBLE, INFO_FINISHED);
                             refreshNotifications();
                             view.setRaspored(getRaspored());
@@ -78,11 +75,7 @@ public class MainPresenter implements MainContract.Presenter {
                         }
                     }
                 });
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-                    htmlConverter.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-                } else {
-                    htmlConverter.execute();
-                }
+                downloadTask.run();
             } else {
                 view.showMessage(View.VISIBLE, ERROR_UNAVAILABLE);
                 view.stopAnimation();
@@ -95,7 +88,7 @@ public class MainPresenter implements MainContract.Presenter {
     }
 
     @Override
-    public List<List<TableCell>> getRaspored() {
+    public List<List<LessonCell>> getRaspored() {
         StringBuilder text = new StringBuilder();
         try {
             BufferedReader br = new BufferedReader(new FileReader(new File(context.getFilesDir(), "raspored.json")));
@@ -106,9 +99,9 @@ public class MainPresenter implements MainContract.Presenter {
                 text.append('\n');
             }
             br.close();
-        } catch (IOException e) {
+        } catch (IOException ignored) {
         } finally {
-            return (List<List<TableCell>>) new Gson().fromJson(text.toString(), new TypeToken<List<List<TableCell>>>() {
+            return (List<List<LessonCell>>) new Gson().fromJson(text.toString(), new TypeToken<List<List<LessonCell>>>() {
             }.getType());
         }
     }
@@ -120,7 +113,7 @@ public class MainPresenter implements MainContract.Presenter {
             String url = getRasporedUrl(idNumber);
             if (url != null) {
                 view.getPreferences().edit().putInt("SpinnerDefault", idNumber).apply();
-                download(url);
+                download(url, idNumber);
             } else {
                 view.stopAnimation();
                 view.showMessage(View.VISIBLE, ERROR_INTERNET);
@@ -133,12 +126,8 @@ public class MainPresenter implements MainContract.Presenter {
 
     @Override
     public void refreshNotifications() {
-        NotificationLoader notificationLoader = new NotificationLoader(context, getRaspored());
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-            notificationLoader.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-        } else {
-            notificationLoader.execute();
-        }
+        NotificationLoaderTask notificationLoader = new NotificationLoaderTask(context, getRaspored());
+        notificationLoader.run();
     }
 
     @Override
@@ -174,7 +163,7 @@ public class MainPresenter implements MainContract.Presenter {
                 currentDate = new Date(Timestamp.valueOf(stringDate).getTime());
             }
             stringDate = new SimpleDateFormat("dd.MM.yyyy").format(currentDate);
-            return new String("http://intranet.fsr.ba/intranetfsr/teamworks.dll/calendar/calendar" + getDegreeRasporedIndex(index) + "/calendar?StartDatee1=" + stringDate + "&DatePickerStartDatee1=&SelectDatee1=" + stringDate + "&DayCounte1=7&ViewTypee1=day&OQS=3-49&parenttagid=e1");
+            return "http://intranet.fsr.ba/intranetfsr/teamworks.dll/calendar/calendar" + getDegreeRasporedIndex(index) + "/calendar?StartDatee1=" + stringDate + "&DatePickerStartDatee1=&SelectDatee1=" + stringDate + "&DayCounte1=7&ViewTypee1=day&OQS=3-49&parenttagid=e1";
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -195,7 +184,7 @@ public class MainPresenter implements MainContract.Presenter {
         if (day <= 4) {
             return day;
         }
-        List<List<TableCell>> raspored = getRaspored();
+        List<List<LessonCell>> raspored = getRaspored();
         if (raspored != null) {
             mainloop:
             for (int i = raspored.size() - 1; i >= 0; i--) {

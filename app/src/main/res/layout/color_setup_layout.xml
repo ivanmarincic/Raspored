@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    tools:context=".Views.ColorSetupView">
+    tools:context=".Views.AppearanceView">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/color_setup_action_bar"
@@ -20,6 +20,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/color_setup_action_bar"
-        android:background="@android:color/transparent"></ListView>
+        android:background="@android:color/transparent" />
 
 </RelativeLayout>

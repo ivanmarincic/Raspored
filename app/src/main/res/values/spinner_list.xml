@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="godine_prompt">Godina studija</string>
     <string-array name="godine_array">
         <item>Strojarstvo</item>
         <item>1. preddiplomski</item>

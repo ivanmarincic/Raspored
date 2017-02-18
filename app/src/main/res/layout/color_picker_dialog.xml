@@ -2,7 +2,6 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="#fff"
     android:orientation="vertical">
 
     <View
@@ -108,7 +107,7 @@
             android:layout_marginTop="20dp"
             android:padding="10dp"
             android:text="HEX:"
-            android:textColor="@color/colorpicker__black"
+            android:textColor="@android:color/black"
             android:textSize="18sp" />
 
         <EditText
@@ -118,6 +117,7 @@
             android:layout_alignBaseline="@+id/textView"
             android:layout_toRightOf="@+id/textView"
             android:imeOptions="actionDone"
+            android:inputType="text"
             android:singleLine="true"
             android:text="ffffffff"
             android:textColor="@color/textColorPrimary"

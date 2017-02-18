@@ -12,6 +12,15 @@ android {
         versionCode 26000019
         versionName "5.9"
     }
+
+    buildTypes {
+        release {
+            shrinkResources true
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'),
+                    'proguard-rules.pro'
+        }
+    }
 }
 
 dependencies {
@@ -20,6 +29,7 @@ dependencies {
     compile "com.android.support:design:25.0.0"
     compile 'org.jsoup:jsoup:1.8.3'
     compile 'com.google.code.gson:gson:2.7'
+    compile 'com.android.volley:volley:1.0.0'
     compile 'com.jakewharton:butterknife:8.4.0'
     apt 'com.jakewharton:butterknife-compiler:8.4.0'
     compile 'de.hdodenhof:circleimageview:2.1.0'

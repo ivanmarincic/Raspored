@@ -1,16 +1,15 @@
-package com.idiotnation.raspored.Modules;
+package com.idiotnation.raspored.Services;
 
 
 import android.app.Service;
 import android.content.Intent;
-import android.os.AsyncTask;
-import android.os.Build;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 
 import com.idiotnation.raspored.Presenters.MainPresenter;
+import com.idiotnation.raspored.Tasks.NotificationLoaderTask;
 
-public class UpdateNotificationsService extends Service {
+public class NotificationUpdateService extends Service {
 
     MainPresenter presenter;
 
@@ -20,12 +19,8 @@ public class UpdateNotificationsService extends Service {
         presenter.start(null, getApplicationContext());
 
         try {
-            NotificationLoader notificationLoader = new NotificationLoader(getApplicationContext(), presenter.getRaspored());
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-                notificationLoader.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-            } else {
-                notificationLoader.execute();
-            }
+            NotificationLoaderTask notificationLoader = new NotificationLoaderTask(getApplicationContext(), presenter.getRaspored());
+            notificationLoader.run();
         } catch (Exception e) {
             e.printStackTrace();
         }

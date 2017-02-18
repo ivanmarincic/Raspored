@@ -5,7 +5,7 @@ import android.app.Activity;
 import android.view.LayoutInflater;
 import android.widget.LinearLayout;
 
-public class ColorSetupContract {
+public class AppearanceContract {
 
     public interface View {
         void initialize();
@@ -13,7 +13,7 @@ public class ColorSetupContract {
     }
 
     public interface Presenter {
-        void start(ColorSetupContract.View view,  Activity activity);
+        void start(AppearanceContract.View view, Activity activity);
         void populateColorsContainer(LayoutInflater layoutInflater, LinearLayout container, Integer[] colorIds);
         void save();
     }

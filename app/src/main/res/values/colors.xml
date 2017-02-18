@@ -13,7 +13,6 @@
     <color name="tabsBarBackgroundColor">@color/colorPrimaryLight</color>
     <color name="tabsBarTextColorPrimary">#ffffff</color>
     <color name="tabsBarTextColorSecondary">#b3ffffff</color>
-    <color name="statusBarBackgroundColor">@color/colorPrimaryDark</color>
     <color name="hoursBackgroundColor">#5262bc</color>
     <color name="hoursTextColorPrimary">#ffffff</color>
     <color name="hoursBackgroundStrokeColor">#00000000</color>
@@ -22,14 +21,4 @@
     <color name="lessonsTextColorPrimary">#ffffff</color>
     <color name="widgetBackgroundColor">#5262bc</color>
     <color name="widgetTextColorPrimary">#ffffff</color>
-    <color name="colorpicker__white">#ffffffff</color>
-    <color name="colorpicker__red">#fff44336</color>
-    <color name="colorpicker__green">#ff4caf50</color>
-    <color name="colorpicker__blue">#ff2196f3</color>
-    <color name="colorpicker__grey">#ffb3b3b3</color>
-    <color name="colorpicker__lightgrey">#ffd9d9d9</color>
-    <color name="colorpicker__dribble">#ffea4c89</color>
-    <color name="colorpicker__dribbledark">#ffc32361</color>
-    <color name="colorpicker__black">#ff000000</color>
-    <color name="colorpicker__dialogcolor">#ff009688</color>
 </resources>

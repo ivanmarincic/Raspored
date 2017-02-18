@@ -1,4 +1,4 @@
-package com.idiotnation.raspored.Modules;
+package com.idiotnation.raspored.Tasks;
 
 
 import android.app.AlarmManager;
@@ -6,10 +6,10 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.AsyncTask;
 import android.os.SystemClock;
 
-import com.idiotnation.raspored.Objects.TableCell;
+import com.idiotnation.raspored.Helpers.BackgroundTask;
+import com.idiotnation.raspored.Models.LessonCell;
 import com.idiotnation.raspored.Recievers.NotificationReceiver;
 import com.idiotnation.raspored.Utils;
 
@@ -17,21 +17,25 @@ import java.util.List;
 
 import static android.content.Context.MODE_PRIVATE;
 
-public class NotificationLoader extends AsyncTask<Void, Void, Void> {
+public class NotificationLoaderTask extends BackgroundTask<List<List<LessonCell>>> {
 
     Context context;
-    List<List<TableCell>> columns;
-    NotificationLoaderListener notificationLoaderListener;
+    List<List<LessonCell>> columns;
     SharedPreferences prefs;
 
-    public NotificationLoader(Context context, List<List<TableCell>> columns) {
+    public NotificationLoaderTask(Context context, List<List<LessonCell>> columns) {
         this.context = context;
         this.columns = columns;
         prefs = context.getSharedPreferences("com.idiotnation.raspored", MODE_PRIVATE);
     }
 
     @Override
-    protected Void doInBackground(Void... params) {
+    protected void onCreate() {
+
+    }
+
+    @Override
+    protected List<List<LessonCell>> onExecute() {
         try {
             clearNotifications();
             if (prefs.getBoolean("NotificationsEnabled", false)) {
@@ -41,10 +45,6 @@ public class NotificationLoader extends AsyncTask<Void, Void, Void> {
             e.printStackTrace();
         }
         return null;
-    }
-
-    public void setFinishListener(NotificationLoaderListener notificationLoaderListener) {
-        this.notificationLoaderListener = notificationLoaderListener;
     }
 
     private void scheduleNotification(String notification, long delay, int id) {
@@ -64,9 +64,9 @@ public class NotificationLoader extends AsyncTask<Void, Void, Void> {
     private void setupNotifications() {
         int idNumber = 2020;
         for (int i = 0; i < columns.size(); i++) {
-            for (TableCell tableCell : columns.get(i)) {
-                tableCell.getStart();
-                scheduleNotification(tableCell.getText(), Utils.getDelayInMiliseconds(tableCell.getStart()), idNumber);
+            for (LessonCell lessonCell : columns.get(i)) {
+                lessonCell.getStart();
+                scheduleNotification(lessonCell.getText(), Utils.getDelayInMiliseconds(lessonCell.getStart()), idNumber);
                 idNumber++;
             }
         }
@@ -85,10 +85,6 @@ public class NotificationLoader extends AsyncTask<Void, Void, Void> {
                 e.printStackTrace();
             }
         }
-    }
-
-    public interface NotificationLoaderListener {
-        void onFinish(List<List<TableCell>> columns);
     }
 
 }

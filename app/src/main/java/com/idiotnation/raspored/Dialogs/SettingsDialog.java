@@ -26,7 +26,7 @@ import android.widget.TextView;
 
 import com.idiotnation.raspored.R;
 import com.idiotnation.raspored.Utils;
-import com.idiotnation.raspored.Views.ColorSetupView;
+import com.idiotnation.raspored.Views.AppearanceView;
 
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
@@ -43,9 +43,8 @@ public class SettingsDialog extends Dialog {
 
     Activity activity;
     SharedPreferences prefs;
-    onEggsterListener eggsterListener;
     Listners listeners;
-    int egg = 0, newPosition;
+    int newPosition;
 
     @BindView(R.id.spinner)
     Spinner godineSpinner;
@@ -59,8 +58,8 @@ public class SettingsDialog extends Dialog {
     @BindView(R.id.gitButton)
     ImageView gitHub;
 
-    @BindView(R.id.easter_egg)
-    TextView easterEgg;
+    @BindView(R.id.version)
+    TextView version;
 
     @BindView(R.id.update_date)
     TextView updateDate;
@@ -117,7 +116,6 @@ public class SettingsDialog extends Dialog {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 prefs.edit().putBoolean("UpdateOnBoot", b).apply();
-                listeners.onUpdateChange(b);
             }
         });
         notificationsEnabled.setVisibility(View.VISIBLE);
@@ -125,13 +123,12 @@ public class SettingsDialog extends Dialog {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 prefs.edit().putBoolean("NotificationsEnabled", b).apply();
-                listeners.onUpdateChange(b);
             }
         });
         setupColors.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                activity.startActivity(new Intent(activity.getApplicationContext(), ColorSetupView.class));
+                activity.startActivity(new Intent(activity.getApplicationContext(), AppearanceView.class));
             }
         });
         final ArrayAdapter<String> dataAdapter = new SpinnerArrayAdapter(activity.getApplicationContext(), R.layout.spinner_selected_item, activity.getResources().getStringArray(R.array.godine_array));
@@ -153,16 +150,6 @@ public class SettingsDialog extends Dialog {
             public void onClick(View view) {
                 Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/ivanmarincic/raspored"));
                 activity.startActivity(browserIntent);
-            }
-        });
-        easterEgg.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                egg++;
-                if (egg == 8) {
-                    eggsterListener.onEgg();
-                    dismiss();
-                }
             }
         });
         try {
@@ -200,7 +187,7 @@ public class SettingsDialog extends Dialog {
             gitDrawable.mutate();
             gitDrawable.setColorFilter(Utils.getColor(R.color.textColorPrimary, activity), PorterDuff.Mode.SRC_ATOP);
         }
-        easterEgg.setTextColor(Utils.getColor(R.color.textColorPrimary, activity));
+        version.setTextColor(Utils.getColor(R.color.textColorPrimary, activity));
         updateOnBootText.setTextColor(Utils.getColor(R.color.textColorPrimary, activity));
         notificationsEnabledText.setTextColor(Utils.getColor(R.color.textColorPrimary, activity));
         colorsText.setTextColor(Utils.getColor(R.color.textColorPrimary, activity));
@@ -227,24 +214,14 @@ public class SettingsDialog extends Dialog {
         }
     }
 
-    public void setOnEggListener(onEggsterListener eggsterListener) {
-        this.eggsterListener = eggsterListener;
-    }
-
     public void setListeners(Listners listeners) {
         this.listeners = listeners;
-    }
-
-    public interface onEggsterListener {
-        void onEgg();
     }
 
     public interface Listners {
         void onFinish(int spinnerItem);
 
         void onNotificationChange(boolean notification);
-
-        void onUpdateChange(boolean update);
 
     }
 

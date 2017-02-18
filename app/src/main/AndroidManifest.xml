@@ -8,7 +8,6 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
-    <uses-permission android:name="android.permission.VIBRATE" />
 
     <application
         android:allowBackup="true"
@@ -30,21 +29,21 @@
 
         <activity
             android:name=".Views.MainView"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait" />
 
         <activity
-            android:name=".Views.ColorSetupView"
-            android:screenOrientation="portrait"></activity>
+            android:name=".Views.AppearanceView"
+            android:screenOrientation="portrait" />
 
         <!-- SERVICES -->
 
         <service
-            android:name=".Modules.UpdateWidgetService"
-            android:enabled="true"></service>
+            android:name=".Services.WidgetUpdateService"
+            android:enabled="true" />
 
         <service
-            android:name=".Modules.UpdateNotificationsService"
-            android:enabled="true"></service>
+            android:name=".Services.NotificationUpdateService"
+            android:enabled="true" />
 
         <!-- RECIEVERS -->
 

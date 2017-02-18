@@ -4,7 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.widget.RelativeLayout;
 
-import com.idiotnation.raspored.Objects.TableCell;
+import com.idiotnation.raspored.Models.LessonCell;
 
 import java.util.List;
 
@@ -14,7 +14,8 @@ public class MainContract {
         void initialize();
         void checkContent();
         void refreshPages();
-        void setRaspored(List<List<TableCell>> columns);
+
+        void setRaspored(List<List<LessonCell>> columns);
         void startAnimation();
         void stopAnimation();
         void showMessage(int visibility, int type);
@@ -24,8 +25,10 @@ public class MainContract {
 
     public interface Presenter {
         void start(View view, Context context);
-        void download(String url);
-        List<List<TableCell>> getRaspored();
+
+        void download(String url, int index);
+
+        List<List<LessonCell>> getRaspored();
         void refresh(int idNumber);
         void refreshNotifications();
         void populateHours(RelativeLayout layout, Context context);

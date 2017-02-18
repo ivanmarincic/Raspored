@@ -14,21 +14,21 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.idiotnation.raspored.Dialogs.InfoDialog;
-import com.idiotnation.raspored.Objects.TableCell;
+import com.idiotnation.raspored.Models.LessonCell;
 import com.idiotnation.raspored.R;
 import com.idiotnation.raspored.Utils;
 
 import java.util.List;
 
 
-public class ImageFragment extends Fragment {
+public class DayFragment extends Fragment {
 
-    List<TableCell> columns;
+    List<LessonCell> columns;
 
-    public ImageFragment() {
+    public DayFragment() {
     }
 
-    public void setParams(List<TableCell> columns) {
+    public void setParams(List<LessonCell> columns) {
         this.columns = columns;
     }
 

@@ -1,4 +1,4 @@
-package com.idiotnation.raspored.Views;
+package com.idiotnation.raspored.Helpers;
 
 import android.content.Context;
 import android.support.v4.widget.SwipeRefreshLayout;

@@ -1,4 +1,4 @@
-package com.idiotnation.raspored.Modules;
+package com.idiotnation.raspored.Services;
 
 
 import android.app.AlarmManager;
@@ -11,7 +11,7 @@ import android.os.IBinder;
 import android.os.SystemClock;
 import android.widget.RemoteViews;
 
-import com.idiotnation.raspored.Objects.TableCell;
+import com.idiotnation.raspored.Models.LessonCell;
 import com.idiotnation.raspored.Presenters.MainPresenter;
 import com.idiotnation.raspored.R;
 import com.idiotnation.raspored.Utils;
@@ -23,7 +23,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
 
-public class UpdateWidgetService extends Service {
+public class WidgetUpdateService extends Service {
 
     MainPresenter presenter;
 
@@ -37,16 +37,16 @@ public class UpdateWidgetService extends Service {
 
         try {
             WidgetData widgetData = getAppropriateItem(presenter.getRaspored(), allWidgetIds);
-            TableCell tableCell = widgetData.tableCell;
+            LessonCell lessonCell = widgetData.lessonCell;
             SimpleDateFormat simpleTimeFormat = new SimpleDateFormat("HH:mm");
 
-            if (tableCell != null) {
+            if (lessonCell != null) {
                 for (int widgetId : allWidgetIds) {
                     RemoteViews remoteViews = new RemoteViews(getApplicationContext().getPackageName(), R.layout.raspored_widget_layout);
-                    remoteViews.setTextViewText(R.id.widget_text_content, tableCell.getText());
+                    remoteViews.setTextViewText(R.id.widget_text_content, lessonCell.getText());
                     remoteViews.setTextColor(R.id.widget_text_content, Utils.getColor(R.color.widgetTextColorPrimary, getApplicationContext()));
-                    if (tableCell.getStart() != null || tableCell.getEnd() != null) {
-                        remoteViews.setTextViewText(R.id.widget_text_time, getDayOfWeek(tableCell.getStart()) + "  " + simpleTimeFormat.format(tableCell.getStart()) + " - " + simpleTimeFormat.format(tableCell.getEnd()));
+                    if (lessonCell.getStart() != null || lessonCell.getEnd() != null) {
+                        remoteViews.setTextViewText(R.id.widget_text_time, getDayOfWeek(lessonCell.getStart()) + "  " + simpleTimeFormat.format(lessonCell.getStart()) + " - " + simpleTimeFormat.format(lessonCell.getEnd()));
                     } else {
                         remoteViews.setTextViewText(R.id.widget_text_time, "");
                     }
@@ -73,39 +73,39 @@ public class UpdateWidgetService extends Service {
         return null;
     }
 
-    private WidgetData getAppropriateItem(List<List<TableCell>> columns, int[] allWidgetIds) {
-        List<TableCell> lessons = Utils.shrinkList(columns);
+    private WidgetData getAppropriateItem(List<List<LessonCell>> columns, int[] allWidgetIds) {
+        List<LessonCell> lessons = Utils.shrinkList(columns);
         WidgetData widgetData = new WidgetData();
         widgetData.numberOfExams = 0;
         widgetData.numberOfLessons = lessons.size();
         boolean isCellFound = false;
         for (int i = 0; i < lessons.size(); i++) {
-            TableCell tableCell = lessons.get(i);
-            if (tableCell.getText().contains("kolokvij") || tableCell.getText().contains("ispit")) {
+            LessonCell lessonCell = lessons.get(i);
+            if (lessonCell.getText().contains("kolokvij") || lessonCell.getText().contains("ispit")) {
                 widgetData.numberOfExams++;
             }
-            if (tableCell.getStart().compareTo(new Date()) > 0 && !isCellFound) {
+            if (lessonCell.getStart().compareTo(new Date()) > 0 && !isCellFound) {
                 if (0 < i) {
-                    scheduleWidgetUpdate(Utils.getDelayInMiliseconds(tableCell.getStart()), allWidgetIds);
+                    scheduleWidgetUpdate(Utils.getDelayInMiliseconds(lessonCell.getStart()), allWidgetIds);
                 } else {
                     scheduleWidgetUpdate(0, allWidgetIds);
                 }
-                widgetData.tableCell = tableCell;
+                widgetData.lessonCell = lessonCell;
                 isCellFound = true;
             }
         }
-        if (widgetData.tableCell == null) {
-            TableCell tableCell = new TableCell();
-            tableCell.setText("Nema predavanja");
-            widgetData.tableCell = tableCell;
+        if (widgetData.lessonCell == null) {
+            LessonCell lessonCell = new LessonCell();
+            lessonCell.setText("Nema predavanja");
+            widgetData.lessonCell = lessonCell;
         }
         return widgetData;
     }
 
     private void scheduleWidgetUpdate(long delay, int[] allWidgetIds) {
-        Intent intent = new Intent(UpdateWidgetService.this, UpdateWidgetService.class);
+        Intent intent = new Intent(WidgetUpdateService.this, WidgetUpdateService.class);
         intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, allWidgetIds);
-        PendingIntent pendingIntent = PendingIntent.getService(UpdateWidgetService.this, Utils.UNIQUE_ID, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent pendingIntent = PendingIntent.getService(WidgetUpdateService.this, Utils.UNIQUE_ID, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         long futureInMillis = SystemClock.elapsedRealtime() + delay;
         AlarmManager alarmManager = (AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE);
@@ -137,7 +137,7 @@ public class UpdateWidgetService extends Service {
 
     private class WidgetData {
 
-        public TableCell tableCell;
+        public LessonCell lessonCell;
         public int numberOfExams;
         public int numberOfLessons;
 

@@ -1,14 +1,14 @@
-package com.idiotnation.raspored.Objects;
+package com.idiotnation.raspored.Models;
 
 import java.util.Date;
 
-public class TableCell {
+public class LessonCell {
     int width, colCount;
     float top, left, height;
     Date start, end;
     String text;
 
-    public TableCell() {
+    public LessonCell() {
     }
 
     public int getWidth() {
@@ -77,7 +77,7 @@ public class TableCell {
 
     @Override
     public String toString() {
-        return "TableCell{" +
+        return "LessonCell{" +
                 "width=" + width +
                 ", colCount=" + colCount +
                 ", top=" + top +

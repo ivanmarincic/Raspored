@@ -3,7 +3,6 @@
     android:id="@+id/widget_text_container"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:background="@color/windowBackgroundColor"
     android:gravity="center"
     android:orientation="vertical"
     android:padding="10dp">

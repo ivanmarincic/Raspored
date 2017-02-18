@@ -14,7 +14,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
-import com.idiotnation.raspored.Contracts.ColorSetupContract;
+import com.idiotnation.raspored.Contracts.AppearanceContract;
 import com.idiotnation.raspored.Dialogs.ColorPickerDialog;
 import com.idiotnation.raspored.R;
 import com.idiotnation.raspored.Utils;
@@ -26,17 +26,16 @@ import de.hdodenhof.circleimageview.CircleImageView;
 import static android.content.Context.MODE_PRIVATE;
 import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
 
-public class ColorSetupPresenter implements ColorSetupContract.Presenter {
+public class AppearancePresenter implements AppearanceContract.Presenter {
 
-    ColorSetupContract.View view;
-    ;
+    AppearanceContract.View view;
     Activity activity;
 
-    public ColorSetupPresenter() {
+    public AppearancePresenter() {
     }
 
     @Override
-    public void start(ColorSetupContract.View view, Activity activity) {
+    public void start(AppearanceContract.View view, Activity activity) {
         this.view = view;
         this.activity = activity;
         view.initialize();

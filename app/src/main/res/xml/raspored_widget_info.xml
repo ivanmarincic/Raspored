@@ -5,4 +5,4 @@
     android:minWidth="300dp"
     android:previewImage="@drawable/notification_icon"
     android:resizeMode="vertical"
-    android:updatePeriodMillis="3600000"></appwidget-provider>
+    android:updatePeriodMillis="3600000" />

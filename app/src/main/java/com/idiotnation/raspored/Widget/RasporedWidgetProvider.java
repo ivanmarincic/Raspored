@@ -8,7 +8,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
-import com.idiotnation.raspored.Modules.UpdateWidgetService;
+import com.idiotnation.raspored.Services.WidgetUpdateService;
 import com.idiotnation.raspored.Utils;
 
 public class RasporedWidgetProvider extends AppWidgetProvider {
@@ -20,7 +20,7 @@ public class RasporedWidgetProvider extends AppWidgetProvider {
         int[] allWidgetIds = appWidgetManager.getAppWidgetIds(thisWidget);
 
         Intent intent = new Intent(context.getApplicationContext(),
-                UpdateWidgetService.class);
+                WidgetUpdateService.class);
         intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, allWidgetIds);
         context.startService(intent);
     }

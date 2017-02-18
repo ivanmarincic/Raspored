@@ -1,6 +1,5 @@
 package com.idiotnation.raspored.Views;
 
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.TypedArray;
 import android.graphics.PorterDuff;
@@ -8,7 +7,6 @@ import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.StrictMode;
-import android.os.Vibrator;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
@@ -22,14 +20,14 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.idiotnation.raspored.Contracts.MainContract;
 import com.idiotnation.raspored.Dialogs.SettingsDialog;
-import com.idiotnation.raspored.Objects.TableCell;
+import com.idiotnation.raspored.Helpers.CustomSwipeToRefresh;
+import com.idiotnation.raspored.Models.LessonCell;
 import com.idiotnation.raspored.Presenters.MainPresenter;
 import com.idiotnation.raspored.R;
 import com.idiotnation.raspored.Utils;
@@ -56,10 +54,6 @@ public class MainView extends AppCompatActivity implements MainContract.View {
     float pageWidth = 1;
 
     // Initialization
-
-    @BindView(R.id.easter_egg_bg)
-    FrameLayout easterEgg;
-
     @BindView(R.id.sati)
     RelativeLayout hoursView;
 
@@ -142,7 +136,7 @@ public class MainView extends AppCompatActivity implements MainContract.View {
     }
 
     @Override
-    public void setRaspored(final List<List<TableCell>> rasporedColumns) {
+    public void setRaspored(final List<List<LessonCell>> rasporedColumns) {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -262,24 +256,6 @@ public class MainView extends AppCompatActivity implements MainContract.View {
                         presenter.refreshNotifications();
                     }
 
-                    @Override
-                    public void onUpdateChange(boolean update) {
-                    }
-                });
-                settingsDialog.setOnEggListener(new SettingsDialog.onEggsterListener() {
-                    @Override
-                    public void onEgg() {
-                        easterEgg = (FrameLayout) findViewById(R.id.easter_egg_bg);
-                        easterEgg.setVisibility(View.VISIBLE);
-                        Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-                        v.vibrate(1000);
-                        easterEgg.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                easterEgg.setVisibility(View.GONE);
-                            }
-                        });
-                    }
                 });
                 return true;
             default:
@@ -351,14 +327,14 @@ public class MainView extends AppCompatActivity implements MainContract.View {
 
     public class MyPagerAdapter extends FragmentStatePagerAdapter {
 
-        List<List<TableCell>> columns;
+        List<List<LessonCell>> columns;
         String[] days = new String[]{"Ponedjeljak", "Utorak", "Srijeda", "Četvrtak", "Petak", "Subota"};
 
         public MyPagerAdapter(FragmentManager fm) {
             super(fm);
         }
 
-        public void setColumns(List<List<TableCell>> columns) {
+        public void setColumns(List<List<LessonCell>> columns) {
             this.columns = columns;
         }
 
@@ -369,7 +345,7 @@ public class MainView extends AppCompatActivity implements MainContract.View {
 
         @Override
         public Fragment getItem(int i) {
-            ImageFragment fragment = new ImageFragment();
+            DayFragment fragment = new DayFragment();
             if (columns != null) {
                 fragment.setParams(columns.get(i));
             }

@@ -7,7 +7,7 @@ import android.view.Window;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.idiotnation.raspored.Objects.TableCell;
+import com.idiotnation.raspored.Models.LessonCell;
 import com.idiotnation.raspored.R;
 import com.idiotnation.raspored.Utils;
 
@@ -16,12 +16,11 @@ import java.text.SimpleDateFormat;
 
 public class InfoDialog extends Dialog {
 
-    private TableCell tableCell;
-    private TextView textContent, textTime;
+    private LessonCell lessonCell;
 
-    public InfoDialog(Context context, TableCell tableCell) {
+    public InfoDialog(Context context, LessonCell lessonCell) {
         super(context);
-        this.tableCell = tableCell;
+        this.lessonCell = lessonCell;
     }
 
     @Override
@@ -31,12 +30,12 @@ public class InfoDialog extends Dialog {
         setContentView(R.layout.info_dialog);
         RelativeLayout rootView = (RelativeLayout) findViewById(R.id.info_dialog_bg);
         rootView.setBackgroundColor(Utils.getColor(R.color.windowBackgroundColor, getContext()));
-        textContent = (TextView) findViewById(R.id.text_content);
+        TextView textContent = (TextView) findViewById(R.id.text_content);
         textContent.setTextColor(Utils.getColor(R.color.textColorPrimary, getContext()));
-        textTime = (TextView) findViewById(R.id.text_time);
+        TextView textTime = (TextView) findViewById(R.id.text_time);
         textTime.setTextColor(Utils.getColor(R.color.textColorPrimary, getContext()));
-        textContent.setText(tableCell.getText());
+        textContent.setText(lessonCell.getText());
         SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
-        textTime.setText(sdf.format(tableCell.getStart()) + " - " + sdf.format(tableCell.getEnd()));
+        textTime.setText(sdf.format(lessonCell.getStart()) + " - " + sdf.format(lessonCell.getEnd()));
     }
 }
