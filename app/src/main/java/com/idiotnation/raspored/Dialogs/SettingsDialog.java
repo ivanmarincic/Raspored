@@ -28,8 +28,10 @@ import com.idiotnation.raspored.R;
 import com.idiotnation.raspored.Utils;
 import com.idiotnation.raspored.Views.AppearanceView;
 
-import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -153,7 +155,8 @@ public class SettingsDialog extends Dialog {
             }
         });
         try {
-            updateDate.setText("Datum: " + new SimpleDateFormat("dd.MM.yyyy").format(Timestamp.valueOf(prefs.getString("UpdateTimeStamp", "ažurirajte"))));
+            DateTimeFormatter dtfOut = DateTimeFormat.forPattern("dd.MM.yyyy");
+            updateDate.setText("Datum: " + dtfOut.print(new DateTime(prefs.getString("UpdateTime", new DateTime().toString()))));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -220,9 +223,6 @@ public class SettingsDialog extends Dialog {
 
     public interface Listners {
         void onFinish(int spinnerItem);
-
-        void onNotificationChange(boolean notification);
-
     }
 
     public class SpinnerArrayAdapter extends ArrayAdapter<String> {

@@ -151,6 +151,7 @@ public class ColorPickerDialog extends Dialog implements SeekBar.OnSeekBarChange
         greenSeekBar.setProgress(green);
         blueSeekBar.setProgress(blue);
 
+        codHex.setTextColor((0xFFFFFF - Color.argb(alpha, red, green, blue)) | 0xFF000000);
         colorView.setBackgroundColor(Color.argb(alpha, red, green, blue));
         codHex.setOnEditorActionListener(
                 new EditText.OnEditorActionListener() {
@@ -223,6 +224,7 @@ public class ColorPickerDialog extends Dialog implements SeekBar.OnSeekBarChange
             green = Color.green(color);
             blue = Color.blue(color);
 
+            codHex.setTextColor((0xFFFFFF - Color.argb(alpha, red, green, blue)) | 0xFF000000);
             colorView.setBackgroundColor(Color.argb(alpha, red, green, blue));
             alphaSeekbar.setProgress(alpha);
             redSeekBar.setProgress(red);
@@ -275,6 +277,7 @@ public class ColorPickerDialog extends Dialog implements SeekBar.OnSeekBarChange
 
         }
 
+        codHex.setTextColor((0xFFFFFF - Color.argb(alpha, red, green, blue)) | 0xFF000000);
         colorView.setBackgroundColor(Color.argb(alpha, red, green, blue));
 
         codHex.setText(String.format("%02x%02x%02x%02x", alpha, red, green, blue));

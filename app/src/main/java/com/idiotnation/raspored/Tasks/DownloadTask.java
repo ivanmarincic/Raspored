@@ -42,7 +42,7 @@ public class DownloadTask extends BackgroundTask<List<List<LessonCell>>> {
     protected List<List<LessonCell>> onExecute() {
         try {
             RequestQueue queue = Volley.newRequestQueue(context);
-            String apiUrl = "API URL HERE" + rasporedIndex;
+            String apiUrl = "INSERT API URL" + rasporedIndex;
 
             StringRequest stringRequest = new StringRequest(Request.Method.GET, apiUrl,
                     new Response.Listener<String>() {

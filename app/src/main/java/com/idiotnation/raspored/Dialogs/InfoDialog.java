@@ -11,7 +11,8 @@ import com.idiotnation.raspored.Models.LessonCell;
 import com.idiotnation.raspored.R;
 import com.idiotnation.raspored.Utils;
 
-import java.text.SimpleDateFormat;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 
 
 public class InfoDialog extends Dialog {
@@ -35,7 +36,7 @@ public class InfoDialog extends Dialog {
         TextView textTime = (TextView) findViewById(R.id.text_time);
         textTime.setTextColor(Utils.getColor(R.color.textColorPrimary, getContext()));
         textContent.setText(lessonCell.getText());
-        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
-        textTime.setText(sdf.format(lessonCell.getStart()) + " - " + sdf.format(lessonCell.getEnd()));
+        DateTimeFormatter dtfOut = DateTimeFormat.forPattern("HH:mm");
+        textTime.setText(dtfOut.print(lessonCell.getStart()) + " - " + dtfOut.print(lessonCell.getEnd()));
     }
 }

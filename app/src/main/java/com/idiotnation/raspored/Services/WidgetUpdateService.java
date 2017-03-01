@@ -17,11 +17,11 @@ import com.idiotnation.raspored.R;
 import com.idiotnation.raspored.Utils;
 import com.idiotnation.raspored.Widget.RasporedWidgetProvider;
 
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
+
 import java.util.List;
-import java.util.TimeZone;
 
 public class WidgetUpdateService extends Service {
 
@@ -38,7 +38,7 @@ public class WidgetUpdateService extends Service {
         try {
             WidgetData widgetData = getAppropriateItem(presenter.getRaspored(), allWidgetIds);
             LessonCell lessonCell = widgetData.lessonCell;
-            SimpleDateFormat simpleTimeFormat = new SimpleDateFormat("HH:mm");
+            DateTimeFormatter timeFormatter = DateTimeFormat.forPattern("HH:mm");
 
             if (lessonCell != null) {
                 for (int widgetId : allWidgetIds) {
@@ -46,7 +46,7 @@ public class WidgetUpdateService extends Service {
                     remoteViews.setTextViewText(R.id.widget_text_content, lessonCell.getText());
                     remoteViews.setTextColor(R.id.widget_text_content, Utils.getColor(R.color.widgetTextColorPrimary, getApplicationContext()));
                     if (lessonCell.getStart() != null || lessonCell.getEnd() != null) {
-                        remoteViews.setTextViewText(R.id.widget_text_time, getDayOfWeek(lessonCell.getStart()) + "  " + simpleTimeFormat.format(lessonCell.getStart()) + " - " + simpleTimeFormat.format(lessonCell.getEnd()));
+                        remoteViews.setTextViewText(R.id.widget_text_time, getDayOfWeek(lessonCell.getStart()) + "  " + timeFormatter.print(lessonCell.getStart()) + " - " + timeFormatter.print(lessonCell.getEnd()));
                     } else {
                         remoteViews.setTextViewText(R.id.widget_text_time, "");
                     }
@@ -84,7 +84,7 @@ public class WidgetUpdateService extends Service {
             if (lessonCell.getText().contains("kolokvij") || lessonCell.getText().contains("ispit")) {
                 widgetData.numberOfExams++;
             }
-            if (lessonCell.getStart().compareTo(new Date()) > 0 && !isCellFound) {
+            if (lessonCell.getStart().isAfterNow() && !isCellFound) {
                 if (0 < i) {
                     scheduleWidgetUpdate(Utils.getDelayInMiliseconds(lessonCell.getStart()), allWidgetIds);
                 } else {
@@ -112,27 +112,25 @@ public class WidgetUpdateService extends Service {
         alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, futureInMillis, pendingIntent);
     }
 
-    private String getDayOfWeek(Date date) {
-        Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("Europe/Sarajevo"));
-        calendar.setTime(date);
-        int day = calendar.get(Calendar.DAY_OF_WEEK);
-        switch (day) {
-            case Calendar.SUNDAY:
+    private String getDayOfWeek(DateTime date) {
+        switch (date.getDayOfWeek()) {
+            case 7:
                 return "Nedjelja";
-            case Calendar.MONDAY:
+            case 1:
                 return "Ponedjeljak";
-            case Calendar.TUESDAY:
+            case 2:
                 return "Utorak";
-            case Calendar.WEDNESDAY:
+            case 3:
                 return "Srijeda";
-            case Calendar.THURSDAY:
+            case 4:
                 return "Četvrtak";
-            case Calendar.FRIDAY:
+            case 5:
                 return "Petak";
-            case Calendar.SATURDAY:
+            case 6:
                 return "Subota";
+            default:
+                return "";
         }
-        return new SimpleDateFormat("dd.MM").format(date);
     }
 
     private class WidgetData {

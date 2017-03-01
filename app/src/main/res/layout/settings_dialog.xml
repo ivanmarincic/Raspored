@@ -99,7 +99,7 @@
             android:layout_centerVertical="true"
             android:layout_marginLeft="10dp"
             android:layout_toRightOf="@+id/setup_colors"
-            android:text="Postavi boje"
+            android:text="Izgled"
             android:textColor="@color/textColorPrimary"
             android:textSize="25dp" />
 
@@ -117,7 +117,7 @@
             android:layout_weight="0.8"
             android:clickable="true"
             android:gravity="center|left"
-            android:text="Verzija: 5.9"
+            android:text="Verzija: 6.1"
             android:textColor="@color/textColorPrimary"
             android:textSize="15dp" />
 

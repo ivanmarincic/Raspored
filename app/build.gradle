@@ -9,17 +9,8 @@ android {
         applicationId "com.idiotnation.raspored"
         minSdkVersion 14
         targetSdkVersion 25
-        versionCode 26000019
-        versionName "5.9"
-    }
-
-    buildTypes {
-        release {
-            shrinkResources true
-            minifyEnabled true
-            proguardFiles getDefaultProguardFile('proguard-android.txt'),
-                    'proguard-rules.pro'
-        }
+        versionCode 26000021
+        versionName "6.1"
     }
 }
 
@@ -33,4 +24,6 @@ dependencies {
     compile 'com.jakewharton:butterknife:8.4.0'
     apt 'com.jakewharton:butterknife-compiler:8.4.0'
     compile 'de.hdodenhof:circleimageview:2.1.0'
+    compile 'joda-time:joda-time:2.9.7'
+    compile 'com.fatboyindustrial.gson-jodatime-serialisers:gson-jodatime-serialisers:1.0.0'
 }

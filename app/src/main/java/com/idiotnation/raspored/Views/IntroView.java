@@ -24,7 +24,7 @@ public class IntroView extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         prefs = getSharedPreferences("com.idiotnation.raspored", MODE_PRIVATE);
-        if (prefs.getInt("DeleteData", -2) == -2) {
+        if (prefs.getInt("DeleteData", -3) == -3) {
             prefs.edit().putInt("DeleteData", 1).apply();
             if (new File(getFilesDir() + "/raspored.json").exists()) {
                 new File(getFilesDir() + "/raspored.json").delete();

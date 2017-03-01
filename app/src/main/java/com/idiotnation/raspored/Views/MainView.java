@@ -1,5 +1,6 @@
 package com.idiotnation.raspored.Views;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.TypedArray;
 import android.graphics.PorterDuff;
@@ -51,6 +52,7 @@ public class MainView extends AppCompatActivity implements MainContract.View {
     MyPagerAdapter mAdapter;
     SharedPreferences prefs;
     MainPresenter presenter;
+    boolean themeChanged = false;
     float pageWidth = 1;
 
     // Initialization
@@ -84,14 +86,19 @@ public class MainView extends AppCompatActivity implements MainContract.View {
     @Override
     public void onBackPressed() {
         ActivityCompat.finishAffinity(this);
-        moveTaskToBack(true);
-        android.os.Process.killProcess(android.os.Process.myPid());
-        System.exit(1);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == 69) {
+            recreate();
+        }
     }
 
     @Override
     public void initialize() {
         prefs = getSharedPreferences("com.idiotnation.raspored", MODE_PRIVATE);
+        themeChanged = getIntent().getBooleanExtra("ThemeChanged", false);
         setColors();
         if (prefs.getBoolean("FirstRun", true) || prefs.getInt("SpinnerDefault", -1) == -1) {
             prefs.edit().putBoolean("FirstRun", false).apply();
@@ -109,6 +116,9 @@ public class MainView extends AppCompatActivity implements MainContract.View {
         setRefreshLayoutProperties();
         onConfigurationChanged(getResources().getConfiguration());
         checkContent();
+        if (themeChanged) {
+            showSettingsDialog();
+        }
     }
 
     @Override
@@ -117,7 +127,7 @@ public class MainView extends AppCompatActivity implements MainContract.View {
             startAnimation();
             setRaspored(presenter.getRaspored());
         }
-        if (prefs.getBoolean("UpdateOnBoot", false)) {
+        if (prefs.getBoolean("UpdateOnBoot", false) && !themeChanged) {
             startAnimation();
             presenter.refresh(prefs.getInt("SpinnerDefault", -1));
         }
@@ -240,23 +250,8 @@ public class MainView extends AppCompatActivity implements MainContract.View {
     public boolean onOptionsItemSelected(final MenuItem item) {
         switch (item.getItemId()) {
             case R.id.ab_settings:
-                SettingsDialog settingsDialog = new SettingsDialog(MainView.this);
-                settingsDialog.show();
-                settingsDialog.setListeners(new SettingsDialog.Listners() {
-                    @Override
-                    public void onFinish(int spinnerItem) {
-                        item.setEnabled(true);
-                        if (spinnerItem != prefs.getInt("SpinnerDefault", -1)) {
-                            presenter.refresh(spinnerItem);
-                        }
-                    }
-
-                    @Override
-                    public void onNotificationChange(boolean notification) {
-                        presenter.refreshNotifications();
-                    }
-
-                });
+                item.setEnabled(true);
+                showSettingsDialog();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -264,6 +259,20 @@ public class MainView extends AppCompatActivity implements MainContract.View {
     }
 
     //Properties
+
+    public void showSettingsDialog() {
+        SettingsDialog settingsDialog = new SettingsDialog(MainView.this);
+        settingsDialog.setListeners(new SettingsDialog.Listners() {
+            @Override
+            public void onFinish(int spinnerItem) {
+                if (spinnerItem != prefs.getInt("SpinnerDefault", -1)) {
+                    presenter.refresh(spinnerItem);
+                }
+            }
+
+        });
+        settingsDialog.show();
+    }
 
     public void setPagerProperties() {
         mAdapter = new MyPagerAdapter(getSupportFragmentManager());

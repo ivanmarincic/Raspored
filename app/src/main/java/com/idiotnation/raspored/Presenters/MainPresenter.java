@@ -10,7 +10,9 @@ import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.fatboyindustrial.gsonjodatime.Converters;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import com.idiotnation.raspored.Contracts.MainContract;
 import com.idiotnation.raspored.Helpers.BackgroundTask;
@@ -21,16 +23,15 @@ import com.idiotnation.raspored.Tasks.NotificationLoaderTask;
 import com.idiotnation.raspored.Utils;
 import com.idiotnation.raspored.Widget.RasporedWidgetProvider;
 
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
-import java.util.TimeZone;
 
 import static com.idiotnation.raspored.Utils.ERROR_INTERNAL;
 import static com.idiotnation.raspored.Utils.ERROR_INTERNET;
@@ -101,7 +102,8 @@ public class MainPresenter implements MainContract.Presenter {
             br.close();
         } catch (IOException ignored) {
         } finally {
-            return (List<List<LessonCell>>) new Gson().fromJson(text.toString(), new TypeToken<List<List<LessonCell>>>() {
+            Gson gson = Converters.registerDateTime(new GsonBuilder()).create();
+            return (List<List<LessonCell>>) gson.fromJson(text.toString(), new TypeToken<List<List<LessonCell>>>() {
             }.getType());
         }
     }
@@ -152,22 +154,34 @@ public class MainPresenter implements MainContract.Presenter {
 
     @Override
     public String getRasporedUrl(int index) {
-        try {
-            getPageNumber();
-            String stringDate = view.getPreferences().getString("UpdateTimeStamp", "default");
-            Date currentDate;
-            if (stringDate.equals("default")) {
-                currentDate = new Date();
-                view.getPreferences().edit().putString("UpdateTimeStamp", new Timestamp(new Date().getTime()).toString()).apply();
+        DateTimeFormatter dtfOut = DateTimeFormat.forPattern("dd.MM.yyyy");
+        DateTime nextDateTime = Utils.thisMonday();
+        List<List<LessonCell>> raspored = getRaspored();
+        if (raspored != null) {
+            if (new DateTime().getDayOfWeek() == 7) {
+                nextDateTime = Utils.nextMonday();
             } else {
-                currentDate = new Date(Timestamp.valueOf(stringDate).getTime());
+                mainloop:
+                for (int i = raspored.size() - 1; i >= 0; i--) {
+                    for (int j = raspored.get(i).size() - 1; j >= 0; j--) {
+                        if ((raspored.get(i).get(j).getEnd().isBeforeNow())) {
+                            nextDateTime = Utils.nextMonday();
+                        }
+                        break mainloop;
+                    }
+                }
+                if (Utils.shrinkList(raspored).size() == 0 && new DateTime().getDayOfWeek() >= 5) {
+                    nextDateTime = Utils.nextMonday();
+                }
             }
-            stringDate = new SimpleDateFormat("dd.MM.yyyy").format(currentDate);
-            return "http://intranet.fsr.ba/intranetfsr/teamworks.dll/calendar/calendar" + getDegreeRasporedIndex(index) + "/calendar?StartDatee1=" + stringDate + "&DatePickerStartDatee1=&SelectDatee1=" + stringDate + "&DayCounte1=7&ViewTypee1=day&OQS=3-49&parenttagid=e1";
-        } catch (Exception e) {
-            e.printStackTrace();
+        } else {
+            if (new DateTime().getDayOfWeek() >= 5) {
+                nextDateTime = Utils.nextMonday();
+            }
         }
-        return null;
+        view.getPreferences().edit().putString("UpdateTime", nextDateTime.toString()).apply();
+        String updateTime = dtfOut.print(nextDateTime);
+        return "http://intranet.fsr.ba/intranetfsr/teamworks.dll/calendar/calendar" + getDegreeRasporedIndex(index) + "/calendar?" + "StartDatee1=" + updateTime;
     }
 
     @Override
@@ -179,46 +193,18 @@ public class MainPresenter implements MainContract.Presenter {
 
     @Override
     public int getPageNumber() {
-        Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("Europe/Sarajevo"));
-        int day = convertDayOfWeek(calendar.get(Calendar.DAY_OF_WEEK));
-        if (day <= 4) {
-            return day;
+        DateTime dateTime = new DateTime();
+        int day = dateTime.getDayOfWeek() - 1;
+        if (dateTime.getHourOfDay() >= 19) {
+            day++;
         }
-        List<List<LessonCell>> raspored = getRaspored();
-        if (raspored != null) {
-            mainloop:
-            for (int i = raspored.size() - 1; i >= 0; i--) {
-                for (int j = raspored.get(i).size() - 1; j >= 0; j--) {
-                    if ((raspored.get(i).get(j).getEnd().compareTo(new Date()) < 0 || raspored.get(i).get(j).getStart().compareTo(new Date()) > 0) && day > 4) {
-                        view.getPreferences().edit().putString("UpdateTimeStamp", new Timestamp(nextMonday(Calendar.MONDAY).getTimeInMillis()).toString()).apply();
-                        day = 0;
-                    }
-                    break mainloop;
-                }
-            }
+        if (day >= 6) {
+            day = 5;
+        }
+        if (getLastUpdateTime().isAfterNow() && day >= 4) {
+            day = 0;
         }
         return day;
-    }
-
-    private int convertDayOfWeek(int number) {
-        switch (number) {
-            case Calendar.MONDAY:
-                return 0;
-            case Calendar.TUESDAY:
-                return 1;
-            case Calendar.WEDNESDAY:
-                return 2;
-            case Calendar.THURSDAY:
-                return 3;
-            case Calendar.FRIDAY:
-                return 4;
-            case Calendar.SATURDAY:
-                return 5;
-            case Calendar.SUNDAY:
-                return 6;
-            default:
-                return 0;
-        }
     }
 
     private int getDegreeRasporedIndex(int index) {
@@ -265,14 +251,8 @@ public class MainPresenter implements MainContract.Presenter {
         return 0;
     }
 
-    private Calendar nextMonday(int day) {
-        Calendar date = Calendar.getInstance();
-        int diff = day - date.get(Calendar.DAY_OF_WEEK);
-        if (!(diff > 0)) {
-            diff += 7;
-        }
-        date.add(Calendar.DAY_OF_MONTH, diff);
-        return date;
+    public DateTime getLastUpdateTime() {
+        return new DateTime(view.getPreferences().getString("UpdateTime", new DateTime().toString()));
     }
 
 }

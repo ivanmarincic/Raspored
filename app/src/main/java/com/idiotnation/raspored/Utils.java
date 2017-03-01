@@ -7,10 +7,10 @@ import android.graphics.Color;
 import android.preference.PreferenceManager;
 import android.util.DisplayMetrics;
 
+import org.joda.time.DateTime;
+
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import static android.content.Context.MODE_PRIVATE;
 
@@ -55,9 +55,9 @@ public class Utils {
         return list;
     }
 
-    public static long getDelayInMiliseconds(Date date) {
-        long diffInMillies = date.getTime() - new Date().getTime();
-        return TimeUnit.MILLISECONDS.convert(diffInMillies, TimeUnit.MILLISECONDS);
+    public static long getDelayInMiliseconds(DateTime date) {
+
+        return date.getMillis() - new DateTime().getMillis();
     }
 
     public static int getColor(int colorId, Context context) {
@@ -79,6 +79,29 @@ public class Utils {
     public static boolean isWidgetActive(Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         return prefs.getBoolean(WIDGET_ACTIVE, false);
+    }
+
+
+    public static DateTime nextMonday() {
+        DateTime dateTime = new DateTime();
+        int old = dateTime.getDayOfWeek();
+        int monday = 1;
+
+        if (monday <= old) {
+            monday += 7;
+        }
+        return dateTime.plusDays(monday - old);
+    }
+
+    public static DateTime thisMonday() {
+        DateTime dateTime = new DateTime();
+        int old = dateTime.getDayOfWeek();
+        int monday = 1;
+
+        if (monday < old) {
+            monday -= old;
+        }
+        return dateTime.plusDays(monday);
     }
 
 }

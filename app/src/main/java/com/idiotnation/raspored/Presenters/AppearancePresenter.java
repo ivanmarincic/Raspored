@@ -107,6 +107,7 @@ public class AppearancePresenter implements AppearanceContract.Presenter {
     public void save() {
         Intent intent = new Intent(activity, MainView.class);
         intent.setFlags(FLAG_ACTIVITY_NEW_TASK);
+        intent.putExtra("ThemeChanged", true);
         activity.startActivity(intent);
     }
 
