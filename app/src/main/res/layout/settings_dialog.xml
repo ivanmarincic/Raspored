@@ -117,7 +117,7 @@
             android:layout_weight="0.8"
             android:clickable="true"
             android:gravity="center|left"
-            android:text="Verzija: 6.1"
+            android:text="Verzija: 6.3"
             android:textColor="@color/textColorPrimary"
             android:textSize="15dp" />
 

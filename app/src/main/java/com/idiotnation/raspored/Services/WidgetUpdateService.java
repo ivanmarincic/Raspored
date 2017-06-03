@@ -86,7 +86,7 @@ public class WidgetUpdateService extends Service {
             }
             if (lessonCell.getStart().isAfterNow() && !isCellFound) {
                 if (0 < i) {
-                    scheduleWidgetUpdate(Utils.getDelayInMiliseconds(lessonCell.getStart()), allWidgetIds);
+                    scheduleWidgetUpdate(Utils.getDelayInMiliseconds(lessonCell.getStart().plusMinutes(15)), allWidgetIds);
                 } else {
                     scheduleWidgetUpdate(0, allWidgetIds);
                 }

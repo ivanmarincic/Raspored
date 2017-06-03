@@ -156,7 +156,7 @@ public class SettingsDialog extends Dialog {
         });
         try {
             DateTimeFormatter dtfOut = DateTimeFormat.forPattern("dd.MM.yyyy");
-            updateDate.setText("Datum: " + dtfOut.print(new DateTime(prefs.getString("UpdateTime", new DateTime().toString()))));
+            updateDate.setText("Datum: " + dtfOut.print(new DateTime(prefs.getString("UpdateTime", Utils.thisMonday().toString()))));
         } catch (Exception e) {
             e.printStackTrace();
         }

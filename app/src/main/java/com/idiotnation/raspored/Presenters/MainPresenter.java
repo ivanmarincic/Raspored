@@ -65,7 +65,7 @@ public class MainPresenter implements MainContract.Presenter {
                 downloadTask.setFinishListener(new BackgroundTask.onFinishListener() {
                     @Override
                     public <Type> void onFinish(Type t) {
-                        if (t != null) {
+                        if (t != null && ((List<List<LessonCell>>) t).size() > 0) {
                             view.showMessage(View.VISIBLE, INFO_FINISHED);
                             refreshNotifications();
                             view.setRaspored(getRaspored());
@@ -155,33 +155,15 @@ public class MainPresenter implements MainContract.Presenter {
     @Override
     public String getRasporedUrl(int index) {
         DateTimeFormatter dtfOut = DateTimeFormat.forPattern("dd.MM.yyyy");
-        DateTime nextDateTime = Utils.thisMonday();
-        List<List<LessonCell>> raspored = getRaspored();
-        if (raspored != null) {
-            if (new DateTime().getDayOfWeek() == 7) {
-                nextDateTime = Utils.nextMonday();
-            } else {
-                mainloop:
-                for (int i = raspored.size() - 1; i >= 0; i--) {
-                    for (int j = raspored.get(i).size() - 1; j >= 0; j--) {
-                        if ((raspored.get(i).get(j).getEnd().isBeforeNow())) {
-                            nextDateTime = Utils.nextMonday();
-                        }
-                        break mainloop;
-                    }
-                }
-                if (Utils.shrinkList(raspored).size() == 0 && new DateTime().getDayOfWeek() >= 5) {
-                    nextDateTime = Utils.nextMonday();
-                }
-            }
+        DateTime updateTime;
+        List<LessonCell> raspored = Utils.shrinkList(getRaspored());
+        if (new DateTime().getDayOfWeek() > 6) {
+            updateTime = Utils.nextMonday();
         } else {
-            if (new DateTime().getDayOfWeek() >= 5) {
-                nextDateTime = Utils.nextMonday();
-            }
+            updateTime = Utils.thisMonday();
         }
-        view.getPreferences().edit().putString("UpdateTime", nextDateTime.toString()).apply();
-        String updateTime = dtfOut.print(nextDateTime);
-        return "http://intranet.fsr.ba/intranetfsr/teamworks.dll/calendar/calendar" + getDegreeRasporedIndex(index) + "/calendar?" + "StartDatee1=" + updateTime;
+        view.getPreferences().edit().putString("UpdateTime", updateTime.toString()).apply();
+        return "http://intranet.fsr.ba/intranetfsr/teamworks.dll/calendar/calendar" + getDegreeRasporedIndex(index) + "/calendar?" + "StartDatee1=" + dtfOut.print(updateTime);
     }
 
     @Override
@@ -252,7 +234,11 @@ public class MainPresenter implements MainContract.Presenter {
     }
 
     public DateTime getLastUpdateTime() {
-        return new DateTime(view.getPreferences().getString("UpdateTime", new DateTime().toString()));
+        try {
+            return new DateTime(view.getPreferences().getString("UpdateTime", Utils.thisMonday().toString()));
+        } catch (Exception e) {
+            return Utils.thisMonday();
+        }
     }
 
 }

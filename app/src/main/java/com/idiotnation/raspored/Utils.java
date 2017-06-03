@@ -8,6 +8,7 @@ import android.preference.PreferenceManager;
 import android.util.DisplayMetrics;
 
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeConstants;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,8 +50,10 @@ public class Utils {
 
     public static <T> List<T> shrinkList(List<List<T>> shrink) {
         List<T> list = new ArrayList<>();
-        for(int i=0; i<shrink.size(); i++){
-            list.addAll(shrink.get(i));
+        if (shrink != null) {
+            for (int i = 0; i < shrink.size(); i++) {
+                list.addAll(shrink.get(i));
+            }
         }
         return list;
     }
@@ -83,25 +86,13 @@ public class Utils {
 
 
     public static DateTime nextMonday() {
-        DateTime dateTime = new DateTime();
-        int old = dateTime.getDayOfWeek();
-        int monday = 1;
-
-        if (monday <= old) {
-            monday += 7;
-        }
-        return dateTime.plusDays(monday - old);
+        DateTime now = new DateTime();
+        return now.withDayOfWeek(DateTimeConstants.MONDAY).plusDays(7);
     }
 
     public static DateTime thisMonday() {
-        DateTime dateTime = new DateTime();
-        int old = dateTime.getDayOfWeek();
-        int monday = 1;
-
-        if (monday < old) {
-            monday -= old;
-        }
-        return dateTime.plusDays(monday);
+        DateTime now = new DateTime();
+        return now.withDayOfWeek(DateTimeConstants.MONDAY);
     }
 
 }

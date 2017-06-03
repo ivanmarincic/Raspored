@@ -316,6 +316,7 @@ public class MainView extends AppCompatActivity implements MainContract.View {
                     presenter.refresh(prefs.getInt("SpinnerDefault", -1));
                 } else {
                     Toast.makeText(MainView.this, "Odaberite godinu studija", Toast.LENGTH_SHORT).show();
+                    stopAnimation();
                 }
             }
         });

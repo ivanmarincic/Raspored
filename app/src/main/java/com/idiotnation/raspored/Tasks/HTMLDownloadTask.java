@@ -55,7 +55,7 @@ public class HTMLDownloadTask extends BackgroundTask<List<List<LessonCell>>> {
         List<List<LessonCell>> columns = new ArrayList<>();
         DateTimeFormatter timeFormatter = DateTimeFormat.forPattern("yyy-MM-dd,HH:mm:ss");
         try {
-            Document doc = Jsoup.connect(url).timeout(6000).get();
+            Document doc = Jsoup.connect(url).timeout(16000).get();
             Elements dayss = doc.select("#WeekTablee1 tbody tr");
             if (dayss.size() > 0) {
                 Element days = dayss.get(0);
