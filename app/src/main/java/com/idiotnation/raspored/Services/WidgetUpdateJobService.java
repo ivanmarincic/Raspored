@@ -51,18 +51,19 @@ public class WidgetUpdateJobService extends JobIntentService {
                     remoteViews.setTextColor(R.id.widget_text_content, Utils.getColor(R.color.widgetTextColorPrimary, getApplicationContext()));
                     if (widgetData.numberOfLessons > 0) {
                         if (lessonCell.getStart() != null || lessonCell.getEnd() != null) {
+                            remoteViews.setViewVisibility(R.id.widget_text_time, View.VISIBLE);
                             remoteViews.setTextViewText(R.id.widget_text_time, getDayOfWeek(lessonCell.getStart()) + "  " + timeFormatter.print(lessonCell.getStart()) + " - " + timeFormatter.print(lessonCell.getEnd()));
                             remoteViews.setTextColor(R.id.widget_text_time, Utils.getColor(R.color.widgetTextColorPrimary, getApplicationContext()));
                         } else {
                             remoteViews.setTextViewText(R.id.widget_text_time, "");
                             remoteViews.setViewVisibility(R.id.widget_text_time, View.GONE);
                         }
+                        remoteViews.setViewVisibility(R.id.widget_text_exams, View.VISIBLE);
                         remoteViews.setTextViewText(R.id.widget_text_exams, "Ispiti: " + widgetData.numberOfExams + "/" + widgetData.numberOfLessons);
                         remoteViews.setTextColor(R.id.widget_text_exams, Utils.getColor(R.color.widgetTextColorPrimary, getApplicationContext()));
                     } else {
                         remoteViews.setViewVisibility(R.id.widget_text_exams, View.GONE);
                         remoteViews.setViewVisibility(R.id.widget_text_time, View.GONE);
-                        remoteViews.setViewPadding(R.id.widget_text_content, 0, 20, 0, 20);
                     }
                     remoteViews.setInt(R.id.widget_text_container, "setBackgroundColor", Utils.getColor(R.color.widgetBackgroundColor, getApplicationContext()));
                     Intent clickIntent = new Intent(getApplicationContext(), RasporedWidgetProvider.class);
