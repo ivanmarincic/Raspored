@@ -1,14 +1,11 @@
 package com.idiotnation.raspored.Services;
 
 
-import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.appwidget.AppWidgetManager;
-import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
-import android.os.SystemClock;
 import android.widget.RemoteViews;
 
 import com.idiotnation.raspored.Models.LessonCell;
@@ -23,6 +20,10 @@ import org.joda.time.format.DateTimeFormatter;
 
 import java.util.List;
 
+/**
+ * @deprecated Replaced with JobIntentService which supports Android 8.0+
+ */
+@Deprecated
 public class WidgetUpdateService extends Service {
 
     MainPresenter presenter;
@@ -85,11 +86,6 @@ public class WidgetUpdateService extends Service {
                 widgetData.numberOfExams++;
             }
             if (lessonCell.getStart().isAfterNow() && !isCellFound) {
-                if (0 < i) {
-                    scheduleWidgetUpdate(Utils.getDelayInMiliseconds(lessonCell.getStart().plusMinutes(15)), allWidgetIds);
-                } else {
-                    scheduleWidgetUpdate(0, allWidgetIds);
-                }
                 widgetData.lessonCell = lessonCell;
                 isCellFound = true;
             }
@@ -100,16 +96,6 @@ public class WidgetUpdateService extends Service {
             widgetData.lessonCell = lessonCell;
         }
         return widgetData;
-    }
-
-    private void scheduleWidgetUpdate(long delay, int[] allWidgetIds) {
-        Intent intent = new Intent(WidgetUpdateService.this, WidgetUpdateService.class);
-        intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, allWidgetIds);
-        PendingIntent pendingIntent = PendingIntent.getService(WidgetUpdateService.this, Utils.UNIQUE_ID, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-
-        long futureInMillis = SystemClock.elapsedRealtime() + delay;
-        AlarmManager alarmManager = (AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE);
-        alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, futureInMillis, pendingIntent);
     }
 
     private String getDayOfWeek(DateTime date) {

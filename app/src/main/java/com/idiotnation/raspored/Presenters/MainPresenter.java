@@ -1,9 +1,12 @@
 package com.idiotnation.raspored.Presenters;
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
+import android.os.Build;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,7 +35,9 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.List;
+import java.util.Locale;
 
+import static com.idiotnation.raspored.Recievers.NotificationReceiver.NOTIFICATION_CHANNEL_ID;
 import static com.idiotnation.raspored.Utils.ERROR_INTERNAL;
 import static com.idiotnation.raspored.Utils.ERROR_INTERNET;
 import static com.idiotnation.raspored.Utils.ERROR_UNAVAILABLE;
@@ -137,11 +142,12 @@ public class MainPresenter implements MainContract.Presenter {
         for (int i = 0; i < 13; i++) {
             TextView textView = new TextView(context);
             textView.setGravity(Gravity.CENTER);
-            textView.setText(String.format("%02d", 7 + i) + ":00");
+            textView.setText(String.format("%s:00", String.format(Locale.ENGLISH, "%02d", 7 + i)));
             textView.setTypeface(Typeface.DEFAULT_BOLD);
             textView.setTextColor(Utils.getColor(R.color.hoursTextColorPrimary, context));
             float scale = context.getResources().getDisplayMetrics().density;
-            GradientDrawable textViewBg = (GradientDrawable) context.getResources().getDrawable(R.drawable.separator).getConstantState().newDrawable();
+            GradientDrawable textViewBg = new GradientDrawable();
+            textViewBg.setShape(GradientDrawable.RECTANGLE);
             textViewBg.setStroke((int) (1 * scale + 0.5f), Utils.getColor(R.color.hoursBackgroundStrokeColor, context));
             textViewBg.setColor(Utils.getColor(R.color.hoursBackgroundColor, context));
             textView.setBackgroundDrawable(textViewBg);
@@ -187,6 +193,20 @@ public class MainPresenter implements MainContract.Presenter {
             day = 0;
         }
         return day;
+    }
+
+    @Override
+    public void initNotificationChannel() {
+        if (Build.VERSION.SDK_INT < 26) {
+            return;
+        }
+        NotificationManager notificationManager =
+                (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        NotificationChannel channel = new NotificationChannel(NOTIFICATION_CHANNEL_ID,
+                context.getResources().getString(R.string.notification_channel_name),
+                NotificationManager.IMPORTANCE_DEFAULT);
+        channel.setDescription(context.getResources().getString(R.string.notification_channel_description));
+        notificationManager.createNotificationChannel(channel);
     }
 
     private int getDegreeRasporedIndex(int index) {

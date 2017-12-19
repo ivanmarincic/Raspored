@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
+    <shortcut
+        android:enabled="true"
+        android:icon="@drawable/refresh_shortcut"
+        android:shortcutDisabledMessage="@string/refresh_shortcut"
+        android:shortcutId="refresh"
+        android:shortcutLongLabel="@string/refresh_shortcut"
+        android:shortcutShortLabel="@string/refresh_shortcut">
+        <intent
+            android:action="com.idiotnation.raspored.action.Refresh"
+            android:targetClass="com.idiotnation.raspored.Views.MainView"
+            android:targetPackage="com.idiotnation.raspored" />
+        <categories android:name="android.shortcut.refresh" />
+    </shortcut>
+</shortcuts>

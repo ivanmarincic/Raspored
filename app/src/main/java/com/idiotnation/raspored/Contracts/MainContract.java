@@ -37,6 +37,8 @@ public class MainContract {
         void refreshWidget();
 
         int getPageNumber();
+
+        void initNotificationChannel();
     }
 
 }

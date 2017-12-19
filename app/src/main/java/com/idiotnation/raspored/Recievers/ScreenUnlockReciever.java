@@ -14,7 +14,7 @@ public class ScreenUnlockReciever extends BroadcastReceiver {
         if (intent.getAction().equals(Intent.ACTION_USER_PRESENT)) {
             Intent updateIntent = new Intent(context, RasporedWidgetProvider.class);
             updateIntent.putExtra(Utils.WIDGET_INTENT, Utils.WIDGET_UPDATE);
-            context.sendBroadcast(updateIntent);
+            //context.sendBroadcast(updateIntent); disabled until tested if it is draining battery
         }
     }
 }

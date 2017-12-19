@@ -1,10 +1,8 @@
 package com.idiotnation.raspored;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Color;
-import android.preference.PreferenceManager;
 import android.util.DisplayMetrics;
 
 import org.joda.time.DateTime;
@@ -22,12 +20,20 @@ public class Utils {
     public static final int INFO_MESSAGE = 3;
     public static final int ERROR_UNAVAILABLE = 4;
     public static final int INFO_FINISHED = 5;
+    public static final int GOOGLEAPICLIENTTIMEOUT_S = 6;
     public static final String WIDGET_ACTIVE = "com.idiotnation.RasporedWidgetActive";
     public static final int UNIQUE_ID = 29109613;
     public static final int WIDGET_CLICK_INTENT = 29109666;
     public static final String WIDGET_INTENT = "com.idiotnation.RasporedWidgetIntent";
     public static final String WIDGET_UPDATE = "com.idiotnation.RasporedWidgetUpdate";
     public static final String WIDGET_CLICK = "com.idiotnation.RasporedWidgetClick";
+    public static final String WEAR_GET_PATH = "/get-raspored";
+    public static final String WEAR_UPDATE_PATH = "/update-raspored";
+    public static final String WEAR_INDEX_KEY = "index";
+    public static final String WEAR_CONTENT_KEY = "lesson";
+    public static final String WEAR_TIME_KEY = "time";
+    public static final int NOTIFICATION_UPDATE_UNIQUE_ID = 2981278;
+    public static final int WIDGET_UPDATE_UNIQUE_ID = 2983471;
 
     public static int manipulateColor(int color, float factor) {
         int a = Color.alpha(color);
@@ -72,18 +78,6 @@ public class Utils {
         DisplayMetrics metrics = resources.getDisplayMetrics();
         return (int) (dp * ((float) metrics.densityDpi / DisplayMetrics.DENSITY_DEFAULT));
     }
-
-    public static float convertPixelsToDp(float px, Context context) {
-        Resources resources = context.getResources();
-        DisplayMetrics metrics = resources.getDisplayMetrics();
-        return px / ((float) metrics.densityDpi / DisplayMetrics.DENSITY_DEFAULT);
-    }
-
-    public static boolean isWidgetActive(Context context) {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        return prefs.getBoolean(WIDGET_ACTIVE, false);
-    }
-
 
     public static DateTime nextMonday() {
         DateTime now = new DateTime();

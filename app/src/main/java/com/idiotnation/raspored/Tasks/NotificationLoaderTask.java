@@ -57,7 +57,9 @@ public class NotificationLoaderTask extends BackgroundTask<List<List<LessonCell>
 
             long futureInMillis = SystemClock.elapsedRealtime() + delay;
             AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-            alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, futureInMillis, pendingIntent);
+            if (alarmManager != null) {
+                alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, futureInMillis, pendingIntent);
+            }
         }
     }
 
@@ -65,7 +67,6 @@ public class NotificationLoaderTask extends BackgroundTask<List<List<LessonCell>
         int idNumber = 2020;
         for (int i = 0; i < columns.size(); i++) {
             for (LessonCell lessonCell : columns.get(i)) {
-                lessonCell.getStart();
                 scheduleNotification(lessonCell.getText(), Utils.getDelayInMiliseconds(lessonCell.getStart()), idNumber);
                 idNumber++;
             }
@@ -80,7 +81,9 @@ public class NotificationLoaderTask extends BackgroundTask<List<List<LessonCell>
             PendingIntent pendingUpdateIntent = PendingIntent.getBroadcast(context, 2020 + i, updateServiceIntent, 0);
 
             try {
-                alarmManager.cancel(pendingUpdateIntent);
+                if (alarmManager != null) {
+                    alarmManager.cancel(pendingUpdateIntent);
+                }
             } catch (Exception e) {
                 e.printStackTrace();
             }

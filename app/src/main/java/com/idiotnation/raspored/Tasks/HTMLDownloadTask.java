@@ -55,9 +55,10 @@ public class HTMLDownloadTask extends BackgroundTask<List<List<LessonCell>>> {
         List<List<LessonCell>> columns = new ArrayList<>();
         DateTimeFormatter timeFormatter = DateTimeFormat.forPattern("yyy-MM-dd,HH:mm:ss");
         try {
-            Document doc = Jsoup.connect(url).timeout(16000).get();
+            Document doc = Jsoup.connect(url).timeout(0).get();
             Elements dayss = doc.select("#WeekTablee1 tbody tr");
             if (dayss.size() > 0) {
+                float minuteFraction = 1 / 60f;
                 Element days = dayss.get(0);
                 Elements head = doc.select("head").get(0).select("script");
                 List<String[]> properties = getElementsArray(head.get(head.size() - 1).html());
@@ -67,8 +68,8 @@ public class HTMLDownloadTask extends BackgroundTask<List<List<LessonCell>>> {
                         String id = properties.get(i)[2].split("=")[1].replaceAll("\"", "").replaceAll(" ", "");
                         DateTime startDate = timeFormatter.parseDateTime(properties.get(i)[7].split("=")[1].replaceAll("\"", "").replaceAll(" ", "")),
                                 endDate = timeFormatter.parseDateTime(properties.get(i)[6].split("=")[1].replaceAll("\"", "").replaceAll(" ", ""));
-                        float start = (float) ((float) startDate.getHourOfDay() - 7.0 + (startDate.getMinuteOfHour() * (1.0 / 60.0))),
-                                end = (float) ((float) endDate.getHourOfDay() - 7.0 + (endDate.getMinuteOfHour() * (1.0 / 60.0))),
+                        float start = startDate.getHourOfDay() - 7f + (startDate.getMinuteOfHour() * minuteFraction),
+                                end = endDate.getHourOfDay() - 7f + (endDate.getMinuteOfHour() * minuteFraction),
                                 height = end - start;
                         int width = Integer.parseInt(properties.get(i)[4].split("=")[1].replaceAll("\"", "").replaceAll(" ", "")),
                                 colCount = Integer.parseInt(properties.get(i)[3].split("=")[1].replaceAll("\"", "").replaceAll(" ", "")),
@@ -88,6 +89,8 @@ public class HTMLDownloadTask extends BackgroundTask<List<List<LessonCell>>> {
                         columns.get(day).add(lessonCell);
                     }
                 }
+            } else {
+                return null;
             }
             while (columns.size() < 6) {
                 columns.add(new ArrayList<LessonCell>());
