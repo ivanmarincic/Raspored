@@ -21,8 +21,6 @@ public class Utils {
     public static final int ERROR_UNAVAILABLE = 4;
     public static final int INFO_FINISHED = 5;
     public static final int GOOGLEAPICLIENTTIMEOUT_S = 6;
-    public static final String WIDGET_ACTIVE = "com.idiotnation.RasporedWidgetActive";
-    public static final int UNIQUE_ID = 29109613;
     public static final int WIDGET_CLICK_INTENT = 29109666;
     public static final String WIDGET_INTENT = "com.idiotnation.RasporedWidgetIntent";
     public static final String WIDGET_UPDATE = "com.idiotnation.RasporedWidgetUpdate";

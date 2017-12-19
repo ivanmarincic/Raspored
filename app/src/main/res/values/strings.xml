@@ -4,8 +4,10 @@
     <string name="error_msg_e">Pokušajte ponovno čini se da je došlo do greške</string>
     <string name="error_msg_i">Niste povezani s internetom</string>
     <string name="error_msg_u">Raspored nije dostupan</string>
+    <string name="error_msg_widget">Ažurirajte raspored</string>
     <string name="info_msg">Odaberite godinu studija u postavkama u gornjem desnom kutu, \n povucite prema dolje preko ekrana za osvježavanje</string>
     <string name="info_end">Dovršeno preuzimanje</string>
+    <string name="info_empty_widget">Nema predavanja</string>
     <string name="refresh_shortcut">Ažuriraj</string>
     <string name="notification_channel_name">Predavanja</string>
     <string name="notification_channel_description">Obavijesti o početku predavanja</string>

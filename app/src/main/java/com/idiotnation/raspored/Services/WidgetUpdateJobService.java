@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v4.app.JobIntentService;
+import android.view.View;
 import android.widget.RemoteViews;
 
 import com.idiotnation.raspored.Models.LessonCell;
@@ -39,7 +40,7 @@ public class WidgetUpdateJobService extends JobIntentService {
         presenter.start(null, getApplicationContext());
 
         try {
-            WidgetData widgetData = getAppropriateItem(presenter.getRaspored(), allWidgetIds);
+            WidgetData widgetData = getAppropriateItem(presenter.getRaspored());
             LessonCell lessonCell = widgetData.lessonCell;
             DateTimeFormatter timeFormatter = DateTimeFormat.forPattern("HH:mm");
 
@@ -48,14 +49,21 @@ public class WidgetUpdateJobService extends JobIntentService {
                     RemoteViews remoteViews = new RemoteViews(getApplicationContext().getPackageName(), R.layout.raspored_widget_layout);
                     remoteViews.setTextViewText(R.id.widget_text_content, lessonCell.getText());
                     remoteViews.setTextColor(R.id.widget_text_content, Utils.getColor(R.color.widgetTextColorPrimary, getApplicationContext()));
-                    if (lessonCell.getStart() != null || lessonCell.getEnd() != null) {
-                        remoteViews.setTextViewText(R.id.widget_text_time, getDayOfWeek(lessonCell.getStart()) + "  " + timeFormatter.print(lessonCell.getStart()) + " - " + timeFormatter.print(lessonCell.getEnd()));
+                    if (widgetData.numberOfLessons > 0) {
+                        if (lessonCell.getStart() != null || lessonCell.getEnd() != null) {
+                            remoteViews.setTextViewText(R.id.widget_text_time, getDayOfWeek(lessonCell.getStart()) + "  " + timeFormatter.print(lessonCell.getStart()) + " - " + timeFormatter.print(lessonCell.getEnd()));
+                            remoteViews.setTextColor(R.id.widget_text_time, Utils.getColor(R.color.widgetTextColorPrimary, getApplicationContext()));
+                        } else {
+                            remoteViews.setTextViewText(R.id.widget_text_time, "");
+                            remoteViews.setViewVisibility(R.id.widget_text_time, View.GONE);
+                        }
+                        remoteViews.setTextViewText(R.id.widget_text_exams, "Ispiti: " + widgetData.numberOfExams + "/" + widgetData.numberOfLessons);
+                        remoteViews.setTextColor(R.id.widget_text_exams, Utils.getColor(R.color.widgetTextColorPrimary, getApplicationContext()));
                     } else {
-                        remoteViews.setTextViewText(R.id.widget_text_time, "");
+                        remoteViews.setViewVisibility(R.id.widget_text_exams, View.GONE);
+                        remoteViews.setViewVisibility(R.id.widget_text_time, View.GONE);
+                        remoteViews.setViewPadding(R.id.widget_text_content, 0, 20, 0, 20);
                     }
-                    remoteViews.setTextColor(R.id.widget_text_time, Utils.getColor(R.color.widgetTextColorPrimary, getApplicationContext()));
-                    remoteViews.setTextViewText(R.id.widget_text_exams, "Ispiti: " + widgetData.numberOfExams + "/" + widgetData.numberOfLessons);
-                    remoteViews.setTextColor(R.id.widget_text_exams, Utils.getColor(R.color.widgetTextColorPrimary, getApplicationContext()));
                     remoteViews.setInt(R.id.widget_text_container, "setBackgroundColor", Utils.getColor(R.color.widgetBackgroundColor, getApplicationContext()));
                     Intent clickIntent = new Intent(getApplicationContext(), RasporedWidgetProvider.class);
                     clickIntent.putExtra(Utils.WIDGET_INTENT, Utils.WIDGET_CLICK);
@@ -70,26 +78,30 @@ public class WidgetUpdateJobService extends JobIntentService {
         stopSelf();
     }
 
-    private WidgetData getAppropriateItem(List<List<LessonCell>> columns, int[] allWidgetIds) {
-        List<LessonCell> lessons = Utils.shrinkList(columns);
+    private WidgetData getAppropriateItem(List<List<LessonCell>> columns) {
         WidgetData widgetData = new WidgetData();
-        widgetData.numberOfExams = 0;
-        widgetData.numberOfLessons = lessons.size();
-        boolean isCellFound = false;
-        for (int i = 0; i < lessons.size(); i++) {
-            LessonCell lessonCell = lessons.get(i);
-            if (lessonCell.getText().contains("kolokvij") || lessonCell.getText().contains("ispit")) {
-                widgetData.numberOfExams++;
+        if (columns != null) {
+            List<LessonCell> lessons = Utils.shrinkList(columns);
+            widgetData.numberOfExams = 0;
+            widgetData.numberOfLessons = lessons.size();
+            boolean isCellFound = false;
+            for (int i = 0; i < lessons.size(); i++) {
+                LessonCell lessonCell = lessons.get(i);
+                if (lessonCell.getText().contains("kolokvij") || lessonCell.getText().contains("ispit")) {
+                    widgetData.numberOfExams++;
+                }
+                if (lessonCell.getStart().isAfterNow() && !isCellFound) {
+                    widgetData.lessonCell = lessonCell;
+                    isCellFound = true;
+                }
             }
-            if (lessonCell.getStart().isAfterNow() && !isCellFound) {
-                widgetData.lessonCell = lessonCell;
-                isCellFound = true;
+            if (widgetData.lessonCell == null) {
+                widgetData.lessonCell = new LessonCell();
+                widgetData.lessonCell.setText(getResources().getString(R.string.info_empty_widget));
             }
-        }
-        if (widgetData.lessonCell == null) {
-            LessonCell lessonCell = new LessonCell();
-            lessonCell.setText("Nema predavanja");
-            widgetData.lessonCell = lessonCell;
+        } else {
+            widgetData.lessonCell = new LessonCell();
+            widgetData.lessonCell.setText(getResources().getString(R.string.error_msg_widget));
         }
         return widgetData;
     }
