@@ -38,6 +38,8 @@ public class Utils {
 
     public static final int PERMISSIONS_READ_WRITE_CALENDAR = 555;
 
+    public static final String CALENDAR_SYNC_URI = "com.idiotnation.raspored.CalendarSync";
+
 
     public static <P, D> List<P> convertToPojo(List<D> dtos, Class<P> pojoClass) {
         List<P> result = new ArrayList<>();

@@ -20,6 +20,7 @@ import org.joda.time.DateTimeZone;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.concurrent.TimeUnit;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
@@ -93,12 +94,11 @@ public class AutoUpdateJob extends Job {
 
     public static int scheduleJob() {
         return new JobRequest.Builder(Utils.AUTO_UPDATE_JOB_TAG)
-//                .setPeriodic(TimeUnit.MINUTES.toMillis(15), TimeUnit.MINUTES.toMillis(5))
-                .startNow()
-//                .setRequiresCharging(false)
-//                .setRequiresDeviceIdle(false)
-//                .setRequiredNetworkType(JobRequest.NetworkType.CONNECTED)
-//                .setRequirementsEnforced(true)
+                .setPeriodic(TimeUnit.MINUTES.toMillis(15), TimeUnit.MINUTES.toMillis(5))
+                .setRequiresCharging(false)
+                .setRequiresDeviceIdle(false)
+                .setRequiredNetworkType(JobRequest.NetworkType.CONNECTED)
+                .setRequirementsEnforced(true)
                 .setUpdateCurrent(true)
                 .build()
                 .schedule();

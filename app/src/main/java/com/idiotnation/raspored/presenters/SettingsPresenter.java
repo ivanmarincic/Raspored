@@ -28,7 +28,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.UUID;
 import java.util.concurrent.Callable;
 
 import io.reactivex.Single;
@@ -192,7 +191,7 @@ public class SettingsPresenter implements SettingsContract.Presenter {
             if (cursor != null && cursor.moveToFirst()) {
                 SharedPreferences.Editor editor = sharedPreferences.edit();
                 if (sharedPreferences.getString(SettingsItemDto.SETTINGS_TYPE_CALENDAR_SYNC_UUID, null) == null) {
-                    editor.putString(SettingsItemDto.SETTINGS_TYPE_CALENDAR_SYNC_UUID, String.valueOf(UUID.randomUUID()));
+                    editor.putString(SettingsItemDto.SETTINGS_TYPE_CALENDAR_SYNC_UUID, Utils.CALENDAR_SYNC_URI);
                 }
                 editor.putInt(SettingsItemDto.SETTINGS_TYPE_CALENDAR_SYNC_ID, cursor.getInt(PROJECTION_ID_INDEX));
                 editor.apply();
