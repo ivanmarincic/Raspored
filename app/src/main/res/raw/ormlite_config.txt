@@ -1,0 +1,106 @@
+#
+# generated on 2018/11/04 03:22:23
+#
+# --table-start--
+dataClass=com.idiotnation.raspored.models.jpa.Appointment
+tableName=appointments
+# --table-fields-start--
+# --field-start--
+fieldName=id
+columnName=id
+generatedId=true
+allowGeneratedIdInsert=true
+# --field-end--
+# --field-start--
+fieldName=name
+columnName=name
+# --field-end--
+# --field-start--
+fieldName=course
+columnName=course_id
+foreign=true
+foreignAutoRefresh=true
+maxForeignAutoRefreshLevel=2
+# --field-end--
+# --field-start--
+fieldName=details
+columnName=details
+# --field-end--
+# --field-start--
+fieldName=classroom
+columnName=classroom
+# --field-end--
+# --field-start--
+fieldName=lecturer
+columnName=lecturer
+# --field-end--
+# --field-start--
+fieldName=start
+columnName=start
+dataPersister=DATE_TIME
+# --field-end--
+# --field-start--
+fieldName=end
+columnName=end
+dataPersister=DATE_TIME
+# --field-end--
+# --table-fields-end--
+# --table-end--
+#################################
+# --table-start--
+dataClass=com.idiotnation.raspored.models.jpa.Course
+tableName=courses
+# --table-fields-start--
+# --field-start--
+fieldName=id
+columnName=id
+generatedId=true
+allowGeneratedIdInsert=true
+# --field-end--
+# --field-start--
+fieldName=name
+columnName=name
+unique=true
+# --field-end--
+# --field-start--
+fieldName=url
+columnName=url
+# --field-end--
+# --field-start--
+fieldName=type
+columnName=course_type_id
+foreign=true
+foreignAutoRefresh=true
+maxForeignAutoRefreshLevel=2
+foreignAutoCreate=true
+# --field-end--
+# --field-start--
+fieldName=year
+columnName=year
+# --field-end--
+# --field-start--
+fieldName=lastSync
+columnName=last_sync
+dataPersister=DATE_TIME
+# --field-end--
+# --table-fields-end--
+# --table-end--
+#################################
+# --table-start--
+dataClass=com.idiotnation.raspored.models.jpa.CourseType
+tableName=course_types
+# --table-fields-start--
+# --field-start--
+fieldName=id
+columnName=id
+generatedId=true
+allowGeneratedIdInsert=true
+# --field-end--
+# --field-start--
+fieldName=name
+columnName=name
+unique=true
+# --field-end--
+# --table-fields-end--
+# --table-end--
+#################################

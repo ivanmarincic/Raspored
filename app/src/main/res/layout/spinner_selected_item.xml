@@ -1,7 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<TextView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/ssi_item"
-    android:layout_width="wrap_content"
+<androidx.appcompat.widget.AppCompatTextView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@android:id/text1"
+    style="?attr/spinnerDropDownItemStyle"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:textSize="23dp"
-    android:textStyle="bold" />
+    android:ellipsize="middle"
+    android:fadingEdge="horizontal"
+    android:marqueeRepeatLimit="marquee_forever"
+    android:paddingTop="@dimen/spinner_selected_padding"
+    android:paddingBottom="@dimen/spinner_selected_padding"
+    android:scrollHorizontally="true"
+    android:singleLine="true"
+    android:textColor="@color/colorOnBackground"
+    android:textSize="@dimen/primary_text_size"
+    android:textStyle="bold"
+    tools:text="asdasdsad asd asd as d d asd asd asdas das sa" />

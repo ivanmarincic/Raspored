@@ -1,0 +1,516 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:id="@+id/settings_view_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="invisible"
+        tools:visibility="visible">
+
+        <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/settings_view_app_bar"
+            android:layout_width="match_parent"
+            android:layout_height="?android:attr/actionBarSize"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/settings_view_toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:title="@string/settings_view_toolbar_title" />
+
+        </com.google.android.material.appbar.AppBarLayout>
+
+        <androidx.core.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/settings_view_app_bar">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/settings_view_course_select"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:foreground="?android:attr/selectableItemBackground"
+                    android:orientation="vertical"
+                    android:padding="@dimen/settings_view_list_item_padding"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent">
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/settings_view_course_select_icon"
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:layout_marginStart="@dimen/settings_view_list_item_icon_margin"
+                        android:padding="@dimen/settings_view_list_item_icon_padding"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintDimensionRatio="1:1"
+                        app:layout_constraintEnd_toStartOf="@+id/settings_view_course_select_guideline"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:srcCompat="@drawable/ic_course"
+                        app:tint="@color/colorOnBackground" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/settings_view_course_select_name"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/settings_view_list_item_icon_margin"
+                        android:gravity="start"
+                        android:padding="@dimen/settings_view_list_item_text_padding"
+                        android:text="@string/settings_view_list_value_course"
+                        android:textColor="@color/colorOnBackground"
+                        android:textSize="@dimen/settings_view_list_item_primary_text_size"
+                        android:textStyle="bold"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/settings_view_course_select_icon"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/settings_view_course_select_value"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/settings_view_list_item_icon_margin"
+                        android:ellipsize="marquee"
+                        android:focusable="true"
+                        android:focusableInTouchMode="true"
+                        android:freezesText="true"
+                        android:gravity="start"
+                        android:marqueeRepeatLimit="marquee_forever"
+                        android:padding="@dimen/settings_view_list_item_text_padding"
+                        android:scrollHorizontally="true"
+                        android:singleLine="true"
+                        android:text="@string/settings_view_list_value_course_default"
+                        android:textColor="@color/colorOnBackgroundLight"
+                        android:textSize="@dimen/settings_view_list_item_secondary_text_size"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/settings_view_course_select_icon"
+                        app:layout_constraintTop_toBottomOf="@+id/settings_view_course_select_name" />
+
+                    <androidx.constraintlayout.widget.Guideline
+                        android:id="@+id/settings_view_course_select_guideline"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        app:layout_constraintGuide_percent="0.17" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/settings_view_partial_select"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:foreground="?android:attr/selectableItemBackground"
+                    android:orientation="vertical"
+                    android:padding="@dimen/settings_view_list_item_padding"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent">
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/settings_view_partial_select_icon"
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:layout_marginStart="@dimen/settings_view_list_item_icon_margin"
+                        android:padding="@dimen/settings_view_list_item_icon_padding"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintDimensionRatio="1:1"
+                        app:layout_constraintEnd_toStartOf="@+id/settings_view_partial_select_guideline"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:srcCompat="@drawable/ic_add_partial"
+                        app:tint="@color/colorOnBackground" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/settings_view_partial_select_name"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/settings_view_list_item_icon_margin"
+                        android:gravity="start"
+                        android:padding="@dimen/settings_view_list_item_text_padding"
+                        android:text="@string/settings_view_list_value_partial"
+                        android:textColor="@color/colorOnBackground"
+                        android:textSize="@dimen/settings_view_list_item_primary_text_size"
+                        android:textStyle="bold"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/settings_view_partial_select_icon"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/settings_view_partial_select_value"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/settings_view_list_item_icon_margin"
+                        android:gravity="start"
+                        android:padding="@dimen/settings_view_list_item_text_padding"
+                        android:text="@string/settings_view_list_value_partial_default"
+                        android:textColor="@color/colorOnBackgroundLight"
+                        android:textSize="@dimen/settings_view_list_item_secondary_text_size"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/settings_view_partial_select_icon"
+                        app:layout_constraintTop_toBottomOf="@+id/settings_view_partial_select_name" />
+
+                    <androidx.constraintlayout.widget.Guideline
+                        android:id="@+id/settings_view_partial_select_guideline"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        app:layout_constraintGuide_percent="0.17" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/settings_view_blocked_select"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:foreground="?android:attr/selectableItemBackground"
+                    android:orientation="vertical"
+                    android:padding="@dimen/settings_view_list_item_padding"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent">
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/settings_view_blocked_select_icon"
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:layout_marginStart="@dimen/settings_view_list_item_icon_margin"
+                        android:padding="@dimen/settings_view_list_item_icon_padding"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintDimensionRatio="1:1"
+                        app:layout_constraintEnd_toStartOf="@+id/settings_view_blocked_select_guideline"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:srcCompat="@drawable/ic_block_appointment"
+                        app:tint="@color/colorOnBackground" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/settings_view_blocked_select_name"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/settings_view_list_item_icon_margin"
+                        android:gravity="start"
+                        android:padding="@dimen/settings_view_list_item_text_padding"
+                        android:text="@string/settings_view_list_value_blocked"
+                        android:textColor="@color/colorOnBackground"
+                        android:textSize="@dimen/settings_view_list_item_primary_text_size"
+                        android:textStyle="bold"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/settings_view_blocked_select_icon"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/settings_view_blocked_select_value"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/settings_view_list_item_icon_margin"
+                        android:gravity="start"
+                        android:padding="@dimen/settings_view_list_item_text_padding"
+                        android:text="@string/settings_view_list_value_blocked_default"
+                        android:textColor="@color/colorOnBackgroundLight"
+                        android:textSize="@dimen/settings_view_list_item_secondary_text_size"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/settings_view_blocked_select_icon"
+                        app:layout_constraintTop_toBottomOf="@+id/settings_view_blocked_select_name" />
+
+                    <androidx.constraintlayout.widget.Guideline
+                        android:id="@+id/settings_view_blocked_select_guideline"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        app:layout_constraintGuide_percent="0.17" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/settings_view_notifications_select"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:foreground="?android:attr/selectableItemBackground"
+                    android:orientation="vertical"
+                    android:padding="@dimen/settings_view_list_item_padding"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent">
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/settings_view_notifications_select_icon"
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:layout_marginStart="@dimen/settings_view_list_item_icon_margin"
+                        android:padding="@dimen/settings_view_list_item_icon_padding"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintDimensionRatio="1:1"
+                        app:layout_constraintEnd_toStartOf="@+id/settings_view_notifications_select_guideline"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:srcCompat="@drawable/ic_notifications"
+                        app:tint="@color/colorOnBackground" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/settings_view_notifications_select_name"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/settings_view_list_item_icon_margin"
+                        android:gravity="start"
+                        android:padding="@dimen/settings_view_list_item_text_padding"
+                        android:text="@string/settings_view_list_value_notifications"
+                        android:textColor="@color/colorOnBackground"
+                        android:textSize="@dimen/settings_view_list_item_primary_text_size"
+                        android:textStyle="bold"
+                        app:layout_constraintEnd_toStartOf="@+id/settings_view_notifications_select_value"
+                        app:layout_constraintStart_toEndOf="@+id/settings_view_notifications_select_icon"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/settings_view_notifications_select_hint"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/settings_view_list_item_icon_margin"
+                        android:gravity="start"
+                        android:padding="@dimen/settings_view_list_item_text_padding"
+                        android:text="@string/settings_view_list_value_notifications_default"
+                        android:textColor="@color/colorOnBackgroundLight"
+                        android:textSize="@dimen/settings_view_list_item_secondary_text_size"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toStartOf="@+id/settings_view_notifications_select_value"
+                        app:layout_constraintStart_toEndOf="@+id/settings_view_notifications_select_icon"
+                        app:layout_constraintTop_toBottomOf="@+id/settings_view_notifications_select_name" />
+
+                    <androidx.appcompat.widget.AppCompatCheckBox
+                        android:id="@+id/settings_view_notifications_select_value"
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:gravity="center"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintDimensionRatio="1:1"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/settings_view_notifications_select_guideline_end"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <androidx.constraintlayout.widget.Guideline
+                        android:id="@+id/settings_view_notifications_select_guideline"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        app:layout_constraintGuide_percent="0.17" />
+
+                    <androidx.constraintlayout.widget.Guideline
+                        android:id="@+id/settings_view_notifications_select_guideline_end"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        app:layout_constraintGuide_percent="0.87" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/settings_view_autosync_select"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:foreground="?android:attr/selectableItemBackground"
+                    android:orientation="vertical"
+                    android:padding="@dimen/settings_view_list_item_padding"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent">
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/settings_view_autosync_select_icon"
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:layout_marginStart="@dimen/settings_view_list_item_icon_margin"
+                        android:padding="@dimen/settings_view_list_item_icon_padding"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintDimensionRatio="1:1"
+                        app:layout_constraintEnd_toStartOf="@+id/settings_view_autosync_select_guideline"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:srcCompat="@drawable/ic_sync"
+                        app:tint="@color/colorOnBackground" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/settings_view_autosync_select_name"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/settings_view_list_item_icon_margin"
+                        android:gravity="start"
+                        android:padding="@dimen/settings_view_list_item_text_padding"
+                        android:text="@string/settings_view_list_value_autosync"
+                        android:textColor="@color/colorOnBackground"
+                        android:textSize="@dimen/settings_view_list_item_primary_text_size"
+                        android:textStyle="bold"
+                        app:layout_constraintEnd_toStartOf="@+id/settings_view_autosync_select_value"
+                        app:layout_constraintStart_toEndOf="@+id/settings_view_autosync_select_icon"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/settings_view_autosync_select_hint"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/settings_view_list_item_icon_margin"
+                        android:gravity="start"
+                        android:padding="@dimen/settings_view_list_item_text_padding"
+                        android:text="@string/settings_view_list_value_autosync_default"
+                        android:textColor="@color/colorOnBackgroundLight"
+                        android:textSize="@dimen/settings_view_list_item_secondary_text_size"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toStartOf="@+id/settings_view_autosync_select_value"
+                        app:layout_constraintStart_toEndOf="@+id/settings_view_autosync_select_icon"
+                        app:layout_constraintTop_toBottomOf="@+id/settings_view_autosync_select_name" />
+
+                    <androidx.appcompat.widget.AppCompatCheckBox
+                        android:id="@+id/settings_view_autosync_select_value"
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:gravity="center"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintDimensionRatio="1:1"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/settings_view_autosync_select_guideline_end"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <androidx.constraintlayout.widget.Guideline
+                        android:id="@+id/settings_view_autosync_select_guideline"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        app:layout_constraintGuide_percent="0.17" />
+
+                    <androidx.constraintlayout.widget.Guideline
+                        android:id="@+id/settings_view_autosync_select_guideline_end"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        app:layout_constraintGuide_percent="0.87" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/settings_view_calendar_sync_select"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:foreground="?android:attr/selectableItemBackground"
+                    android:orientation="vertical"
+                    android:padding="@dimen/settings_view_list_item_padding"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent">
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/settings_view_calendar_sync_select_icon"
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:layout_marginStart="@dimen/settings_view_list_item_icon_margin"
+                        android:padding="@dimen/settings_view_list_item_icon_padding"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintDimensionRatio="1:1"
+                        app:layout_constraintEnd_toStartOf="@+id/settings_view_calendar_sync_select_guideline"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:srcCompat="@drawable/ic_calendar"
+                        app:tint="@color/colorOnBackground" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/settings_view_calendar_sync_select_name"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/settings_view_list_item_icon_margin"
+                        android:gravity="start"
+                        android:padding="@dimen/settings_view_list_item_text_padding"
+                        android:text="@string/settings_view_list_value_calendar_sync"
+                        android:textColor="@color/colorOnBackground"
+                        android:textSize="@dimen/settings_view_list_item_primary_text_size"
+                        android:textStyle="bold"
+                        app:layout_constraintEnd_toStartOf="@+id/settings_view_calendar_sync_select_value"
+                        app:layout_constraintStart_toEndOf="@+id/settings_view_calendar_sync_select_icon"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/settings_view_calendar_sync_select_hint"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/settings_view_list_item_icon_margin"
+                        android:gravity="start"
+                        android:padding="@dimen/settings_view_list_item_text_padding"
+                        android:text="@string/settings_view_list_value_calendar_sync_default"
+                        android:textColor="@color/colorOnBackgroundLight"
+                        android:textSize="@dimen/settings_view_list_item_secondary_text_size"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toStartOf="@+id/settings_view_calendar_sync_select_value"
+                        app:layout_constraintStart_toEndOf="@+id/settings_view_calendar_sync_select_icon"
+                        app:layout_constraintTop_toBottomOf="@+id/settings_view_calendar_sync_select_name" />
+
+                    <androidx.appcompat.widget.AppCompatCheckBox
+                        android:id="@+id/settings_view_calendar_sync_select_value"
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:gravity="center"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintDimensionRatio="1:1"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/settings_view_calendar_sync_select_guideline_end"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <androidx.constraintlayout.widget.Guideline
+                        android:id="@+id/settings_view_calendar_sync_select_guideline"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        app:layout_constraintGuide_percent="0.17" />
+
+                    <androidx.constraintlayout.widget.Guideline
+                        android:id="@+id/settings_view_calendar_sync_select_guideline_end"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        app:layout_constraintGuide_percent="0.87" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </LinearLayout>
+        </androidx.core.widget.NestedScrollView>
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+    <FrameLayout
+        android:id="@+id/settings_view_fragment_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:visibility="gone" />
+
+
+    <androidx.core.widget.ContentLoadingProgressBar
+        android:id="@+id/settings_view_progress"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

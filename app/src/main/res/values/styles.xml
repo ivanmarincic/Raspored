@@ -1,33 +1,17 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme.Light" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="android:windowContentTransitions" tools:targetApi="lollipop">true</item>
-        <item name="colorDark">@color/colorPrimaryDark</item>
+    <style name="AppTheme" parent="Theme.MaterialComponents.NoActionBar">
+        <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorSecondary">@color/colorPrimaryLight</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorSecondary">@color/colorAccent</item>
         <item name="colorAccent">@color/colorAccent</item>
-        <item name="android:colorAccent" tools:targetApi="lollipop">@color/colorAccent</item>
-        <item name="android:windowBackground">@color/windowBackgroundColor</item>
-        <item name="windowBackgroundPrimary">@color/windowBackgroundColor</item>
-        <item name="windowBackgroundSecondary">@color/windowBackgroundColor</item>
-        <item name="dialogBackground">@color/windowBackgroundColor</item>
-        <item name="dialogBackgroundSecondary">@color/windowBackgroundColor</item>
-        <item name="textColorPrimary">@color/textColorPrimary</item>
-        <item name="textColorSecondary">@color/textColorSecondary</item>
-        <item name="android:textColorSecondary">@color/textColorSecondary</item>
-        <item name="textColorDisabled">@color/textColorDisabled</item>
-        <item name="textColorActionBarPrimary">@color/actionBarTextColorPrimary</item>
-        <item name="android:statusBarColor" tools:targetApi="lollipop">@color/colorPrimaryDark</item>
-        <item name="toolbarNavigationButtonStyle">@style/ToolbarNavigationButtonStyle</item>
+        <item name="android:textColorPrimary">@color/colorOnPrimary</item>
+        <item name="android:colorBackground">@color/colorBackground</item>
+        <item name="android:colorForeground">@color/colorOnBackground</item>
+        <item name="android:textColorPrimaryInverse">@color/colorOnPrimaryInverse</item>
+        <item name="android:textColorSecondary">@color/colorOnPrimary</item>
+        <item name="android:textColorSecondaryInverse">@color/colorOnPrimaryInverse</item>
     </style>
-
-    <style name="ToolbarNavigationButtonStyle" parent="@style/Widget.AppCompat.Toolbar.Button.Navigation">
-        <item name="android:minWidth">0dp</item>
-        <item name="android:paddingBottom">12dp</item>
-        <item name="android:paddingTop">12dp</item>
-        <item name="android:scaleType">centerInside</item>
-    </style>
-
-    <style name="DialogTheme" parent="android:Theme.Dialog"></style>
 </resources>

@@ -1,26 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorPrimary">#3949AB</color>
-    <color name="colorPrimaryLight">#3F51B5</color>
-    <color name="colorAccent">#ff4081</color>
-    <color name="iconColorPrimary">#2196f3</color>
-    <color name="iconColorSecondary">#ffffff</color>
-    <color name="windowBackgroundColor">#eceff1</color>
-    <color name="textColorPrimary">#000000</color>
-    <color name="textColorSecondary">#b3000000</color>
-    <color name="textColorDisabled">#80000000</color>
-    <color name="actionBarTextColorPrimary">#ffffff</color>
-    <color name="actionBarBackgroundColor">@color/colorPrimary</color>
-    <color name="tabsBarBackgroundColor">@color/colorPrimaryLight</color>
-    <color name="tabsBarTextColorPrimary">#ffffff</color>
-    <color name="tabsBarTextColorSecondary">#b3ffffff</color>
-    <color name="hoursBackgroundColor">#5262bc</color>
-    <color name="hoursTextColorPrimary">#ffffff</color>
-    <color name="hoursBackgroundStrokeColor">#00000000</color>
-    <color name="lessonsBackgroundColor">#5262bc</color>
-    <color name="lessonsBackgroundStrokeColor">#00000000</color>
-    <color name="lessonsTextColorPrimary">#ffffff</color>
-    <color name="widgetBackgroundColor">#5262bc</color>
-    <color name="widgetTextColorPrimary">#ffffff</color>
+    <color name="colorPrimaryDark">#01579B</color>
+    <color name="colorPrimary">#0277BD</color>
+    <color name="colorPrimaryLight">#0288D1</color>
+    <color name="colorAccent">@color/colorPrimaryLight</color>
+    <color name="colorBackground">#303030</color>
+    <color name="colorBackgroundLight">#424242</color>
+    <color name="colorBackgroundVeryLight">#a4a4a4</color>
+    <color name="colorBackgroundDark">#212121</color>
+    <color name="colorOnBackground">#ffffff</color>
+    <color name="colorOnBackgroundLight">#b3ffffff</color>
+    <color name="colorOnBackgroundDisabled">#80ffffff</color>
+    <color name="colorOnPrimary">#ffffff</color>
+    <color name="colorOnPrimaryLight">#b3ffffff</color>
+    <color name="colorOnPrimaryDisabled">#80ffffff</color>
+    <color name="colorOnPrimaryInverse">#000000</color>
+
 </resources>

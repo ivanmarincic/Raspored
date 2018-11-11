@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:cardBackgroundColor="@color/colorBackgroundLight"
+        app:cardCornerRadius="@dimen/corner_radius"
+        app:cardElevation="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/main_view_appointments_list_item_guideline"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_margin="@dimen/margin_between_views">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/main_view_appointments_list_item_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?attr/selectableItemBackground"
+            android:padding="@dimen/main_view_appointment_card_padding">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/main_view_appointments_list_item_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/margin_between_views"
+                android:gravity="center"
+                android:textColor="@color/colorOnBackground"
+                android:textSize="@dimen/primary_text_size"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toTopOf="@+id/main_view_appointments_list_item_guideline_horizontal"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="Matematika 1" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/main_view_appointments_list_item_guideline_vertical"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/main_view_appointments_list_item_guideline_horizontal">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/main_view_appointments_list_item_classroom_icon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="@dimen/margin_between_views"
+                    android:layout_marginEnd="@dimen/margin_between_views"
+                    app:srcCompat="@drawable/ic_classroom"
+                    app:tint="@color/colorOnBackgroundLight" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/main_view_appointments_list_item_classroom"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/margin_between_views"
+                    android:layout_marginEnd="@dimen/margin_between_views"
+                    android:textColor="@color/colorOnBackgroundLight"
+                    android:textSize="@dimen/secondary_text_size"
+                    tools:text="D103" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/main_view_appointments_list_item_guideline_vertical"
+                app:layout_constraintTop_toBottomOf="@+id/main_view_appointments_list_item_guideline_horizontal">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/main_view_appointments_list_item_time_icon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="@dimen/margin_between_views"
+                    android:layout_marginEnd="@dimen/margin_between_views"
+                    app:srcCompat="@drawable/ic_time"
+                    app:tint="@color/colorOnBackgroundLight" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/main_view_appointments_list_item_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/margin_between_views"
+                    android:layout_marginEnd="@dimen/margin_between_views"
+                    android:textColor="@color/colorOnBackgroundLight"
+                    android:textSize="@dimen/secondary_text_size"
+                    tools:text="12:30 - 13:30" />
+            </LinearLayout>
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/main_view_appointments_list_item_guideline_vertical"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent="0.5" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/main_view_appointments_list_item_guideline_horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintGuide_percent="0.5" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/main_view_appointments_list_item_guideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.17" />
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/main_view_appointment_info_name_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin_between_views"
+        android:gravity="start"
+        android:text="@string/main_view_appointment_info_dialog_name_label"
+        android:textColor="@color/colorOnBackground"
+        android:textSize="@dimen/primary_text_size"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/main_view_appointment_info_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin_between_views"
+        android:gravity="start"
+        android:textColor="@color/colorOnBackground"
+        android:textSize="@dimen/primary_text_size"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/main_view_appointment_info_name_label"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/main_view_appointment_info_details_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin_between_views"
+        android:gravity="start"
+        android:text="@string/main_view_appointment_info_dialog_details_label"
+        android:textColor="@color/colorOnBackground"
+        android:textSize="@dimen/primary_text_size"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/main_view_appointment_info_name" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/main_view_appointment_info_details"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin_between_views"
+        android:gravity="start"
+        android:textColor="@color/colorOnBackground"
+        android:textSize="@dimen/primary_text_size"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/main_view_appointment_info_details_label"
+        app:layout_constraintTop_toBottomOf="@+id/main_view_appointment_info_name" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/main_view_appointment_info_classroom_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin_between_views"
+        android:gravity="start"
+        android:text="@string/main_view_appointment_info_dialog_classroom_label"
+        android:textColor="@color/colorOnBackground"
+        android:textSize="@dimen/primary_text_size"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/main_view_appointment_info_details" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/main_view_appointment_info_classroom"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin_between_views"
+        android:gravity="start"
+        android:textColor="@color/colorOnBackground"
+        android:textSize="@dimen/primary_text_size"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/main_view_appointment_info_classroom_label"
+        app:layout_constraintTop_toBottomOf="@+id/main_view_appointment_info_details" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/main_view_appointment_info_time_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin_between_views"
+        android:gravity="start"
+        android:text="@string/main_view_appointment_info_dialog_time_label"
+        android:textColor="@color/colorOnBackground"
+        android:textSize="@dimen/primary_text_size"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/main_view_appointment_info_classroom" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/main_view_appointment_info_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin_between_views"
+        android:gravity="start"
+        android:textColor="@color/colorOnBackground"
+        android:textSize="@dimen/primary_text_size"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/main_view_appointment_info_time_label"
+        app:layout_constraintTop_toBottomOf="@+id/main_view_appointment_info_classroom" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/main_view_appointment_info_lecturer_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin_between_views"
+        android:gravity="start"
+        android:text="@string/main_view_appointment_info_dialog_lecturer_label"
+        android:textColor="@color/colorOnBackground"
+        android:textSize="@dimen/primary_text_size"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/main_view_appointment_info_time" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/main_view_appointment_info_lecturer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin_between_views"
+        android:gravity="start"
+        android:textColor="@color/colorOnBackground"
+        android:textSize="@dimen/primary_text_size"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/main_view_appointment_info_lecturer_label"
+        app:layout_constraintTop_toBottomOf="@+id/main_view_appointment_info_time" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/main_view_appointment_info_block"
+        style="@style/Widget.MaterialComponents.Button.TextButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin_between_views"
+        android:text="@string/settings_view_list_value_blocked_add"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/main_view_appointment_info_lecturer" />
+</androidx.constraintlayout.widget.ConstraintLayout>

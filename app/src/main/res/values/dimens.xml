@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="settings_view_list_item_primary_text_size">18sp</dimen>
+    <dimen name="settings_view_list_item_secondary_text_size">14sp</dimen>
+    <dimen name="settings_view_list_item_padding">8dp</dimen>
+    <dimen name="settings_view_list_item_margin">8dp</dimen>
+    <dimen name="settings_view_list_item_text_padding">2dp</dimen>
+    <dimen name="settings_view_list_item_icon_margin">8dp</dimen>
+    <dimen name="settings_view_list_item_icon_padding">8dp</dimen>
+    <dimen name="settings_view_card_height">180dp</dimen>
+    <dimen name="settings_view_dialog_height">200dp</dimen>
+    <dimen name="settings_view_dialog_width">300dp</dimen>
+    <dimen name="main_view_appointment_card_padding">16dp</dimen>
+    <dimen name="primary_text_size">18sp</dimen>
+    <dimen name="secondary_text_size">14sp</dimen>
+    <dimen name="toolbar_text_size">20sp</dimen>
+    <dimen name="toolbar_text_padding">16dp</dimen>
+    <dimen name="header_text_size">20sp</dimen>
+    <dimen name="margin_between_views">8dp</dimen>
+    <dimen name="corner_radius">6dp</dimen>
+    <dimen name="spinner_selected_padding">16dp</dimen>
+    <dimen name="spinner_item_padding">8dp</dimen>
+    <dimen name="spinner_item_margin">8dp</dimen>
+</resources>

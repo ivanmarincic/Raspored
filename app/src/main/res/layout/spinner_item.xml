@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <TextView xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/si_item"
-    android:layout_width="wrap_content"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingBottom="2dp"
-    android:paddingLeft="5dp"
-    android:paddingRight="25dp"
-    android:textColor="@color/textColorPrimary"
-    android:paddingTop="2dp"
-    android:textSize="18dp"
-    android:textStyle="bold" />
+    android:layout_margin="@dimen/spinner_item_margin"
+    android:ellipsize="middle"
+    android:padding="@dimen/spinner_item_padding"
+    android:textColor="@color/colorOnBackground"
+    android:textSize="@dimen/primary_text_size" />

@@ -2,8 +2,13 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/ab_settings"
-        android:icon="@drawable/settings"
-        android:title="Settings"
-        app:showAsAction="always"/>
+        android:id="@+id/main_view_menu_now"
+        android:icon="@drawable/ic_now"
+        android:title="@string/main_view_menu_now_title"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/main_view_menu_settings"
+        android:icon="@drawable/ic_settings"
+        android:title="@string/main_view_menu_settings_title"
+        app:showAsAction="ifRoom" />
 </menu>
