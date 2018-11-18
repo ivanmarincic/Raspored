@@ -118,14 +118,10 @@ public class AppointmentService {
                 .fromCallable(new Callable<Pair<List<AppointmentDto>, Boolean>>() {
                     @Override
                     public Pair<List<AppointmentDto>, Boolean> call() throws Exception {
-                        try {
-                            List<AppointmentDto> appointments = getAppointmentsFromServer(appointmentFilter);
-                            if (appointments != null) {
-                                syncCalendarEvents(calendarFilterDto, appointments, context);
-                                return new Pair<>(appointments, true);
-                            }
-                        } catch (Exception e) {
-                            e.printStackTrace();
+                        List<AppointmentDto> appointments = getAppointmentsFromServer(appointmentFilter);
+                        if (appointments != null) {
+                            syncCalendarEvents(calendarFilterDto, appointments, context);
+                            return new Pair<>(appointments, true);
                         }
                         return new Pair<>(
                                 Utils.convertToDto(

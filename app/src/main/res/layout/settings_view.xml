@@ -25,6 +25,7 @@
                 android:id="@+id/settings_view_toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:elevation="4dp"
                 app:title="@string/settings_view_toolbar_title" />
 
         </com.google.android.material.appbar.AppBarLayout>

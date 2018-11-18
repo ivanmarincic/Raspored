@@ -176,11 +176,13 @@ public class SettingsView extends AppCompatActivity implements SettingsContract.
                     courseSelection.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            CourseSelectionDialog courseSelectionDialog = new CourseSelectionDialog(SettingsView.this);
+                            Integer courseId = currentSettings.get(SettingsItemDto.SETTINGS_TYPE_COURSE).getValue(Integer.class);
+                            CourseSelectionDialog courseSelectionDialog = new CourseSelectionDialog(SettingsView.this, courseId, -1);
                             courseSelectionDialog.setOnSelectListener(new CourseSelectionDialog.OnSelectListener() {
                                 @Override
                                 public void onSelect(CourseDto course) {
-                                    currentSettings.get(SettingsItemDto.SETTINGS_TYPE_COURSE).setValue(course);
+                                    currentSettings.get(SettingsItemDto.SETTINGS_TYPE_COURSE).setValue(course.getId());
+                                    currentSettings.get(SettingsItemDto.SETTINGS_TYPE_COURSE_NAME).setValue(course.getName());
                                     currentSettings.get(SettingsItemDto.SETTINGS_TYPE_COURSE_LAST_SYNC).setValue(DateTime.now().withZone(DateTimeZone.UTC));
                                     courseSelectionValue.setText(course.getName());
                                     courseChanged = true;
@@ -189,8 +191,8 @@ public class SettingsView extends AppCompatActivity implements SettingsContract.
                             courseSelectionDialog.show();
                         }
                     });
-                    if (item.getValue() != null) {
-                        courseSelectionValue.setText(item.getValue(CourseDto.class).getName());
+                    if (item.getValue(Integer.class) != -1) {
+                        courseSelectionValue.setText(currentSettings.get(SettingsItemDto.SETTINGS_TYPE_COURSE_NAME).getValue(String.class));
                     } else {
                         courseSelectionValue.setText(getResources().getString(R.string.settings_view_list_value_course_default));
                     }
@@ -202,11 +204,13 @@ public class SettingsView extends AppCompatActivity implements SettingsContract.
                             SettingsAppointmentsFilterFragment fragment = new SettingsAppointmentsFilterFragment();
                             Bundle fragmentArguments = new Bundle();
                             if (currentSettings.get(SettingsItemDto.SETTINGS_TYPE_PARTIAL_COURSE).getValue(Integer.class) != -1) {
-                                Integer courseId = currentSettings.get(SettingsItemDto.SETTINGS_TYPE_PARTIAL_COURSE).getValue(Integer.class);
+                                Integer partialCourseId = currentSettings.get(SettingsItemDto.SETTINGS_TYPE_PARTIAL_COURSE).getValue(Integer.class);
                                 String courseName = currentSettings.get(SettingsItemDto.SETTINGS_TYPE_PARTIAL_COURSE_NAME).getValue(String.class);
-                                fragmentArguments.putInt(SettingsAppointmentsFilterFragment.SELECTED_COURSE, courseId);
+                                fragmentArguments.putInt(SettingsAppointmentsFilterFragment.SELECTED_COURSE, partialCourseId);
                                 fragmentArguments.putString(SettingsAppointmentsFilterFragment.SELECTED_COURSE_NAME, courseName);
                             }
+                            Integer courseId = currentSettings.get(SettingsItemDto.SETTINGS_TYPE_COURSE).getValue(Integer.class);
+                            fragmentArguments.putInt(SettingsAppointmentsFilterFragment.FILTERED_COURSE, courseId);
                             fragmentArguments.putString(SettingsAppointmentsFilterFragment.TITLE, getResources().getString(R.string.settings_view_list_value_partial));
                             fragmentArguments.putString(SettingsAppointmentsFilterFragment.EMPTY_TEXT, getResources().getString(R.string.settings_view_list_value_partial_empty));
                             fragmentArguments.putString(SettingsAppointmentsFilterFragment.BUTTON_TEXT, getResources().getString(R.string.settings_view_list_value_partial_add));
@@ -243,10 +247,8 @@ public class SettingsView extends AppCompatActivity implements SettingsContract.
                         public void onClick(View v) {
                             SettingsAppointmentsFilterFragment fragment = new SettingsAppointmentsFilterFragment();
                             Bundle fragmentArguments = new Bundle();
-                            if (currentSettings.get(SettingsItemDto.SETTINGS_TYPE_COURSE).getValue() != null) {
-                                CourseDto course = currentSettings.get(SettingsItemDto.SETTINGS_TYPE_COURSE).getValue(CourseDto.class);
-                                fragmentArguments.putInt(SettingsAppointmentsFilterFragment.SELECTED_COURSE, course.getId());
-                            }
+                            Integer courseId = currentSettings.get(SettingsItemDto.SETTINGS_TYPE_COURSE).getValue(Integer.class);
+                            fragmentArguments.putInt(SettingsAppointmentsFilterFragment.SELECTED_COURSE, courseId);
                             fragmentArguments.putString(SettingsAppointmentsFilterFragment.TITLE, getResources().getString(R.string.settings_view_list_value_blocked));
                             fragmentArguments.putString(SettingsAppointmentsFilterFragment.EMPTY_TEXT, getResources().getString(R.string.settings_view_list_value_blocked_empty));
                             fragmentArguments.putString(SettingsAppointmentsFilterFragment.BUTTON_TEXT, getResources().getString(R.string.settings_view_list_value_blocked_add));

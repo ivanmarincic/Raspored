@@ -2,6 +2,7 @@ package com.idiotnation.raspored.dialogs;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.widget.Toast;
 
 import com.idiotnation.raspored.R;
 import com.idiotnation.raspored.adapters.ArrayListAdapter;
@@ -9,6 +10,7 @@ import com.idiotnation.raspored.custom.MaterialDialog;
 import com.idiotnation.raspored.dataaccess.api.AppointmentService;
 import com.idiotnation.raspored.dataaccess.api.ServiceGenerator;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -78,7 +80,11 @@ public class AppointmentSelectionDialog extends MaterialDialog {
 
                     @Override
                     public void onError(Throwable e) {
-
+                        if (e instanceof IOException) {
+                            Toast.makeText(getContext(), getContext().getResources().getString(R.string.request_error_internet), Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(getContext(), getContext().getResources().getString(R.string.request_error_internal), Toast.LENGTH_SHORT).show();
+                        }
                     }
                 });
     }

@@ -9,9 +9,9 @@ import com.idiotnation.raspored.models.jpa.Course;
 import com.idiotnation.raspored.models.jpa.CourseType;
 import com.j256.ormlite.dao.Dao;
 
-import java.io.IOException;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.Callable;
 
@@ -51,7 +51,7 @@ public class CourseService {
                 });
     }
 
-    public Single<List<CourseDto>> syncLatest(final CourseFilterDto courseFilterDto) {
+    public Single<List<CourseDto>> syncLatest(final CourseFilterDto courseFilterDto, final Integer filteredOutCourse) {
         return Single.fromCallable(new Callable<List<CourseDto>>() {
             @Override
             public List<CourseDto> call() throws Exception {
@@ -78,17 +78,35 @@ public class CourseService {
                                 return o1.getName().compareTo(o2.getName());
                             }
                         });
+                        if (filteredOutCourse != null) {
+                            Iterator iterator = synced.iterator();
+                            while (iterator.hasNext()) {
+                                CourseDto courseDto = (CourseDto) iterator.next();
+                                if (courseDto.getId().equals(filteredOutCourse)) {
+                                    iterator.remove();
+                                    break;
+                                }
+                            }
+                        }
                         return synced;
                     }
-                } catch (IOException e) {
+                } catch (Exception e) {
                     e.printStackTrace();
+                    List<CourseDto> courses = Utils.convertToDto(
+                            courseDao
+                                    .queryBuilder()
+                                    .orderBy("name", true)
+                                    .where()
+                                    .ne("id", filteredOutCourse)
+                                    .query()
+                            , CourseDto.class);
+                    if (courses.size() == 0) {
+                        throw e;
+                    } else {
+                        return courses;
+                    }
                 }
-                return Utils.convertToDto(
-                        courseDao
-                                .queryBuilder()
-                                .orderBy("name", true)
-                                .query()
-                        , CourseDto.class);
+                return null;
             }
         });
     }

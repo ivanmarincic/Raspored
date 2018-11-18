@@ -15,7 +15,7 @@ public class MainContract {
         void initialize();
         void loadList(List<AppointmentDto> appointments);
         void scrollToNow();
-        void setRefreshing();
+        void setRefreshing(boolean isRefreshing);
         void startFirstTimeConfiguration();
     }
 

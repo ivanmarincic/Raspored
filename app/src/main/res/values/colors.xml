@@ -11,6 +11,7 @@
     <color name="colorOnBackground">#ffffff</color>
     <color name="colorOnBackgroundLight">#b3ffffff</color>
     <color name="colorOnBackgroundDisabled">#80ffffff</color>
+    <color name="colorOnBackgroundSelected">#16ffffff</color>
     <color name="colorOnPrimary">#ffffff</color>
     <color name="colorOnPrimaryLight">#b3ffffff</color>
     <color name="colorOnPrimaryDisabled">#80ffffff</color>

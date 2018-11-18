@@ -6,21 +6,30 @@
     android:layout_height="wrap_content"
     android:orientation="horizontal">
 
-    <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/main_view_appointments_list_header_date"
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/main_view_appointments_list_header_date_container"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_margin="@dimen/margin_between_views"
-        android:gravity="center"
-        android:textColor="@color/colorBackgroundVeryLight"
-        android:textSize="@dimen/primary_text_size"
-        android:textStyle="bold"
+        app:cardBackgroundColor="@android:color/transparent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintEnd_toStartOf="@+id/main_view_appointments_list_header_guideline"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:text="3.\n11." />
+        tools:text="3.\n11.">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/main_view_appointments_list_header_date"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:textColor="@color/colorBackgroundVeryLight"
+            android:textSize="@dimen/primary_text_size"
+            android:textStyle="bold"
+            tools:text="3.\n11." />
+    </com.google.android.material.card.MaterialCardView>
 
 
     <androidx.constraintlayout.widget.Guideline

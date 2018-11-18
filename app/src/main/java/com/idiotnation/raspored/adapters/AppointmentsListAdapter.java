@@ -2,12 +2,14 @@ package com.idiotnation.raspored.adapters;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.graphics.Color;
 import android.util.SparseArray;
 import android.util.SparseIntArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.android.material.card.MaterialCardView;
 import com.idiotnation.raspored.R;
 import com.idiotnation.raspored.custom.HeaderItemDecoration;
 import com.idiotnation.raspored.helpers.Utils;
@@ -40,6 +42,10 @@ public class AppointmentsListAdapter extends RecyclerView.Adapter<RecyclerView.V
     private SparseIntArray sparseListTypes;
     private List<Integer> headerPositions;
     private ItemOnSelectListener listener;
+    private int colorPrimary;
+    private int colorOnPrimary;
+    private int colorBackgroundVerLight;
+    private int elevation;
 
     public void setList(List<AppointmentDto> list) {
         sparseList = new SparseArray<>();
@@ -88,6 +94,10 @@ public class AppointmentsListAdapter extends RecyclerView.Adapter<RecyclerView.V
     public AppointmentsListAdapter(Context context, List<AppointmentDto> list) {
         this.context = context;
         setList(list);
+        colorPrimary = ContextCompat.getColor(context, R.color.colorPrimary);
+        colorOnPrimary = ContextCompat.getColor(context, R.color.colorOnPrimary);
+        colorBackgroundVerLight = ContextCompat.getColor(context, R.color.colorBackgroundVeryLight);
+        elevation = context.getResources().getDimensionPixelSize(R.dimen.header_elevation);
     }
 
     @NonNull
@@ -166,13 +176,18 @@ public class AppointmentsListAdapter extends RecyclerView.Adapter<RecyclerView.V
     @Override
     public void bindHeaderData(View header, int headerPosition) {
         AppCompatTextView date = header.findViewById(R.id.main_view_appointments_list_header_date);
+        MaterialCardView dateContainer = header.findViewById(R.id.main_view_appointments_list_header_date_container);
         AppointmentHeaderDto item = (AppointmentHeaderDto) sparseList.get(headerPosition);
         date.setText(item.getDate().toLocalDateTime().toString("dd\nMM"));
         if (headerPosition == indexOfNow) {
-            date.setBackgroundDrawable(ContextCompat.getDrawable(context, R.drawable.main_view_appointments_list_header_date_background));
-            date.setTextColor(ContextCompat.getColor(context, R.color.colorOnPrimary));
+            dateContainer.setCardBackgroundColor(colorPrimary);
+            dateContainer.setCardElevation(elevation);
+            dateContainer.setRadius(dateContainer.getHeight() / 2);
+            date.setTextColor(colorOnPrimary);
         } else {
-            date.setBackgroundDrawable(null);
+            dateContainer.setCardBackgroundColor(Color.TRANSPARENT);
+            dateContainer.setCardElevation(0);
+            dateContainer.setRadius(0);
             date.setTextColor(ContextCompat.getColor(context, R.color.colorBackgroundVeryLight));
         }
     }

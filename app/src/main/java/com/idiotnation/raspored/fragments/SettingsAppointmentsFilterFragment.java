@@ -33,6 +33,7 @@ public class SettingsAppointmentsFilterFragment extends Fragment {
     public static final String LIST_VALUES = "LIST_VALUES";
     public static final String SELECTED_COURSE = "SELECTED_COURSE";
     public static final String SELECTED_COURSE_NAME = "SELECTED_COURSE_NAME";
+    public static final String FILTERED_COURSE = "FILTERED_COURSE";
     public static final String HIDE_COURSE_SELECTION = "HIDE_COURSE_SELECTION";
 
     public interface OnFinishListener {
@@ -79,7 +80,7 @@ public class SettingsAppointmentsFilterFragment extends Fragment {
 
     @OnClick(R.id.settings_view_appointments_filter_course_select)
     public void courseSelection() {
-        CourseSelectionDialog dialog = new CourseSelectionDialog(getActivity());
+        CourseSelectionDialog dialog = new CourseSelectionDialog(getActivity(), selectedCourse, filteredCourse);
         dialog.setOnSelectListener(new CourseSelectionDialog.OnSelectListener() {
             @Override
             public void onSelect(CourseDto course) {
@@ -103,6 +104,7 @@ public class SettingsAppointmentsFilterFragment extends Fragment {
     private List<String> list;
     private RemovableArrayListAdapter listAdapter;
     private OnFinishListener listener;
+    private Integer filteredCourse = -1;
     private Integer selectedCourse = -1;
     private String selectedCourseName = null;
 
@@ -116,6 +118,7 @@ public class SettingsAppointmentsFilterFragment extends Fragment {
             titleView.setText(arguments.getString(TITLE, ""));
             addButton.setText(arguments.getString(BUTTON_TEXT, ""));
             emptyView.setText(arguments.getString(EMPTY_TEXT, ""));
+            filteredCourse = arguments.getInt(FILTERED_COURSE, -1);
             selectedCourse = arguments.getInt(SELECTED_COURSE, -1);
             selectedCourseName = arguments.getString(SELECTED_COURSE_NAME, null);
             if (selectedCourseName != null) {

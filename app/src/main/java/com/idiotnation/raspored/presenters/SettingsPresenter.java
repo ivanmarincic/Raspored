@@ -12,15 +12,9 @@ import android.widget.Toast;
 
 import com.idiotnation.raspored.R;
 import com.idiotnation.raspored.contracts.SettingsContract;
-import com.idiotnation.raspored.dataaccess.api.CourseService;
-import com.idiotnation.raspored.dataaccess.api.ServiceGenerator;
-import com.idiotnation.raspored.dataaccess.database.DatabaseManager;
 import com.idiotnation.raspored.helpers.Utils;
-import com.idiotnation.raspored.models.dto.CourseDto;
 import com.idiotnation.raspored.models.dto.CourseFilterDto;
 import com.idiotnation.raspored.models.dto.SettingsItemDto;
-import com.idiotnation.raspored.models.jpa.Course;
-import com.j256.ormlite.dao.Dao;
 
 import org.joda.time.DateTime;
 
@@ -43,16 +37,12 @@ public class SettingsPresenter implements SettingsContract.Presenter {
     private SettingsContract.View view;
     private Context context;
     private SharedPreferences sharedPreferences;
-    private Dao<Course, Integer> courseDao;
-    private CourseService courseService;
     private HashMap<String, SettingsItemDto> currentSettings;
 
     @Override
     public void start(SettingsContract.View view, Context context) {
         this.view = view;
         this.context = context;
-        this.courseDao = DatabaseManager.courseDao;
-        this.courseService = ServiceGenerator.createService(CourseService.class);
         this.sharedPreferences = context.getSharedPreferences(context.getPackageName(), Context.MODE_PRIVATE);
         view.initialize();
     }
@@ -62,19 +52,10 @@ public class SettingsPresenter implements SettingsContract.Presenter {
         Single
                 .fromCallable(new Callable<HashMap<String, SettingsItemDto>>() {
                     @Override
-                    public HashMap<String, SettingsItemDto> call() throws Exception {
+                    public HashMap<String, SettingsItemDto> call() {
                         HashMap<String, SettingsItemDto> settings = new HashMap<>();
-                        Integer selectedCourseId = sharedPreferences.getInt(SettingsItemDto.SETTINGS_TYPE_COURSE, -1);
-                        if (selectedCourseId == -1) {
-                            settings.put(SettingsItemDto.SETTINGS_TYPE_COURSE, new SettingsItemDto(null, SettingsItemDto.SETTINGS_TYPE_COURSE));
-                        } else {
-                            Course course = courseDao.queryForId(selectedCourseId);
-                            if (course != null) {
-                                settings.put(SettingsItemDto.SETTINGS_TYPE_COURSE, new SettingsItemDto(new CourseDto(course), SettingsItemDto.SETTINGS_TYPE_COURSE));
-                            } else {
-                                settings.put(SettingsItemDto.SETTINGS_TYPE_COURSE, new SettingsItemDto(null, SettingsItemDto.SETTINGS_TYPE_COURSE));
-                            }
-                        }
+                        settings.put(SettingsItemDto.SETTINGS_TYPE_COURSE, new SettingsItemDto(sharedPreferences.getInt(SettingsItemDto.SETTINGS_TYPE_COURSE, -1), SettingsItemDto.SETTINGS_TYPE_COURSE));
+                        settings.put(SettingsItemDto.SETTINGS_TYPE_COURSE_NAME, new SettingsItemDto(sharedPreferences.getString(SettingsItemDto.SETTINGS_TYPE_COURSE_NAME, null), SettingsItemDto.SETTINGS_TYPE_COURSE_NAME));
                         settings.put(SettingsItemDto.SETTINGS_TYPE_PARTIAL_COURSE, new SettingsItemDto(sharedPreferences.getInt(SettingsItemDto.SETTINGS_TYPE_PARTIAL_COURSE, -1), SettingsItemDto.SETTINGS_TYPE_PARTIAL_COURSE));
                         settings.put(SettingsItemDto.SETTINGS_TYPE_PARTIAL_COURSE_NAME, new SettingsItemDto(sharedPreferences.getString(SettingsItemDto.SETTINGS_TYPE_PARTIAL_COURSE_NAME, null), SettingsItemDto.SETTINGS_TYPE_PARTIAL_COURSE_NAME));
                         List<String> partialStrings = new ArrayList<>(sharedPreferences.getStringSet(SettingsItemDto.SETTINGS_TYPE_PARTIAL, new HashSet<String>()));
@@ -126,11 +107,10 @@ public class SettingsPresenter implements SettingsContract.Presenter {
     @Override
     public void saveSettings(HashMap<String, SettingsItemDto> settings) {
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        SettingsItemDto courseSelected = settings.get(SettingsItemDto.SETTINGS_TYPE_COURSE);
-        if (courseSelected.getValue() != null) {
-            editor.putInt(SettingsItemDto.SETTINGS_TYPE_COURSE, courseSelected.getValue(CourseDto.class).getId());
-        } else {
-            editor.remove(SettingsItemDto.SETTINGS_TYPE_COURSE);
+        editor.putInt(SettingsItemDto.SETTINGS_TYPE_COURSE, settings.get(SettingsItemDto.SETTINGS_TYPE_COURSE).getValue(Integer.class));
+        Object courseName = settings.get(SettingsItemDto.SETTINGS_TYPE_COURSE_NAME).getValue();
+        if (courseName != null) {
+            editor.putString(SettingsItemDto.SETTINGS_TYPE_COURSE_NAME, courseName.toString());
         }
         editor.putInt(SettingsItemDto.SETTINGS_TYPE_PARTIAL_COURSE, settings.get(SettingsItemDto.SETTINGS_TYPE_PARTIAL_COURSE).getValue(Integer.class));
         Object partialCourseName = settings.get(SettingsItemDto.SETTINGS_TYPE_PARTIAL_COURSE_NAME).getValue();
@@ -198,6 +178,21 @@ public class SettingsPresenter implements SettingsContract.Presenter {
                 cursor.close();
                 return true;
             } else {
+                String selectionOther =
+                        "("
+                                + CalendarContract.Calendars.IS_PRIMARY + " = ?)";
+                String[] selectionOtherArgs = new String[]{"1"};
+                Cursor cursorOther = contentResolver.query(uri, EVENT_PROJECTION, selectionOther, selectionOtherArgs, null);
+                if (cursorOther != null && cursorOther.moveToFirst()) {
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                    if (sharedPreferences.getString(SettingsItemDto.SETTINGS_TYPE_CALENDAR_SYNC_UUID, null) == null) {
+                        editor.putString(SettingsItemDto.SETTINGS_TYPE_CALENDAR_SYNC_UUID, Utils.CALENDAR_SYNC_URI);
+                    }
+                    editor.putInt(SettingsItemDto.SETTINGS_TYPE_CALENDAR_SYNC_ID, cursorOther.getInt(PROJECTION_ID_INDEX));
+                    editor.apply();
+                    cursorOther.close();
+                    return true;
+                }
                 Toast.makeText(context, context.getString(R.string.settings_view_list_value_calendar_sync_not_found), Toast.LENGTH_SHORT).show();
                 return false;
             }

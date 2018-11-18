@@ -21,4 +21,5 @@
     <dimen name="spinner_selected_padding">16dp</dimen>
     <dimen name="spinner_item_padding">8dp</dimen>
     <dimen name="spinner_item_margin">8dp</dimen>
+    <dimen name="header_elevation">4dp</dimen>
 </resources>

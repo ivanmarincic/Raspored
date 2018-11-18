@@ -3,8 +3,10 @@ package com.idiotnation.raspored.presenters;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Pair;
+import android.widget.Toast;
 
 import com.evernote.android.job.JobManager;
+import com.idiotnation.raspored.R;
 import com.idiotnation.raspored.contracts.MainContract;
 import com.idiotnation.raspored.helpers.Utils;
 import com.idiotnation.raspored.jobs.AutoUpdateJob;
@@ -17,6 +19,7 @@ import com.idiotnation.raspored.services.AppointmentService;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -62,7 +65,6 @@ public class MainPresenter implements MainContract.Presenter {
     public void checkSettingsResultFlags(int flags) {
         if (flags != -1) {
             if ((flags & Utils.SETTINGS_RESULT_EXTRAS_UPDATE) == Utils.SETTINGS_RESULT_EXTRAS_UPDATE) {
-                view.setRefreshing();
                 syncAppointments();
             }
             if ((flags & Utils.SETTINGS_RESULT_EXTRAS_JOB) == Utils.SETTINGS_RESULT_EXTRAS_JOB) {
@@ -120,7 +122,12 @@ public class MainPresenter implements MainContract.Presenter {
 
                     @Override
                     public void onError(Throwable e) {
-
+                        if (e instanceof IOException) {
+                            Toast.makeText(context, context.getResources().getString(R.string.request_error_internet), Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(context, context.getResources().getString(R.string.request_error_internal), Toast.LENGTH_SHORT).show();
+                        }
+                        view.setRefreshing(false);
                     }
                 });
     }
@@ -134,7 +141,7 @@ public class MainPresenter implements MainContract.Presenter {
                 .subscribe(new SingleObserver<Pair<List<AppointmentDto>, Boolean>>() {
                     @Override
                     public void onSubscribe(Disposable d) {
-                        view.setRefreshing();
+                        view.setRefreshing(true);
                     }
 
                     @Override
@@ -150,7 +157,12 @@ public class MainPresenter implements MainContract.Presenter {
 
                     @Override
                     public void onError(Throwable e) {
-
+                        if (e instanceof IOException) {
+                            Toast.makeText(context, context.getResources().getString(R.string.request_error_internet), Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(context, context.getResources().getString(R.string.request_error_internal), Toast.LENGTH_SHORT).show();
+                        }
+                        view.setRefreshing(false);
                     }
                 });
     }
@@ -186,7 +198,12 @@ public class MainPresenter implements MainContract.Presenter {
 
                     @Override
                     public void onError(Throwable e) {
-
+                        if (e instanceof IOException) {
+                            Toast.makeText(context, context.getResources().getString(R.string.request_error_internet), Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(context, context.getResources().getString(R.string.request_error_internal), Toast.LENGTH_SHORT).show();
+                        }
+                        view.setRefreshing(false);
                     }
                 });
     }
@@ -206,7 +223,6 @@ public class MainPresenter implements MainContract.Presenter {
                     .putStringSet(SettingsItemDto.SETTINGS_TYPE_BLOCKED, currentSet)
                     .apply();
         }
-        view.setRefreshing();
         syncAppointments();
     }
 }

@@ -45,7 +45,7 @@ public class MainView extends AppCompatActivity implements MainContract.View {
 
     MainContract.Presenter presenter;
     AppointmentsListAdapter listAdapter;
-    private boolean refreshCanceled = false;
+    private boolean isRefreshing = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,7 +77,6 @@ public class MainView extends AppCompatActivity implements MainContract.View {
     @Override
     public void initialize() {
         setSupportActionBar(toolbar);
-        setRefreshing();
         swipeToRefresh.setColorSchemeColors(ContextCompat.getColor(getApplicationContext(), R.color.colorAccent));
         swipeToRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -113,8 +112,7 @@ public class MainView extends AppCompatActivity implements MainContract.View {
         listAdapter.notifyDataSetChanged();
         list.setVisibility(View.VISIBLE);
         list.scrollToPosition(listAdapter.getIndexOfNow());
-        refreshCanceled = true;
-        swipeToRefresh.setRefreshing(false);
+        setRefreshing(false);
     }
 
     @Override
@@ -133,14 +131,16 @@ public class MainView extends AppCompatActivity implements MainContract.View {
     }
 
     @Override
-    public void setRefreshing() {
+    public void setRefreshing(final boolean refreshing) {
+        this.isRefreshing = refreshing;
         swipeToRefresh.post(new Runnable() {
             @Override
             public void run() {
-                if (!refreshCanceled) {
-                    swipeToRefresh.setRefreshing(true);
+                if (refreshing == isRefreshing) {
+                    swipeToRefresh.setRefreshing(refreshing);
+                } else {
+                    swipeToRefresh.setRefreshing(false);
                 }
-                refreshCanceled = false;
             }
         });
 

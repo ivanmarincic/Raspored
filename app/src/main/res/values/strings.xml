@@ -53,4 +53,6 @@
     <string name="request_permission_rationale">Dopusti pristup kalendaru</string>
     <string name="request_permission_rationale_positive">Da</string>
     <string name="request_permission_rationale_negative">Ne</string>
+    <string name="request_error_internet">Nema internetske veze</string>
+    <string name="request_error_internal">Došlo je do greške pokušajte ponovno</string>
 </resources>

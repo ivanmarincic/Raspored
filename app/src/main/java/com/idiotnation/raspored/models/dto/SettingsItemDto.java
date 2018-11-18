@@ -3,6 +3,7 @@ package com.idiotnation.raspored.models.dto;
 public class SettingsItemDto {
 
     public static final String SETTINGS_TYPE_COURSE = "SETTINGS_SELECTED_COURSE";
+    public static final String SETTINGS_TYPE_COURSE_NAME = "SETTINGS_SELECTED_COURSE_NAME";
     public static final String SETTINGS_TYPE_PARTIAL = "SETTINGS_PARTIAL_APPOINTMENTS";
     public static final String SETTINGS_TYPE_PARTIAL_COURSE = "SETTINGS_PARTIAL_COURSE";
     public static final String SETTINGS_TYPE_PARTIAL_COURSE_NAME = "SETTINGS_PARTIAL_COURSE_NAME";
