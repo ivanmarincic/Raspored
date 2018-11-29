@@ -20,13 +20,16 @@ import org.joda.time.DateTimeZone;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
+import io.reactivex.SingleObserver;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Consumer;
+import io.reactivex.schedulers.Schedulers;
 
 import static android.content.Context.MODE_PRIVATE;
 
@@ -39,29 +42,39 @@ public class AutoUpdateJob extends Job {
     @NonNull
     protected Result onRunJob(@NonNull Params params) {
         final SharedPreferences sharedPreferences = getContext().getSharedPreferences(getContext().getPackageName(), MODE_PRIVATE);
-        disposable = new AppointmentService()
+        final CountDownLatch countDownLatch = new CountDownLatch(1);
+        new AppointmentService()
                 .autoUpdateSync(getAppointmentFilter(sharedPreferences), getCalendarFilter(sharedPreferences), getContext())
-                .subscribe(
-                        new Consumer<Boolean>() {
-                            @Override
-                            public void accept(Boolean hasBeenUpdated) {
-                                if (hasBeenUpdated) {
-                                    sharedPreferences
-                                            .edit()
-                                            .putString(SettingsItemDto.SETTINGS_TYPE_LAST_SYNC, DateTime.now().withZone(DateTimeZone.UTC).toString())
-                                            .apply();
-                                    NotificationManagerCompat notificationManager = NotificationManagerCompat.from(getContext());
-                                    notificationManager.notify(Utils.NOTIFICATION_CHAGNES_ID, createNotification());
-                                }
-                            }
-                        },
-                        new Consumer<Throwable>() {
-                            @Override
-                            public void accept(Throwable throwable) {
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new SingleObserver<Boolean>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                        disposable = d;
+                    }
 
-                            }
-                        });
+                    @Override
+                    public void onSuccess(Boolean hasBeenUpdated) {
+                        if (hasBeenUpdated) {
+                            sharedPreferences
+                                    .edit()
+                                    .putString(SettingsItemDto.SETTINGS_TYPE_LAST_SYNC, DateTime.now().withZone(DateTimeZone.UTC).toString())
+                                    .apply();
+                            NotificationManagerCompat notificationManager = NotificationManagerCompat.from(getContext());
+                            notificationManager.notify(Utils.NOTIFICATION_CHAGNES_ID, createNotification());
+                        }
+                        countDownLatch.countDown();
+                    }
 
+                    @Override
+                    public void onError(Throwable e) {
+                        countDownLatch.countDown();
+                    }
+                });
+        try {
+            countDownLatch.await();
+        } catch (InterruptedException ignored) {
+        }
         return Result.SUCCESS;
     }
 

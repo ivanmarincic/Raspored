@@ -54,7 +54,7 @@ public class CourseService {
     public Single<List<CourseDto>> syncLatest(final CourseFilterDto courseFilterDto, final Integer filteredOutCourse) {
         return Single.fromCallable(new Callable<List<CourseDto>>() {
             @Override
-            public List<CourseDto> call() throws Exception {
+            public List<CourseDto> call() {
                 try {
                     Response<List<CourseDto>> response = courseService
                             .getLatestSynchronous(courseFilterDto)
@@ -89,22 +89,23 @@ public class CourseService {
                             }
                         }
                         return synced;
+                    } else {
+                        List<CourseDto> courses = Utils.convertToDto(
+                                courseDao
+                                        .queryBuilder()
+                                        .orderBy("name", true)
+                                        .where()
+                                        .ne("id", filteredOutCourse)
+                                        .query()
+                                , CourseDto.class);
+                        if (courses.size() == 0) {
+                            throw new NullPointerException();
+                        } else {
+                            return courses;
+                        }
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
-                    List<CourseDto> courses = Utils.convertToDto(
-                            courseDao
-                                    .queryBuilder()
-                                    .orderBy("name", true)
-                                    .where()
-                                    .ne("id", filteredOutCourse)
-                                    .query()
-                            , CourseDto.class);
-                    if (courses.size() == 0) {
-                        throw e;
-                    } else {
-                        return courses;
-                    }
                 }
                 return null;
             }
