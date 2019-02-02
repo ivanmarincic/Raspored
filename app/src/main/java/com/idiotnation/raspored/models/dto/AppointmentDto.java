@@ -8,14 +8,14 @@ import org.joda.time.DateTime;
 
 public class AppointmentDto {
 
-    Integer id = null;
-    String name = "";
-    CourseDto course = null;
-    String details = "";
-    String classroom = "";
-    String lecturer = "";
-    DateTime start = new DateTime();
-    DateTime end = new DateTime();
+    private Integer id = null;
+    private String name = "";
+    private CourseDto course = null;
+    private String details = "";
+    private String classroom = "";
+    private String lecturer = "";
+    private DateTime start = new DateTime();
+    private DateTime end = new DateTime();
 
     public Integer getId() {
         return id;

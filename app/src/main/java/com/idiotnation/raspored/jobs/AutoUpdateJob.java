@@ -56,12 +56,12 @@ public class AutoUpdateJob extends Job {
                     @Override
                     public void onSuccess(Boolean hasBeenUpdated) {
                         if (hasBeenUpdated) {
+                            NotificationManagerCompat notificationManager = NotificationManagerCompat.from(getContext());
+                            notificationManager.notify(Utils.NOTIFICATION_CHAGNES_ID, createNotification());
                             sharedPreferences
                                     .edit()
                                     .putString(SettingsItemDto.SETTINGS_TYPE_LAST_SYNC, DateTime.now().withZone(DateTimeZone.UTC).toString())
                                     .apply();
-                            NotificationManagerCompat notificationManager = NotificationManagerCompat.from(getContext());
-                            notificationManager.notify(Utils.NOTIFICATION_CHAGNES_ID, createNotification());
                         }
                         countDownLatch.countDown();
                     }

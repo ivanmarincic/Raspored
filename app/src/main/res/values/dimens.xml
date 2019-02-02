@@ -11,6 +11,7 @@
     <dimen name="settings_view_dialog_height">200dp</dimen>
     <dimen name="settings_view_dialog_width">300dp</dimen>
     <dimen name="main_view_appointment_card_padding">16dp</dimen>
+    <dimen name="main_view_appointment_list_header_date_padding">4dp</dimen>
     <dimen name="primary_text_size">18sp</dimen>
     <dimen name="secondary_text_size">14sp</dimen>
     <dimen name="toolbar_text_size">20sp</dimen>

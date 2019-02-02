@@ -8,6 +8,7 @@ import com.idiotnation.raspored.R;
 import com.idiotnation.raspored.adapters.SettingsCoursesAdapter;
 import com.idiotnation.raspored.custom.MaterialDialog;
 import com.idiotnation.raspored.models.dto.CourseDto;
+import com.idiotnation.raspored.models.dto.CourseTypeDto;
 import com.idiotnation.raspored.services.CourseService;
 import com.idiotnation.raspored.views.SettingsView;
 
@@ -35,7 +36,6 @@ public class CourseSelectionDialog extends MaterialDialog {
     ContentLoadingProgressBar progressBar;
 
     private SettingsCoursesAdapter coursesAdapter;
-    private List<CourseDto> courses;
     private OnSelectListener listener;
     private Integer selectedCourse;
     private Integer filteredOutCourse;
@@ -53,7 +53,7 @@ public class CourseSelectionDialog extends MaterialDialog {
         setTitle(getContext().getResources().getString(R.string.settings_view_course_selection));
         ButterKnife.bind(this);
         progressBar.show();
-        coursesAdapter = new SettingsCoursesAdapter(getContext(), new ArrayList<CourseDto>(), selectedCourse);
+        coursesAdapter = new SettingsCoursesAdapter(getContext(), new ArrayList<CourseTypeDto>(), selectedCourse);
         coursesAdapter.setItemOnSelectListener(new SettingsCoursesAdapter.ItemOnSelectListener() {
             @Override
             public void onSelect(CourseDto item) {
@@ -69,16 +69,16 @@ public class CourseSelectionDialog extends MaterialDialog {
                 .syncLatest(((SettingsView) getActivity()).presenter.getCoursesFilter(), filteredOutCourse)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new SingleObserver<List<CourseDto>>() {
+                .subscribe(new SingleObserver<List<CourseTypeDto>>() {
                     @Override
                     public void onSubscribe(Disposable d) {
 
                     }
 
                     @Override
-                    public void onSuccess(List<CourseDto> courses) {
-                        if (courses != null) {
-                            coursesAdapter.setList(courses);
+                    public void onSuccess(List<CourseTypeDto> courseTypes) {
+                        if (courseTypes != null) {
+                            coursesAdapter.setList(courseTypes);
                             coursesAdapter.notifyDataSetChanged();
                             progressBar.hide();
                         }
@@ -91,6 +91,7 @@ public class CourseSelectionDialog extends MaterialDialog {
                         } else {
                             Toast.makeText(getContext(), getContext().getResources().getString(R.string.request_error_internal), Toast.LENGTH_SHORT).show();
                         }
+                        e.printStackTrace();
                     }
                 });
     }

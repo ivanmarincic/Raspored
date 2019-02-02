@@ -62,20 +62,22 @@ public class AppointmentService {
                 .execute();
         if (response.code() == 200) {
             final List<AppointmentDto> synced = response.body();
-            appointmentDao.callBatchTasks(new Callable<Void>() {
+            if (synced != null) {
+                appointmentDao.callBatchTasks(new Callable<Void>() {
 
-                @Override
-                public Void call() throws Exception {
-                    appointmentDao
-                            .deleteBuilder()
-                            .delete();
-                    for (AppointmentDto appointmentDto : synced) {
-                        appointmentDao.create(appointmentDto.toPojo());
+                    @Override
+                    public Void call() throws Exception {
+                        appointmentDao
+                                .deleteBuilder()
+                                .delete();
+                        for (AppointmentDto appointmentDto : synced) {
+                            appointmentDao.create(appointmentDto.toPojo());
+                        }
+                        return null;
                     }
-                    return null;
-                }
-            });
-            return synced;
+                });
+                return synced;
+            }
         }
         return null;
     }

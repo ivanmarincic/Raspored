@@ -1,11 +1,17 @@
 package com.idiotnation.raspored.models.dto;
 
 import com.idiotnation.raspored.helpers.Utils;
+import com.idiotnation.raspored.models.jpa.Course;
 import com.idiotnation.raspored.models.jpa.CourseType;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 public class CourseTypeDto {
-    Integer id = null;
-    String name = "";
+    private Integer id = null;
+    private String name = "";
+    private List<CourseDto> courses;
 
     public Integer getId() {
         return id;
@@ -23,6 +29,14 @@ public class CourseTypeDto {
         this.name = name;
     }
 
+    public List<CourseDto> getCourses() {
+        return courses;
+    }
+
+    public void setCourses(List<CourseDto> courses) {
+        this.courses = courses;
+    }
+
     public CourseTypeDto() {
     }
 
@@ -32,8 +46,19 @@ public class CourseTypeDto {
     }
 
     public CourseTypeDto(CourseType courseType) {
+        this(courseType, false);
+    }
+
+    public CourseTypeDto(CourseType courseType, Boolean recursive) {
         this.id = courseType.getId();
         this.name = courseType.getName();
+        if (courseType.getCourses() != null && !recursive) {
+            Iterator<Course> iterator = courseType.getCourses().iterator();
+            this.courses = new ArrayList<>();
+            while (iterator.hasNext()) {
+                this.courses.add(new CourseDto(iterator.next(), true));
+            }
+        }
     }
 
     public CourseType toPojo() {

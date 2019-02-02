@@ -20,6 +20,7 @@ import com.idiotnation.raspored.models.dto.AppointmentHeaderDto;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeConstants;
 import org.joda.time.DateTimeZone;
+import org.joda.time.Interval;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,24 +54,22 @@ public class AppointmentsListAdapter extends RecyclerView.Adapter<RecyclerView.V
         headerPositions = new ArrayList<>();
         this.list = list;
         int index = 0;
-        DateTime startDate = DateTime.now().withZone(DateTimeZone.getDefault());
-        if (list.size() > 0) {
-            DateTime firstStart = list.get(0).getStart();
-            if (firstStart.weekOfWeekyear().get() > startDate.weekOfWeekyear().get()) {
-                startDate = firstStart.withDayOfWeek(DateTimeConstants.MONDAY).withTimeAtStartOfDay();
-            }
-        }
-        for (int dayOfWeek = DateTimeConstants.MONDAY; dayOfWeek < DateTimeConstants.MONDAY + DateTimeConstants.DAYS_PER_WEEK; dayOfWeek++) {
+        DateTime todayDate = DateTime.now().withZone(DateTimeZone.getDefault()).withTimeAtStartOfDay();
+        DateTime startDate = todayDate.withDayOfWeek(DateTimeConstants.MONDAY);
+        for (int i = 0; i < DateTimeConstants.DAYS_PER_WEEK * 2; i++) {
             boolean wasThisDay = false;
-            sparseList.put(index, new AppointmentHeaderDto(Utils.getDayOfWeekString(dayOfWeek, context), startDate.withDayOfWeek(dayOfWeek).toDateTime()));
+            DateTime dayOfWeekDate = startDate.plusDays(i).withTimeAtStartOfDay();
+            Interval dayOfWeekInterval = new Interval(dayOfWeekDate, dayOfWeekDate.plusDays(1));
+            int dayOfWeek = dayOfWeekDate.dayOfWeek().get();
+            sparseList.put(index, new AppointmentHeaderDto(Utils.getDayOfWeekString(dayOfWeek, context), todayDate.withDayOfWeek(dayOfWeek).toDateTime()));
             sparseListTypes.put(index, VIEW_TYPE_HEADER);
             headerPositions.add(index);
-            if (startDate.getDayOfWeek() == dayOfWeek) {
+            if (dayOfWeekInterval.contains(todayDate)) {
                 indexOfNow = index;
             }
             index++;
             for (AppointmentDto appointment : list) {
-                if (dayOfWeek == appointment.getStart().getDayOfWeek()) {
+                if (dayOfWeekInterval.contains(appointment.getStart())) {
                     wasThisDay = true;
                     sparseList.put(index, appointment);
                     sparseListTypes.put(index, VIEW_TYPE_ITEM);
@@ -174,6 +173,11 @@ public class AppointmentsListAdapter extends RecyclerView.Adapter<RecyclerView.V
     }
 
     @Override
+    public View getHeaderTextView(View header) {
+        return header.findViewById(R.id.main_view_appointments_list_header_date);
+    }
+
+    @Override
     public void bindHeaderData(View header, int headerPosition) {
         AppCompatTextView date = header.findViewById(R.id.main_view_appointments_list_header_date);
         MaterialCardView dateContainer = header.findViewById(R.id.main_view_appointments_list_header_date_container);
@@ -190,11 +194,6 @@ public class AppointmentsListAdapter extends RecyclerView.Adapter<RecyclerView.V
             dateContainer.setRadius(0);
             date.setTextColor(ContextCompat.getColor(context, R.color.colorBackgroundVeryLight));
         }
-    }
-
-    @Override
-    public boolean isHeader(int headerPosition) {
-        return getItemViewType(headerPosition) == VIEW_TYPE_HEADER;
     }
 
     class ViewHolderItem extends RecyclerView.ViewHolder {

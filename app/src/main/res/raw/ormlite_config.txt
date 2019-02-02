@@ -1,5 +1,5 @@
 #
-# generated on 2018/11/04 03:22:23
+# generated on 2019/02/02 10:09:33
 #
 # --table-start--
 dataClass=com.idiotnation.raspored.models.jpa.Appointment
@@ -72,7 +72,6 @@ columnName=course_type_id
 foreign=true
 foreignAutoRefresh=true
 maxForeignAutoRefreshLevel=2
-foreignAutoCreate=true
 # --field-end--
 # --field-start--
 fieldName=year
@@ -100,6 +99,12 @@ allowGeneratedIdInsert=true
 fieldName=name
 columnName=name
 unique=true
+# --field-end--
+# --field-start--
+fieldName=courses
+foreignCollection=true
+foreignCollectionEager=true
+foreignCollectionOrderColumnName=name
 # --field-end--
 # --table-fields-end--
 # --table-end--

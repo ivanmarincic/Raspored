@@ -10,22 +10,22 @@ import org.joda.time.DateTime;
 public class Course {
 
     @DatabaseField(columnName = "id", generatedId = true, allowGeneratedIdInsert = true)
-    Integer id = null;
+    private Integer id = null;
 
     @DatabaseField(columnName = "name", unique = true)
-    String name = "";
+    private String name = "";
 
     @DatabaseField(columnName = "url")
-    String url = "";
+    private String url = "";
 
     @DatabaseField(columnName = "course_type_id", foreign = true, foreignAutoRefresh = true)
-    CourseType type = null;
+    private CourseType type = null;
 
     @DatabaseField(columnName = "year")
-    Integer year = -1;
+    private Integer year = -1;
 
     @DatabaseField(columnName = "last_sync", dataType = DataType.DATE_TIME)
-    DateTime lastSync = null;
+    private DateTime lastSync = null;
 
     public Integer getId() {
         return id;

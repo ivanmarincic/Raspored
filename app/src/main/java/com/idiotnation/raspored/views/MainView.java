@@ -111,8 +111,13 @@ public class MainView extends AppCompatActivity implements MainContract.View {
         listAdapter.setList(appointments);
         listAdapter.notifyDataSetChanged();
         list.setVisibility(View.VISIBLE);
-        list.scrollToPosition(listAdapter.getIndexOfNow());
         setRefreshing(false);
+        list.post(new Runnable() {
+            @Override
+            public void run() {
+                scrollToNow();
+            }
+        });
     }
 
     @Override

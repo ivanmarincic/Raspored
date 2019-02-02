@@ -6,12 +6,12 @@ import com.idiotnation.raspored.models.jpa.Course;
 import org.joda.time.DateTime;
 
 public class CourseDto {
-    Integer id = null;
-    String name = "";
-    String url = "";
-    CourseTypeDto type = new CourseTypeDto();
-    Integer year = -1;
-    DateTime lastSync = null;
+    private Integer id = null;
+    private String name = "";
+    private String url = "";
+    private CourseTypeDto type = new CourseTypeDto();
+    private Integer year = -1;
+    private DateTime lastSync = null;
 
     public Integer getId() {
         return id;
@@ -74,11 +74,15 @@ public class CourseDto {
     }
 
     public CourseDto(Course course) {
+        this(course, false);
+    }
+
+    public CourseDto(Course course, Boolean recursive) {
         this.id = course.getId();
         this.name = course.getName();
         this.url = course.getUrl();
-        if (course.getType() != null) {
-            this.type = new CourseTypeDto(course.getType());
+        if (course.getType() != null && !recursive) {
+            this.type = new CourseTypeDto(course.getType(), true);
         } else {
             this.type = null;
         }

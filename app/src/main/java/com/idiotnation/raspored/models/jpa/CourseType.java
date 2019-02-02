@@ -1,16 +1,21 @@
 package com.idiotnation.raspored.models.jpa;
 
+import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
 
 @DatabaseTable(tableName = "course_types")
 public class CourseType {
 
     @DatabaseField(columnName = "id", generatedId = true, allowGeneratedIdInsert = true)
-    Integer id = null;
+    private Integer id = null;
 
     @DatabaseField(columnName = "name", unique = true)
-    String name = "";
+    private String name = "";
+
+    @ForeignCollectionField(eager = true, orderColumnName = "name")
+    private ForeignCollection<Course> courses;
 
     public Integer getId() {
         return id;
@@ -28,6 +33,14 @@ public class CourseType {
         this.name = name;
     }
 
+    public ForeignCollection<Course> getCourses() {
+        return courses;
+    }
+
+    public void setCourses(ForeignCollection<Course> courses) {
+        this.courses = courses;
+    }
+
     public CourseType() {
     }
 
@@ -35,8 +48,9 @@ public class CourseType {
         this.id = id;
     }
 
-    public CourseType(Integer id, String name) {
+    public CourseType(Integer id, String name, ForeignCollection<Course> courses) {
         this.id = id;
         this.name = name;
+        this.courses = courses;
     }
 }

@@ -9,28 +9,28 @@ import org.joda.time.DateTime;
 @DatabaseTable(tableName = "appointments")
 public class Appointment {
     @DatabaseField(columnName = "id", generatedId = true, allowGeneratedIdInsert = true)
-    Integer id = null;
+    private Integer id = null;
 
     @DatabaseField(columnName = "name")
-    String name = "";
+    private String name = "";
 
     @DatabaseField(columnName = "course_id", foreign = true, foreignAutoRefresh = true)
-    Course course = new Course();
+    private Course course = new Course();
 
     @DatabaseField(columnName = "details")
-    String details = "";
+    private String details = "";
 
     @DatabaseField(columnName = "classroom")
-    String classroom = "";
+    private String classroom = "";
 
     @DatabaseField(columnName = "lecturer")
-    String lecturer = "";
+    private String lecturer = "";
 
     @DatabaseField(columnName = "start", dataType = DataType.DATE_TIME)
-    DateTime start = new DateTime();
+    private DateTime start = new DateTime();
 
     @DatabaseField(columnName = "end", dataType = DataType.DATE_TIME)
-    DateTime end = new DateTime();
+    private DateTime end = new DateTime();
 
     public Integer getId() {
         return id;

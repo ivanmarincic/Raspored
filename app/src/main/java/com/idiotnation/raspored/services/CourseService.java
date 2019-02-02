@@ -5,13 +5,11 @@ import com.idiotnation.raspored.dataaccess.database.DatabaseManager;
 import com.idiotnation.raspored.helpers.Utils;
 import com.idiotnation.raspored.models.dto.CourseDto;
 import com.idiotnation.raspored.models.dto.CourseFilterDto;
+import com.idiotnation.raspored.models.dto.CourseTypeDto;
 import com.idiotnation.raspored.models.jpa.Course;
 import com.idiotnation.raspored.models.jpa.CourseType;
 import com.j256.ormlite.dao.Dao;
 
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.Callable;
 
@@ -51,10 +49,10 @@ public class CourseService {
                 });
     }
 
-    public Single<List<CourseDto>> syncLatest(final CourseFilterDto courseFilterDto, final Integer filteredOutCourse) {
-        return Single.fromCallable(new Callable<List<CourseDto>>() {
+    public Single<List<CourseTypeDto>> syncLatest(final CourseFilterDto courseFilterDto, final Integer filteredOutCourse) {
+        return Single.fromCallable(new Callable<List<CourseTypeDto>>() {
             @Override
-            public List<CourseDto> call() {
+            public List<CourseTypeDto> call() {
                 try {
                     Response<List<CourseDto>> response = courseService
                             .getLatestSynchronous(courseFilterDto)
@@ -72,37 +70,18 @@ public class CourseService {
                                 return null;
                             }
                         });
-                        Collections.sort(synced, new Comparator<CourseDto>() {
-                            @Override
-                            public int compare(CourseDto o1, CourseDto o2) {
-                                return o1.getName().compareTo(o2.getName());
-                            }
-                        });
-                        if (filteredOutCourse != null) {
-                            Iterator iterator = synced.iterator();
-                            while (iterator.hasNext()) {
-                                CourseDto courseDto = (CourseDto) iterator.next();
-                                if (courseDto.getId().equals(filteredOutCourse)) {
-                                    iterator.remove();
-                                    break;
-                                }
-                            }
-                        }
-                        return synced;
+                    }
+                    List<CourseTypeDto> courses = Utils.convertToDto(
+                            courseTypeDao
+                                    .queryBuilder()
+                                    .where()
+                                    .ne("id", filteredOutCourse)
+                                    .query()
+                            , CourseTypeDto.class);
+                    if (courses.size() == 0) {
+                        throw new NullPointerException();
                     } else {
-                        List<CourseDto> courses = Utils.convertToDto(
-                                courseDao
-                                        .queryBuilder()
-                                        .orderBy("name", true)
-                                        .where()
-                                        .ne("id", filteredOutCourse)
-                                        .query()
-                                , CourseDto.class);
-                        if (courses.size() == 0) {
-                            throw new NullPointerException();
-                        } else {
-                            return courses;
-                        }
+                        return courses;
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
