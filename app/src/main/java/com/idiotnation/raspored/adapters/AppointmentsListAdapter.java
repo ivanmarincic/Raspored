@@ -61,7 +61,7 @@ public class AppointmentsListAdapter extends RecyclerView.Adapter<RecyclerView.V
             DateTime dayOfWeekDate = startDate.plusDays(i).withTimeAtStartOfDay();
             Interval dayOfWeekInterval = new Interval(dayOfWeekDate, dayOfWeekDate.plusDays(1));
             int dayOfWeek = dayOfWeekDate.dayOfWeek().get();
-            sparseList.put(index, new AppointmentHeaderDto(Utils.getDayOfWeekString(dayOfWeek, context), todayDate.withDayOfWeek(dayOfWeek).toDateTime()));
+            sparseList.put(index, new AppointmentHeaderDto(Utils.getDayOfWeekString(dayOfWeek, context), dayOfWeekDate.toDateTime().toLocalDateTime().toString("dd\nMM")));
             sparseListTypes.put(index, VIEW_TYPE_HEADER);
             headerPositions.add(index);
             if (dayOfWeekInterval.contains(todayDate)) {
@@ -135,7 +135,7 @@ public class AppointmentsListAdapter extends RecyclerView.Adapter<RecyclerView.V
         }
         if (holder instanceof ViewHolderHeader) {
             AppointmentHeaderDto item = (AppointmentHeaderDto) sparseList.get(position);
-            ((ViewHolderHeader) holder).name.setText(item.getValue());
+            ((ViewHolderHeader) holder).name.setText(item.getDayOfWeek());
             return;
         }
         if (holder instanceof ViewHolderItemEmpty) {
@@ -182,7 +182,7 @@ public class AppointmentsListAdapter extends RecyclerView.Adapter<RecyclerView.V
         AppCompatTextView date = header.findViewById(R.id.main_view_appointments_list_header_date);
         MaterialCardView dateContainer = header.findViewById(R.id.main_view_appointments_list_header_date_container);
         AppointmentHeaderDto item = (AppointmentHeaderDto) sparseList.get(headerPosition);
-        date.setText(item.getDate().toLocalDateTime().toString("dd\nMM"));
+        date.setText(item.getDate());
         if (headerPosition == indexOfNow) {
             dateContainer.setCardBackgroundColor(colorPrimary);
             dateContainer.setCardElevation(elevation);

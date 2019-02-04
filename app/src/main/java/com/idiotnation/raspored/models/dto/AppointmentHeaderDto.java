@@ -1,32 +1,30 @@
 package com.idiotnation.raspored.models.dto;
 
-import org.joda.time.DateTime;
-
 public class AppointmentHeaderDto {
-    String value;
-    DateTime date;
+    String dayOfWeek;
+    String date;
 
-    public String getValue() {
-        return value;
+    public String getDayOfWeek() {
+        return dayOfWeek;
     }
 
-    public void setValue(String value) {
-        this.value = value;
+    public void setDayOfWeek(String dayOfWeek) {
+        this.dayOfWeek = dayOfWeek;
     }
 
-    public DateTime getDate() {
+    public String getDate() {
         return date;
     }
 
-    public void setDate(DateTime date) {
+    public void setDate(String date) {
         this.date = date;
     }
 
     public AppointmentHeaderDto() {
     }
 
-    public AppointmentHeaderDto(String value, DateTime date) {
-        this.value = value;
+    public AppointmentHeaderDto(String dayOfWeek, String date) {
+        this.dayOfWeek = dayOfWeek;
         this.date = date;
     }
 }
