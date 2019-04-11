@@ -28,6 +28,7 @@ public class SettingsCoursesAdapter extends RecyclerView.Adapter<SettingsCourses
     private List<CourseTypeDto> list;
     private ItemOnSelectListener listener;
     private Integer selectedItem;
+    private Integer filteredOutItem;
     private Integer selectedBackground;
 
     public List<CourseTypeDto> getList() {
@@ -38,9 +39,10 @@ public class SettingsCoursesAdapter extends RecyclerView.Adapter<SettingsCourses
         this.list = list;
     }
 
-    public SettingsCoursesAdapter(Context context, List<CourseTypeDto> list, Integer selectedItem) {
+    public SettingsCoursesAdapter(Context context, List<CourseTypeDto> list, Integer selectedItem, Integer filteredOutItem) {
         this.list = list;
         this.selectedItem = selectedItem;
+        this.filteredOutItem = filteredOutItem;
         selectedBackground = ContextCompat.getColor(context, R.color.colorOnBackgroundSelected);
     }
 
@@ -61,6 +63,9 @@ public class SettingsCoursesAdapter extends RecyclerView.Adapter<SettingsCourses
         if (item.getCourses() != null) {
             for (int i = 0; i < item.getCourses().size(); i++) {
                 final CourseDto subItem = item.getCourses().get(i);
+                if (subItem.getId().equals(filteredOutItem)) {
+                    continue;
+                }
                 ListViewHolder subHolder = new ListViewHolder(LayoutInflater.from(holder.itemView.getContext()).inflate(R.layout.settings_view_course_selection_list_item, holder.list, false));
                 subHolder.value.setText(subItem.getName().replace(item.getName(), "").trim());
                 if (subItem.getId().equals(selectedItem)) {

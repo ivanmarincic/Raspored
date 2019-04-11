@@ -1,8 +1,8 @@
 #
-# generated on 2019/02/02 10:09:33
+# generated on 2019/04/12 12:34:09
 #
 # --table-start--
-dataClass=com.idiotnation.raspored.models.jpa.Appointment
+dataClass=com.idiotnation.raspored.models.db.Appointment
 tableName=appointments
 # --table-fields-start--
 # --field-start--
@@ -48,7 +48,7 @@ dataPersister=DATE_TIME
 # --table-end--
 #################################
 # --table-start--
-dataClass=com.idiotnation.raspored.models.jpa.Course
+dataClass=com.idiotnation.raspored.models.db.Course
 tableName=courses
 # --table-fields-start--
 # --field-start--
@@ -86,7 +86,7 @@ dataPersister=DATE_TIME
 # --table-end--
 #################################
 # --table-start--
-dataClass=com.idiotnation.raspored.models.jpa.CourseType
+dataClass=com.idiotnation.raspored.models.db.CourseType
 tableName=course_types
 # --table-fields-start--
 # --field-start--

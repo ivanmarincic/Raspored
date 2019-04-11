@@ -1,4 +1,4 @@
-package com.idiotnation.raspored.models.jpa;
+package com.idiotnation.raspored.models.db;
 
 import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DatabaseField;

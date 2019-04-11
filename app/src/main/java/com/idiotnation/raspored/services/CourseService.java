@@ -3,11 +3,11 @@ package com.idiotnation.raspored.services;
 import com.idiotnation.raspored.dataaccess.api.ServiceGenerator;
 import com.idiotnation.raspored.dataaccess.database.DatabaseManager;
 import com.idiotnation.raspored.helpers.Utils;
+import com.idiotnation.raspored.models.db.Course;
+import com.idiotnation.raspored.models.db.CourseType;
 import com.idiotnation.raspored.models.dto.CourseDto;
 import com.idiotnation.raspored.models.dto.CourseFilterDto;
 import com.idiotnation.raspored.models.dto.CourseTypeDto;
-import com.idiotnation.raspored.models.jpa.Course;
-import com.idiotnation.raspored.models.jpa.CourseType;
 import com.j256.ormlite.dao.Dao;
 
 import java.util.List;
@@ -49,7 +49,7 @@ public class CourseService {
                 });
     }
 
-    public Single<List<CourseTypeDto>> syncLatest(final CourseFilterDto courseFilterDto, final Integer filteredOutCourse) {
+    public Single<List<CourseTypeDto>> syncLatest(final CourseFilterDto courseFilterDto) {
         return Single.fromCallable(new Callable<List<CourseTypeDto>>() {
             @Override
             public List<CourseTypeDto> call() {
@@ -74,10 +74,9 @@ public class CourseService {
                     List<CourseTypeDto> courses = Utils.convertToDto(
                             courseTypeDao
                                     .queryBuilder()
-                                    .where()
-                                    .ne("id", filteredOutCourse)
-                                    .query()
-                            , CourseTypeDto.class);
+                                    .distinct()
+                                    .query(),
+                            CourseTypeDto.class);
                     if (courses.size() == 0) {
                         throw new NullPointerException();
                     } else {

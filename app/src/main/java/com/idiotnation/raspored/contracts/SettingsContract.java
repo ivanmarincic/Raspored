@@ -23,5 +23,9 @@ public class SettingsContract {
         void saveSettings(HashMap<String, SettingsItemDto> settings);
         CourseFilterDto getCoursesFilter();
         boolean getCalendarId();
+        void scheduleAutoUpdateJob();
+        void cancelAutoUpdateJob();
+        void scheduleAppointmentNotificationsJob();
+        void cancelAppointmentNotificationsJob();
     }
 }

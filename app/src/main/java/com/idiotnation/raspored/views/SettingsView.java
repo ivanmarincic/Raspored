@@ -1,6 +1,5 @@
 package com.idiotnation.raspored.views;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.CompoundButton;
@@ -92,9 +91,6 @@ public class SettingsView extends AppCompatActivity implements SettingsContract.
     public SettingsContract.Presenter presenter;
     HashMap<String, SettingsItemDto> currentSettings;
     FragmentManager fragmentManager;
-    private boolean courseChanged = false;
-    private boolean notificationsChanged = false;
-    private boolean jobChanged = false;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -116,27 +112,7 @@ public class SettingsView extends AppCompatActivity implements SettingsContract.
         } else {
             presenter.saveSettings(currentSettings);
             if (currentSettings.get(SettingsItemDto.SETTINGS_TYPE_COURSE).getValue() != null) {
-                Intent intent = new Intent();
-                Integer flags = null;
-                if (courseChanged) {
-                    flags = Utils.SETTINGS_RESULT_EXTRAS_UPDATE;
-                }
-                if (jobChanged) {
-                    if (flags == null) {
-                        flags = Utils.SETTINGS_RESULT_EXTRAS_JOB;
-                    } else {
-                        flags |= Utils.SETTINGS_RESULT_EXTRAS_JOB;
-                    }
-                }
-                if (notificationsChanged) {
-                    if (flags == null) {
-                        flags = Utils.SETTINGS_RESULT_EXTRAS_NOTIFICATIONS;
-                    } else {
-                        flags |= Utils.SETTINGS_RESULT_EXTRAS_NOTIFICATIONS;
-                    }
-                }
-                intent.putExtra(Utils.SETTINGS_RESULT_EXTRAS, flags);
-                setResult(RESULT_OK, intent);
+                setResult(RESULT_OK);
                 finish();
             } else {
                 Toast.makeText(this, getResources().getString(R.string.settings_view_list_value_course_required), Toast.LENGTH_SHORT).show();
@@ -168,7 +144,7 @@ public class SettingsView extends AppCompatActivity implements SettingsContract.
     }
 
     @Override
-    public void loadSettings(HashMap<String, SettingsItemDto> settings) {
+    public void loadSettings(final HashMap<String, SettingsItemDto> settings) {
         currentSettings = settings;
         for (SettingsItemDto item : settings.values()) {
             switch (item.getType()) {
@@ -185,7 +161,6 @@ public class SettingsView extends AppCompatActivity implements SettingsContract.
                                     currentSettings.get(SettingsItemDto.SETTINGS_TYPE_COURSE_NAME).setValue(course.getName());
                                     currentSettings.get(SettingsItemDto.SETTINGS_TYPE_COURSE_LAST_SYNC).setValue(DateTime.now().withZone(DateTimeZone.UTC));
                                     courseSelectionValue.setText(course.getName());
-                                    courseChanged = true;
                                 }
                             });
                             courseSelectionDialog.show();
@@ -227,7 +202,6 @@ public class SettingsView extends AppCompatActivity implements SettingsContract.
                                     } else {
                                         partialSelectionValue.setText(getResources().getString(R.string.settings_view_list_value_partial_default));
                                     }
-                                    courseChanged = true;
                                 }
                             });
                             fragmentManager
@@ -264,7 +238,6 @@ public class SettingsView extends AppCompatActivity implements SettingsContract.
                                     } else {
                                         blockedSelectionValue.setText(getResources().getString(R.string.settings_view_list_value_blocked_default));
                                     }
-                                    courseChanged = true;
                                 }
                             });
                             fragmentManager
@@ -284,7 +257,11 @@ public class SettingsView extends AppCompatActivity implements SettingsContract.
                         @Override
                         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                             currentSettings.get(SettingsItemDto.SETTINGS_TYPE_NOTIFICATIONS).setValue(isChecked);
-                            notificationsChanged = true;
+                            if (isChecked) {
+                                presenter.scheduleAppointmentNotificationsJob();
+                            } else {
+                                presenter.cancelAppointmentNotificationsJob();
+                            }
                         }
                     });
                     break;
@@ -294,7 +271,11 @@ public class SettingsView extends AppCompatActivity implements SettingsContract.
                         @Override
                         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                             currentSettings.get(SettingsItemDto.SETTINGS_TYPE_AUTOSYNC).setValue(isChecked);
-                            jobChanged = true;
+                            if (isChecked) {
+                                presenter.scheduleAutoUpdateJob();
+                            } else {
+                                presenter.cancelAutoUpdateJob();
+                            }
                         }
                     });
                     break;
@@ -307,7 +288,6 @@ public class SettingsView extends AppCompatActivity implements SettingsContract.
                                 presenter.getCalendarId();
                             }
                             currentSettings.get(SettingsItemDto.SETTINGS_TYPE_CALENDAR_SYNC).setValue(isChecked);
-                            courseChanged = true;
                         }
                     });
                     break;

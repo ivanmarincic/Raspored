@@ -22,15 +22,10 @@ public class MainContract {
     public interface Presenter {
         void start(View view, Context context) throws SQLException;
         boolean checkIfCourseIsSelected();
-        void checkSettingsResultFlags(int flags);
         AppointmentFilterDto getAppointmentsFilter();
         CalendarFilterDto getCalendarFilter();
         void getAppointments();
         void syncAppointments();
-        void scheduleAutoUpdateJob();
-        void cancelAutoUpdateJob();
-        void scheduleAppointmentNotificationsJob();
-        void cancelAppointmentNotificationsJob();
         void blockAppointment(AppointmentDto appointmentDto);
     }
 

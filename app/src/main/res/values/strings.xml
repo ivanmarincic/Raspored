@@ -10,6 +10,7 @@
     <string name="notification_changes_text">Došlo je do izmjena na rasporedu</string>
     <string name="main_view_menu_settings_title">Postavke</string>
     <string name="main_view_menu_now_title">Pokaži današnji dan</string>
+    <string name="main_view_menu_refresh_title">Osvježi</string>
     <string name="main_view_appointment_info_dialog_title">Informacije</string>
     <string name="main_view_appointment_info_dialog_name_label">Ime: </string>
     <string name="main_view_appointment_info_dialog_details_label">Detalji: </string>

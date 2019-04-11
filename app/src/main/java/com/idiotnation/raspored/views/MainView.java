@@ -67,10 +67,8 @@ public class MainView extends AppCompatActivity implements MainContract.View {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode == RESULT_OK) {
-            if (requestCode == Utils.SETTINGS_RESULT_CODE && data.getExtras() != null) {
-                presenter.checkSettingsResultFlags(data.getExtras().getInt(Utils.SETTINGS_RESULT_EXTRAS, -1));
-            }
+        if (resultCode == RESULT_OK && requestCode == Utils.SETTINGS_RESULT_CODE) {
+            presenter.syncAppointments();
         }
     }
 
@@ -175,6 +173,11 @@ public class MainView extends AppCompatActivity implements MainContract.View {
             case R.id.main_view_menu_now:
                 item.setEnabled(true);
                 scrollToNow();
+                return true;
+            case R.id.main_view_menu_refresh:
+                item.setEnabled(true);
+                setRefreshing(true);
+                presenter.syncAppointments();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

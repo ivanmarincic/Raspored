@@ -32,10 +32,6 @@ public class AppointmentNotificationJob extends Job {
     public static int scheduleJob(long miliseconds) {
         return new JobRequest.Builder(Utils.APPOINTEMENT_NOTIFICATIONS_JOB_TAG)
                 .setExact(miliseconds)
-                .setRequiresCharging(false)
-                .setRequiresDeviceIdle(false)
-                .setRequiredNetworkType(JobRequest.NetworkType.ANY)
-                .setRequirementsEnforced(true)
                 .setUpdateCurrent(false)
                 .build()
                 .schedule();

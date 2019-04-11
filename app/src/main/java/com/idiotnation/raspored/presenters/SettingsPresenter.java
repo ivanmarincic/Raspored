@@ -10,11 +10,14 @@ import android.net.Uri;
 import android.provider.CalendarContract;
 import android.widget.Toast;
 
+import com.evernote.android.job.JobManager;
 import com.idiotnation.raspored.R;
 import com.idiotnation.raspored.contracts.SettingsContract;
 import com.idiotnation.raspored.helpers.Utils;
+import com.idiotnation.raspored.jobs.AutoUpdateJob;
 import com.idiotnation.raspored.models.dto.CourseFilterDto;
 import com.idiotnation.raspored.models.dto.SettingsItemDto;
+import com.idiotnation.raspored.services.AppointmentService;
 
 import org.joda.time.DateTime;
 
@@ -38,13 +41,17 @@ public class SettingsPresenter implements SettingsContract.Presenter {
     private Context context;
     private SharedPreferences sharedPreferences;
     private HashMap<String, SettingsItemDto> currentSettings;
+    private AppointmentService appointmentService;
 
     @Override
     public void start(SettingsContract.View view, Context context) {
         this.view = view;
         this.context = context;
         this.sharedPreferences = context.getSharedPreferences(context.getPackageName(), Context.MODE_PRIVATE);
-        view.initialize();
+        appointmentService = new AppointmentService();
+        if (view != null) {
+            view.initialize();
+        }
     }
 
     @Override
@@ -206,5 +213,30 @@ public class SettingsPresenter implements SettingsContract.Presenter {
             );
         }
         return true;
+    }
+
+    @Override
+    public void scheduleAutoUpdateJob() {
+        AutoUpdateJob.scheduleJob();
+    }
+
+    @Override
+    public void cancelAutoUpdateJob() {
+        JobManager.instance().cancelAllForTag(Utils.AUTO_UPDATE_JOB_TAG);
+    }
+
+    @Override
+    public void scheduleAppointmentNotificationsJob() {
+        cancelAppointmentNotificationsJob();
+        appointmentService
+                .scheduleNotifications()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe();
+    }
+
+    @Override
+    public void cancelAppointmentNotificationsJob() {
+        JobManager.instance().cancelAllForTag(Utils.APPOINTEMENT_NOTIFICATIONS_JOB_TAG);
     }
 }

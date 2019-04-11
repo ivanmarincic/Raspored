@@ -5,11 +5,8 @@ import android.content.SharedPreferences;
 import android.util.Pair;
 import android.widget.Toast;
 
-import com.evernote.android.job.JobManager;
 import com.idiotnation.raspored.R;
 import com.idiotnation.raspored.contracts.MainContract;
-import com.idiotnation.raspored.helpers.Utils;
-import com.idiotnation.raspored.jobs.AutoUpdateJob;
 import com.idiotnation.raspored.models.dto.AppointmentDto;
 import com.idiotnation.raspored.models.dto.AppointmentFilterDto;
 import com.idiotnation.raspored.models.dto.CalendarFilterDto;
@@ -32,10 +29,10 @@ import io.reactivex.schedulers.Schedulers;
 
 public class MainPresenter implements MainContract.Presenter {
 
-    MainContract.View view;
-    Context context;
-    SharedPreferences sharedPreferences;
-    AppointmentService appointmentService;
+    private MainContract.View view;
+    private Context context;
+    private SharedPreferences sharedPreferences;
+    private AppointmentService appointmentService;
 
     public MainPresenter() {
     }
@@ -59,29 +56,6 @@ public class MainPresenter implements MainContract.Presenter {
             return false;
         }
         return true;
-    }
-
-    @Override
-    public void checkSettingsResultFlags(int flags) {
-        if (flags != -1) {
-            if ((flags & Utils.SETTINGS_RESULT_EXTRAS_UPDATE) == Utils.SETTINGS_RESULT_EXTRAS_UPDATE) {
-                syncAppointments();
-            }
-            if ((flags & Utils.SETTINGS_RESULT_EXTRAS_JOB) == Utils.SETTINGS_RESULT_EXTRAS_JOB) {
-                if (sharedPreferences.getBoolean(SettingsItemDto.SETTINGS_TYPE_AUTOSYNC, false)) {
-                    scheduleAutoUpdateJob();
-                } else {
-                    cancelAutoUpdateJob();
-                }
-            }
-            if ((flags & Utils.SETTINGS_RESULT_EXTRAS_NOTIFICATIONS) == Utils.SETTINGS_RESULT_EXTRAS_NOTIFICATIONS) {
-                if (sharedPreferences.getBoolean(SettingsItemDto.SETTINGS_TYPE_NOTIFICATIONS, false)) {
-                    scheduleAppointmentNotificationsJob();
-                } else {
-                    cancelAppointmentNotificationsJob();
-                }
-            }
-        }
     }
 
     @Override
@@ -165,52 +139,6 @@ public class MainPresenter implements MainContract.Presenter {
                         view.setRefreshing(false);
                     }
                 });
-    }
-
-    @Override
-    public void scheduleAutoUpdateJob() {
-        Integer jobId = AutoUpdateJob.scheduleJob();
-        sharedPreferences.edit().putInt(Utils.AUTO_UPDATE_JOB_ID, jobId).apply();
-    }
-
-    @Override
-    public void cancelAutoUpdateJob() {
-        JobManager.instance().cancelAllForTag(Utils.AUTO_UPDATE_JOB_TAG);
-    }
-
-    @Override
-    public void scheduleAppointmentNotificationsJob() {
-        cancelAppointmentNotificationsJob();
-        appointmentService
-                .scheduleNotifications()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new SingleObserver<List<String>>() {
-                    @Override
-                    public void onSubscribe(Disposable d) {
-
-                    }
-
-                    @Override
-                    public void onSuccess(List<String> integers) {
-                        sharedPreferences.edit().putStringSet(Utils.APPOINTEMENT_NOTIFICATIONS_JOB_ID, new HashSet<>(integers)).apply();
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        if (e instanceof IOException) {
-                            Toast.makeText(context, context.getResources().getString(R.string.request_error_internet), Toast.LENGTH_SHORT).show();
-                        } else {
-                            Toast.makeText(context, context.getResources().getString(R.string.request_error_internal), Toast.LENGTH_SHORT).show();
-                        }
-                        view.setRefreshing(false);
-                    }
-                });
-    }
-
-    @Override
-    public void cancelAppointmentNotificationsJob() {
-        JobManager.instance().cancelAllForTag(Utils.APPOINTEMENT_NOTIFICATIONS_JOB_TAG);
     }
 
     @Override

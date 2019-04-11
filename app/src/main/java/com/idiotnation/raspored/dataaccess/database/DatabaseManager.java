@@ -1,9 +1,9 @@
 package com.idiotnation.raspored.dataaccess.database;
 
 import com.idiotnation.raspored.Application;
-import com.idiotnation.raspored.models.jpa.Appointment;
-import com.idiotnation.raspored.models.jpa.Course;
-import com.idiotnation.raspored.models.jpa.CourseType;
+import com.idiotnation.raspored.models.db.Appointment;
+import com.idiotnation.raspored.models.db.Course;
+import com.idiotnation.raspored.models.db.CourseType;
 import com.j256.ormlite.dao.Dao;
 
 import java.sql.SQLException;

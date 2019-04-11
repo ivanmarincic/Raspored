@@ -46,7 +46,7 @@ public class AppointmentSelectionDialog extends MaterialDialog {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.settings_view_appointment_selection_dialog);
-        setTitle(getContext().getResources().getString(R.string.settings_view_course_selection));
+        setTitle(getContext().getResources().getString(R.string.settings_view_appointment_selection));
         ButterKnife.bind(this);
         progressBar.show();
         appointmentsAdapter = new ArrayListAdapter(new ArrayList<String>());

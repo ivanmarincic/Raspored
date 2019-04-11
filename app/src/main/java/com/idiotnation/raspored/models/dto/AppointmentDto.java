@@ -1,7 +1,7 @@
 package com.idiotnation.raspored.models.dto;
 
 import com.idiotnation.raspored.helpers.Utils;
-import com.idiotnation.raspored.models.jpa.Appointment;
+import com.idiotnation.raspored.models.db.Appointment;
 
 import org.joda.time.DateTime;
 

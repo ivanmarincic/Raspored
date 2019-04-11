@@ -130,6 +130,7 @@ public class SettingsAppointmentsFilterFragment extends Fragment {
             listView.setLayoutManager(new LinearLayoutManager(getContext()));
             if (arguments.getBoolean(HIDE_COURSE_SELECTION, false)) {
                 courseSelect.setVisibility(View.GONE);
+                courseSelect.setClickable(false);
             }
             if (list.size() > 0) {
                 emptyView.setVisibility(View.GONE);

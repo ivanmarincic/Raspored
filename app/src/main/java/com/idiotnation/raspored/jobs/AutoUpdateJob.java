@@ -27,7 +27,6 @@ import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import io.reactivex.SingleObserver;
-import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
@@ -46,7 +45,7 @@ public class AutoUpdateJob extends Job {
         new AppointmentService()
                 .autoUpdateSync(getAppointmentFilter(sharedPreferences), getCalendarFilter(sharedPreferences), getContext())
                 .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .observeOn(Schedulers.single())
                 .subscribe(new SingleObserver<Boolean>() {
                     @Override
                     public void onSubscribe(Disposable d) {
@@ -107,10 +106,10 @@ public class AutoUpdateJob extends Job {
 
     public static int scheduleJob() {
         return new JobRequest.Builder(Utils.AUTO_UPDATE_JOB_TAG)
-                .setPeriodic(TimeUnit.MINUTES.toMillis(15), TimeUnit.MINUTES.toMillis(5))
+                .setPeriodic(TimeUnit.MINUTES.toMillis(30), TimeUnit.MINUTES.toMillis(5))
                 .setRequiresCharging(false)
                 .setRequiresDeviceIdle(false)
-                .setRequiredNetworkType(JobRequest.NetworkType.CONNECTED)
+                .setRequiredNetworkType(JobRequest.NetworkType.NOT_ROAMING)
                 .setRequirementsEnforced(true)
                 .setUpdateCurrent(true)
                 .build()

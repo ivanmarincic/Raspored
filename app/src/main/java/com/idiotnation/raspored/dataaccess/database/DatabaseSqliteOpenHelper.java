@@ -4,9 +4,9 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.idiotnation.raspored.R;
-import com.idiotnation.raspored.models.jpa.Appointment;
-import com.idiotnation.raspored.models.jpa.Course;
-import com.idiotnation.raspored.models.jpa.CourseType;
+import com.idiotnation.raspored.models.db.Appointment;
+import com.idiotnation.raspored.models.db.Course;
+import com.idiotnation.raspored.models.db.CourseType;
 import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;

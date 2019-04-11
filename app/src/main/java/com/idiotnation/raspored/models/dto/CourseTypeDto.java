@@ -1,8 +1,8 @@
 package com.idiotnation.raspored.models.dto;
 
 import com.idiotnation.raspored.helpers.Utils;
-import com.idiotnation.raspored.models.jpa.Course;
-import com.idiotnation.raspored.models.jpa.CourseType;
+import com.idiotnation.raspored.models.db.Course;
+import com.idiotnation.raspored.models.db.CourseType;
 
 import java.util.ArrayList;
 import java.util.Iterator;

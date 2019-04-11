@@ -12,14 +12,13 @@ import com.idiotnation.raspored.dataaccess.api.ServiceGenerator;
 import com.idiotnation.raspored.dataaccess.database.DatabaseManager;
 import com.idiotnation.raspored.helpers.Utils;
 import com.idiotnation.raspored.jobs.AppointmentNotificationJob;
+import com.idiotnation.raspored.models.db.Appointment;
+import com.idiotnation.raspored.models.db.Course;
 import com.idiotnation.raspored.models.dto.AppointmentDto;
 import com.idiotnation.raspored.models.dto.AppointmentFilterDto;
 import com.idiotnation.raspored.models.dto.CalendarFilterDto;
-import com.idiotnation.raspored.models.jpa.Appointment;
-import com.idiotnation.raspored.models.jpa.Course;
 import com.j256.ormlite.dao.Dao;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
 
@@ -157,20 +156,19 @@ public class AppointmentService {
                 });
     }
 
-    public Single<List<String>> scheduleNotifications() {
+    public Single scheduleNotifications() {
         return Single
-                .fromCallable(new Callable<List<String>>() {
+                .fromCallable(new Callable() {
 
                     @Override
-                    public List<String> call() throws Exception {
+                    public Object call() throws Exception {
                         List<Appointment> appointments = appointmentDao.queryBuilder()
                                 .orderBy("start", true)
                                 .query();
-                        List<String> notificationsJobIds = new ArrayList<>();
                         for (Appointment appointment : appointments) {
-                            notificationsJobIds.add(AppointmentNotificationJob.scheduleJob(appointment.getStart().minusMinutes(30).getMillis()) + "");
+                            AppointmentNotificationJob.scheduleJob(appointment.getStart().minusMinutes(30).getMillis());
                         }
-                        return notificationsJobIds;
+                        return null;
                     }
                 });
     }

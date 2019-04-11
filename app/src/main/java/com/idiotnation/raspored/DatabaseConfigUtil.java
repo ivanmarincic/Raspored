@@ -10,7 +10,7 @@ public class DatabaseConfigUtil extends OrmLiteConfigUtil {
 
     public static void main(String[] args) throws SQLException, IOException {
         File conffile = new File("F:/Workspace/Android/Raspored/app/src/main/res/raw/ormlite_config.txt");
-        File searchdir = new File("F:\\Workspace\\Android\\Raspored\\app\\src\\main\\java\\com\\idiotnation\\raspored\\models\\jpa");
+        File searchdir = new File("F:\\Workspace\\Android\\Raspored\\app\\src\\main\\java\\com\\idiotnation\\raspored\\models\\db");
         writeConfigFile(conffile, searchdir);
     }
 }

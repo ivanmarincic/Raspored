@@ -53,7 +53,7 @@ public class CourseSelectionDialog extends MaterialDialog {
         setTitle(getContext().getResources().getString(R.string.settings_view_course_selection));
         ButterKnife.bind(this);
         progressBar.show();
-        coursesAdapter = new SettingsCoursesAdapter(getContext(), new ArrayList<CourseTypeDto>(), selectedCourse);
+        coursesAdapter = new SettingsCoursesAdapter(getContext(), new ArrayList<CourseTypeDto>(), selectedCourse, filteredOutCourse);
         coursesAdapter.setItemOnSelectListener(new SettingsCoursesAdapter.ItemOnSelectListener() {
             @Override
             public void onSelect(CourseDto item) {
@@ -66,7 +66,7 @@ public class CourseSelectionDialog extends MaterialDialog {
         list.setAdapter(coursesAdapter);
         list.setLayoutManager(new LinearLayoutManager(getContext()));
         new CourseService()
-                .syncLatest(((SettingsView) getActivity()).presenter.getCoursesFilter(), filteredOutCourse)
+                .syncLatest(((SettingsView) getActivity()).presenter.getCoursesFilter())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new SingleObserver<List<CourseTypeDto>>() {
