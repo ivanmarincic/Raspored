@@ -2,25 +2,25 @@ package com.idiotnation.raspored.presenters;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.util.Pair;
 import android.widget.Toast;
 
 import com.idiotnation.raspored.R;
 import com.idiotnation.raspored.contracts.MainContract;
+import com.idiotnation.raspored.helpers.Utils;
 import com.idiotnation.raspored.models.dto.AppointmentDto;
 import com.idiotnation.raspored.models.dto.AppointmentFilterDto;
+import com.idiotnation.raspored.models.dto.AppointmentSyncDto;
 import com.idiotnation.raspored.models.dto.CalendarFilterDto;
-import com.idiotnation.raspored.models.dto.SettingsItemDto;
+import com.idiotnation.raspored.models.dto.FilteredCourseDto;
+import com.idiotnation.raspored.models.dto.PartialCourseDto;
+import com.idiotnation.raspored.models.dto.SettingsDto;
 import com.idiotnation.raspored.services.AppointmentService;
+import com.idiotnation.raspored.services.SettingsService;
 
 import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import io.reactivex.SingleObserver;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -33,6 +33,10 @@ public class MainPresenter implements MainContract.Presenter {
     private Context context;
     private SharedPreferences sharedPreferences;
     private AppointmentService appointmentService;
+    private SettingsService settingsService;
+    private SettingsDto currentSettings;
+    private List<PartialCourseDto> currentPartials;
+    private List<FilteredCourseDto> currentFiltered;
 
     public MainPresenter() {
     }
@@ -43,6 +47,7 @@ public class MainPresenter implements MainContract.Presenter {
         this.context = context;
         sharedPreferences = context.getSharedPreferences(context.getPackageName(), Context.MODE_PRIVATE);
         appointmentService = new AppointmentService();
+        settingsService = new SettingsService();
         if (view != null) {
             view.initialize();
         }
@@ -50,8 +55,13 @@ public class MainPresenter implements MainContract.Presenter {
 
     @Override
     public boolean checkIfCourseIsSelected() {
-        Integer selectedCourse = sharedPreferences.getInt(SettingsItemDto.SETTINGS_TYPE_COURSE, -1);
-        if (selectedCourse == -1) {
+        currentSettings = settingsService.getSettings();
+        if (currentSettings == null) {
+            currentSettings = settingsService.createSettings();
+        }
+        currentPartials = settingsService.getPartials(currentSettings.getPartialCourse());
+        currentFiltered = settingsService.getFiltered();
+        if (currentSettings.getSelectedCourse() == null) {
             view.startFirstTimeConfiguration();
             return false;
         }
@@ -62,18 +72,18 @@ public class MainPresenter implements MainContract.Presenter {
     public AppointmentFilterDto getAppointmentsFilter() {
         AppointmentFilterDto appointmentFilterDto = new AppointmentFilterDto();
         appointmentFilterDto.setLastSync(null);
-        appointmentFilterDto.setCourseId(sharedPreferences.getInt(SettingsItemDto.SETTINGS_TYPE_COURSE, -1));
-        appointmentFilterDto.setPartialCourseId(sharedPreferences.getInt(SettingsItemDto.SETTINGS_TYPE_PARTIAL_COURSE, -1));
-        appointmentFilterDto.setPartialStrings(new ArrayList<>(sharedPreferences.getStringSet(SettingsItemDto.SETTINGS_TYPE_PARTIAL, new HashSet<String>())));
-        appointmentFilterDto.setBlockedStrings(new ArrayList<>(sharedPreferences.getStringSet(SettingsItemDto.SETTINGS_TYPE_BLOCKED, new HashSet<String>())));
+        appointmentFilterDto.setCourseId(currentSettings.getSelectedCourse().getId());
+        appointmentFilterDto.setPartialCourseId(currentSettings.getPartialCourse() != null ? currentSettings.getPartialCourse().getId() : -1);
+        appointmentFilterDto.setPartialStrings(Utils.listToStringList(currentPartials));
+        appointmentFilterDto.setBlockedStrings(Utils.listToStringList(currentFiltered));
         return appointmentFilterDto;
     }
 
     @Override
     public CalendarFilterDto getCalendarFilter() {
         CalendarFilterDto calendarFilterDto = new CalendarFilterDto();
-        calendarFilterDto.setCalendarId(sharedPreferences.getInt(SettingsItemDto.SETTINGS_TYPE_CALENDAR_SYNC_ID, -1));
-        calendarFilterDto.setSyncId(sharedPreferences.getString(SettingsItemDto.SETTINGS_TYPE_CALENDAR_SYNC_UUID, null));
+        calendarFilterDto.setCalendarId(sharedPreferences.getInt(Utils.SETTINGS_CALENDAR_SYNC_ID, -1));
+        calendarFilterDto.setSyncId(sharedPreferences.getString(Utils.SETTINGS_CALENDAR_GUID, null));
         return calendarFilterDto;
     }
 
@@ -112,21 +122,22 @@ public class MainPresenter implements MainContract.Presenter {
                 .syncLatest(getAppointmentsFilter(), getCalendarFilter(), context)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new SingleObserver<Pair<List<AppointmentDto>, Boolean>>() {
+                .subscribe(new SingleObserver<AppointmentSyncDto>() {
                     @Override
                     public void onSubscribe(Disposable d) {
                         view.setRefreshing(true);
                     }
 
                     @Override
-                    public void onSuccess(Pair<List<AppointmentDto>, Boolean> appointments) {
-                        if (appointments.second) {
-                            sharedPreferences
-                                    .edit()
-                                    .putString(SettingsItemDto.SETTINGS_TYPE_LAST_SYNC, DateTime.now().withZone(DateTimeZone.UTC).toString())
-                                    .apply();
+                    public void onSuccess(AppointmentSyncDto appointmentSync) {
+                        sharedPreferences
+                                .edit()
+                                .putString(Utils.SETTINGS_LAST_SYNC, DateTime.now().toString())
+                                .apply();
+                        view.loadList(appointmentSync.getAppointments());
+                        if (appointmentSync.getOutOfSync()) {
+                            Toast.makeText(context, context.getResources().getString(R.string.request_error_out_of_sync), Toast.LENGTH_SHORT).show();
                         }
-                        view.loadList(appointments.first);
                     }
 
                     @Override
@@ -144,12 +155,7 @@ public class MainPresenter implements MainContract.Presenter {
     @Override
     public void blockAppointment(AppointmentDto appointmentDto) {
         if (appointmentDto != null && appointmentDto.getName() != null) {
-            Set<String> currentSet = sharedPreferences.getStringSet(SettingsItemDto.SETTINGS_TYPE_BLOCKED, new HashSet<String>());
-            currentSet.add(appointmentDto.getName());
-            sharedPreferences
-                    .edit()
-                    .putStringSet(SettingsItemDto.SETTINGS_TYPE_BLOCKED, currentSet)
-                    .apply();
+            settingsService.addFilteredAppointment(appointmentDto.getName());
         }
         syncAppointments();
     }

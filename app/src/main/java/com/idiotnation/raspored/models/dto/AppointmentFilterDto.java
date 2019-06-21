@@ -6,11 +6,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AppointmentFilterDto {
-    Integer courseId = -1;
-    DateTime lastSync = null;
-    Integer partialCourseId = -1;
-    List<String> partialStrings = new ArrayList<>();
-    List<String> blockedStrings = new ArrayList<>();
+    private Integer courseId = -1;
+    private DateTime lastSync = null;
+    private Integer partialCourseId = -1;
+    private List<String> partialStrings = new ArrayList<>();
+    private List<String> blockedStrings = new ArrayList<>();
 
     public Integer getCourseId() {
         return courseId;

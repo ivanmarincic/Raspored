@@ -1,5 +1,5 @@
 #
-# generated on 2019/04/12 12:34:09
+# generated on 2019/05/13 02:17:06
 #
 # --table-start--
 dataClass=com.idiotnation.raspored.models.db.Appointment
@@ -82,6 +82,11 @@ fieldName=lastSync
 columnName=last_sync
 dataPersister=DATE_TIME
 # --field-end--
+# --field-start--
+fieldName=lastFailed
+columnName=last_failed
+dataPersister=DATE_TIME
+# --field-end--
 # --table-fields-end--
 # --table-end--
 #################################
@@ -105,6 +110,89 @@ fieldName=courses
 foreignCollection=true
 foreignCollectionEager=true
 foreignCollectionOrderColumnName=name
+# --field-end--
+# --table-fields-end--
+# --table-end--
+#################################
+# --table-start--
+dataClass=com.idiotnation.raspored.models.db.FilteredCourse
+tableName=filtered_courses
+# --table-fields-start--
+# --field-start--
+fieldName=id
+columnName=id
+generatedId=true
+allowGeneratedIdInsert=true
+# --field-end--
+# --field-start--
+fieldName=name
+columnName=name
+unique=true
+# --field-end--
+# --table-fields-end--
+# --table-end--
+#################################
+# --table-start--
+dataClass=com.idiotnation.raspored.models.db.PartialCourse
+tableName=partial_courses
+# --table-fields-start--
+# --field-start--
+fieldName=id
+columnName=id
+generatedId=true
+allowGeneratedIdInsert=true
+# --field-end--
+# --field-start--
+fieldName=course
+columnName=course_id
+foreign=true
+uniqueIndexName=UQ_COURSE_NAME
+foreignAutoRefresh=true
+maxForeignAutoRefreshLevel=2
+# --field-end--
+# --field-start--
+fieldName=name
+columnName=name
+uniqueIndexName=UQ_COURSE_NAME
+# --field-end--
+# --table-fields-end--
+# --table-end--
+#################################
+# --table-start--
+dataClass=com.idiotnation.raspored.models.db.Settings
+tableName=settings
+# --table-fields-start--
+# --field-start--
+fieldName=id
+columnName=id
+generatedId=true
+allowGeneratedIdInsert=true
+# --field-end--
+# --field-start--
+fieldName=selectedCourse
+columnName=selected_course_id
+foreign=true
+foreignAutoRefresh=true
+maxForeignAutoRefreshLevel=2
+# --field-end--
+# --field-start--
+fieldName=partialCourse
+columnName=partial_course_id
+foreign=true
+foreignAutoRefresh=true
+maxForeignAutoRefreshLevel=2
+# --field-end--
+# --field-start--
+fieldName=syncNotifications
+columnName=sync_notifications
+# --field-end--
+# --field-start--
+fieldName=syncAutomatically
+columnName=sync_automatically
+# --field-end--
+# --field-start--
+fieldName=syncCalendar
+columnName=sync_calendar
 # --field-end--
 # --table-fields-end--
 # --table-end--

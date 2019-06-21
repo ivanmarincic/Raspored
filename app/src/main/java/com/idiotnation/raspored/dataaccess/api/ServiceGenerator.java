@@ -1,10 +1,9 @@
 package com.idiotnation.raspored.dataaccess.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.joda.JodaModule;
 import com.idiotnation.raspored.helpers.Utils;
-
-import java.util.TimeZone;
 
 import io.reactivex.schedulers.Schedulers;
 import retrofit2.Retrofit;
@@ -18,7 +17,12 @@ public class ServiceGenerator {
         if (retrofit == null) {
             retrofit = new Retrofit.Builder()
                     .baseUrl(Utils.WS_BASE_URL)
-                    .addConverterFactory(JacksonConverterFactory.create(new ObjectMapper().registerModule(new JodaModule()).setTimeZone(TimeZone.getDefault())))
+                    .addConverterFactory(
+                            JacksonConverterFactory
+                                    .create(
+                                            new ObjectMapper()
+                                                    .registerModule(new JodaModule())
+                                                    .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)))
                     .addCallAdapterFactory(RxJava2CallAdapterFactory.createWithScheduler(Schedulers.io()))
                     .build();
         }

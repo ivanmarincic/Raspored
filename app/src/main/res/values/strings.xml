@@ -38,6 +38,7 @@
     <string name="settings_view_list_value_calendar_sync">Sinkroniziraj sa kalendarom</string>
     <string name="settings_view_list_value_calendar_sync_default">Automatski dodaj predavanja u kalendar</string>
     <string name="settings_view_list_value_calendar_sync_not_found">Ne mogu pronaći kalendar</string>
+    <string name="settings_view_saving_failed">Greška prilikom spremanja</string>
     <string name="settings_view_appointments_filter_list">Popis predmeta</string>
     <string name="settings_view_course_selection_cancel">Poništi</string>
     <string name="settings_view_save">Spremi</string>
@@ -56,4 +57,5 @@
     <string name="request_permission_rationale_negative">Ne</string>
     <string name="request_error_internet">Nema internetske veze</string>
     <string name="request_error_internal">Došlo je do greške pokušajte ponovno</string>
+    <string name="request_error_out_of_sync">Moguće kašnjenje rasporeda</string>
 </resources>

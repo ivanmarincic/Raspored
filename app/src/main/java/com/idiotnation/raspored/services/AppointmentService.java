@@ -6,7 +6,6 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.net.Uri;
 import android.provider.CalendarContract;
-import android.util.Pair;
 
 import com.idiotnation.raspored.dataaccess.api.ServiceGenerator;
 import com.idiotnation.raspored.dataaccess.database.DatabaseManager;
@@ -16,8 +15,12 @@ import com.idiotnation.raspored.models.db.Appointment;
 import com.idiotnation.raspored.models.db.Course;
 import com.idiotnation.raspored.models.dto.AppointmentDto;
 import com.idiotnation.raspored.models.dto.AppointmentFilterDto;
+import com.idiotnation.raspored.models.dto.AppointmentSyncDto;
 import com.idiotnation.raspored.models.dto.CalendarFilterDto;
 import com.j256.ormlite.dao.Dao;
+
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -55,28 +58,30 @@ public class AppointmentService {
                 });
     }
 
-    private List<AppointmentDto> getAppointmentsFromServer(AppointmentFilterDto appointmentFilter) throws Exception {
+    private AppointmentSyncDto getAppointmentsFromServer(AppointmentFilterDto appointmentFilter) throws Exception {
         Response<List<AppointmentDto>> response = appointmentService
                 .getLatestSynchronous(appointmentFilter)
                 .execute();
-        if (response.code() == 200) {
-            final List<AppointmentDto> synced = response.body();
-            if (synced != null) {
-                appointmentDao.callBatchTasks(new Callable<Void>() {
+        int responseCode = response.code();
+        if (responseCode == 210) {
+            return null;
+        }
+        final List<AppointmentDto> synced = response.body();
+        if (synced != null) {
+            appointmentDao.callBatchTasks(new Callable<Void>() {
 
-                    @Override
-                    public Void call() throws Exception {
-                        appointmentDao
-                                .deleteBuilder()
-                                .delete();
-                        for (AppointmentDto appointmentDto : synced) {
-                            appointmentDao.create(appointmentDto.toPojo());
-                        }
-                        return null;
+                @Override
+                public Void call() throws Exception {
+                    appointmentDao
+                            .deleteBuilder()
+                            .delete();
+                    for (AppointmentDto appointmentDto : synced) {
+                        appointmentDao.create(appointmentDto.toPojo());
                     }
-                });
-                return synced;
-            }
+                    return null;
+                }
+            });
+            return new AppointmentSyncDto(synced, responseCode == 211);
         }
         return null;
     }
@@ -114,17 +119,21 @@ public class AppointmentService {
         }
     }
 
-    public Single<Pair<List<AppointmentDto>, Boolean>> syncLatest(final AppointmentFilterDto appointmentFilter, final CalendarFilterDto calendarFilterDto, final Context context) {
+    public Single<AppointmentSyncDto> syncLatest(final AppointmentFilterDto appointmentFilter, final CalendarFilterDto calendarFilterDto, final Context context) {
         return Single
-                .fromCallable(new Callable<Pair<List<AppointmentDto>, Boolean>>() {
+                .fromCallable(new Callable<AppointmentSyncDto>() {
                     @Override
-                    public Pair<List<AppointmentDto>, Boolean> call() throws Exception {
-                        List<AppointmentDto> appointments = getAppointmentsFromServer(appointmentFilter);
-                        if (appointments != null) {
-                            syncCalendarEvents(calendarFilterDto, appointments, context);
-                            return new Pair<>(appointments, true);
+                    public AppointmentSyncDto call() throws Exception {
+                        DateTime lastSync = appointmentFilter.getLastSync();
+                        if (lastSync != null) {
+                            appointmentFilter.setLastSync(lastSync.withZone(DateTimeZone.UTC));
                         }
-                        return new Pair<>(
+                        AppointmentSyncDto appointmentSync = getAppointmentsFromServer(appointmentFilter);
+                        if (appointmentSync != null) {
+                            syncCalendarEvents(calendarFilterDto, appointmentSync.getAppointments(), context);
+                            return appointmentSync;
+                        }
+                        return new AppointmentSyncDto(
                                 Utils.convertToDto(
                                         appointmentDao
                                                 .queryBuilder()
@@ -143,9 +152,9 @@ public class AppointmentService {
                     @Override
                     public Boolean call() {
                         try {
-                            List<AppointmentDto> appointments = getAppointmentsFromServer(appointmentFilter);
-                            if (appointments != null) {
-                                syncCalendarEvents(calendarFilterDto, appointments, context);
+                            AppointmentSyncDto appointmentSync = getAppointmentsFromServer(appointmentFilter);
+                            if (appointmentSync != null && appointmentSync.getAppointments() != null) {
+                                syncCalendarEvents(calendarFilterDto, appointmentSync.getAppointments(), context);
                                 return true;
                             }
                         } catch (Exception e) {

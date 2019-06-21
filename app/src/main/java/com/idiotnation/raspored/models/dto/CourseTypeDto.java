@@ -1,5 +1,8 @@
 package com.idiotnation.raspored.models.dto;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.idiotnation.raspored.helpers.Utils;
 import com.idiotnation.raspored.models.db.Course;
 import com.idiotnation.raspored.models.db.CourseType;
@@ -8,7 +11,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public class CourseTypeDto {
+public class CourseTypeDto implements Parcelable {
     private Integer id = null;
     private String name = "";
     private List<CourseDto> courses;
@@ -79,5 +82,16 @@ public class CourseTypeDto {
     @Override
     public int hashCode() {
         return Utils.hash(name);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(id);
+        dest.writeString(name);
     }
 }

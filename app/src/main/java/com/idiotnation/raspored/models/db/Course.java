@@ -27,6 +27,9 @@ public class Course {
     @DatabaseField(columnName = "last_sync", dataType = DataType.DATE_TIME)
     private DateTime lastSync = null;
 
+    @DatabaseField(columnName = "last_failed", dataType = DataType.DATE_TIME)
+    private DateTime lastFailed = null;
+
     public Integer getId() {
         return id;
     }
@@ -75,6 +78,14 @@ public class Course {
         this.lastSync = lastSync;
     }
 
+    public DateTime getLastFailed() {
+        return lastFailed;
+    }
+
+    public void setLastFailed(DateTime lastFailed) {
+        this.lastFailed = lastFailed;
+    }
+
     public Course() {
     }
 
@@ -82,12 +93,13 @@ public class Course {
         this.id = id;
     }
 
-    public Course(Integer id, String name, String url, CourseType type, Integer year, DateTime lastSync) {
+    public Course(Integer id, String name, String url, CourseType type, Integer year, DateTime lastSync, DateTime lastFailed) {
         this.id = id;
         this.name = name;
         this.url = url;
         this.type = type;
         this.year = year;
         this.lastSync = lastSync;
+        this.lastFailed = lastFailed;
     }
 }

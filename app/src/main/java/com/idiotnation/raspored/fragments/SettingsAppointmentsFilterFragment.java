@@ -5,6 +5,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.AppCompatTextView;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.google.android.material.button.MaterialButton;
 import com.idiotnation.raspored.R;
 import com.idiotnation.raspored.adapters.RemovableArrayListAdapter;
@@ -14,12 +21,6 @@ import com.idiotnation.raspored.models.dto.CourseDto;
 
 import java.util.List;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.widget.AppCompatTextView;
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -32,13 +33,8 @@ public class SettingsAppointmentsFilterFragment extends Fragment {
     public static final String BUTTON_TEXT = "BUTTON_TEXT";
     public static final String LIST_VALUES = "LIST_VALUES";
     public static final String SELECTED_COURSE = "SELECTED_COURSE";
-    public static final String SELECTED_COURSE_NAME = "SELECTED_COURSE_NAME";
     public static final String FILTERED_COURSE = "FILTERED_COURSE";
     public static final String HIDE_COURSE_SELECTION = "HIDE_COURSE_SELECTION";
-
-    public interface OnFinishListener {
-        void onFinish(List<String> list, Integer course, String courseName);
-    }
 
     @BindView(R.id.settings_view_appointments_filter_toolbar_title)
     AppCompatTextView titleView;
@@ -60,13 +56,14 @@ public class SettingsAppointmentsFilterFragment extends Fragment {
 
     @OnClick(R.id.settings_view_appointments_filter_add)
     public void add() {
-        AppointmentSelectionDialog dialog = new AppointmentSelectionDialog(getActivity(), selectedCourse);
+        AppointmentSelectionDialog dialog = new AppointmentSelectionDialog(getActivity(), selectedCourse != null ? selectedCourse.getId() : -1);
         dialog.setOnSelectListener(new AppointmentSelectionDialog.OnSelectListener() {
             @Override
             public void onSelect(String appointment) {
                 if (!list.contains(appointment)) {
                     list.add(appointment);
                     listAdapter.notifyItemInserted(list.size() - 1);
+                    listener.onAdded(appointment, selectedCourse);
                 }
                 if (list.size() > 0) {
                     emptyView.setVisibility(View.GONE);
@@ -80,14 +77,14 @@ public class SettingsAppointmentsFilterFragment extends Fragment {
 
     @OnClick(R.id.settings_view_appointments_filter_course_select)
     public void courseSelection() {
-        CourseSelectionDialog dialog = new CourseSelectionDialog(getActivity(), selectedCourse, filteredCourse);
+        CourseSelectionDialog dialog = new CourseSelectionDialog(getActivity(), selectedCourse != null ? selectedCourse.getId() : -1, filteredCourse != null ? filteredCourse.getId() : -1);
         dialog.setOnSelectListener(new CourseSelectionDialog.OnSelectListener() {
             @Override
             public void onSelect(CourseDto course) {
-                selectedCourse = course.getId();
-                selectedCourseName = course.getName();
-                courseSelectValue.setText(selectedCourseName);
-                addButton.setEnabled(selectedCourse != -1);
+                selectedCourse = course;
+                courseSelectValue.setText(selectedCourse.getName());
+                addButton.setEnabled(selectedCourse != null);
+                listener.onCourseSelected(course);
             }
         });
         dialog.show();
@@ -95,18 +92,15 @@ public class SettingsAppointmentsFilterFragment extends Fragment {
 
     @OnClick(R.id.settings_view_appointments_filter_toolbar_back)
     public void back() {
-        if (listener != null && list != null) {
-            listener.onFinish(list, selectedCourse, selectedCourseName);
-        }
+        listener.onFinished(list, selectedCourse);
         getActivity().onBackPressed();
     }
 
     private List<String> list;
     private RemovableArrayListAdapter listAdapter;
-    private OnFinishListener listener;
-    private Integer filteredCourse = -1;
-    private Integer selectedCourse = -1;
-    private String selectedCourseName = null;
+    private OnActionListener listener;
+    private CourseDto filteredCourse = null;
+    private CourseDto selectedCourse = null;
 
     @Nullable
     @Override
@@ -118,14 +112,19 @@ public class SettingsAppointmentsFilterFragment extends Fragment {
             titleView.setText(arguments.getString(TITLE, ""));
             addButton.setText(arguments.getString(BUTTON_TEXT, ""));
             emptyView.setText(arguments.getString(EMPTY_TEXT, ""));
-            filteredCourse = arguments.getInt(FILTERED_COURSE, -1);
-            selectedCourse = arguments.getInt(SELECTED_COURSE, -1);
-            selectedCourseName = arguments.getString(SELECTED_COURSE_NAME, null);
-            if (selectedCourseName != null) {
-                courseSelectValue.setText(selectedCourseName);
+            filteredCourse = arguments.getParcelable(FILTERED_COURSE);
+            selectedCourse = arguments.getParcelable(SELECTED_COURSE);
+            if (selectedCourse != null) {
+                courseSelectValue.setText(selectedCourse.getName());
             }
             list = arguments.getStringArrayList(LIST_VALUES);
             listAdapter = new RemovableArrayListAdapter(list);
+            listAdapter.setItemOnRemoveListener(new RemovableArrayListAdapter.ItemOnRemoveListener() {
+                @Override
+                public void onRemove(Object item) {
+                    listener.onRemoved(item.toString(), selectedCourse);
+                }
+            });
             listView.setAdapter(listAdapter);
             listView.setLayoutManager(new LinearLayoutManager(getContext()));
             if (arguments.getBoolean(HIDE_COURSE_SELECTION, false)) {
@@ -137,12 +136,22 @@ public class SettingsAppointmentsFilterFragment extends Fragment {
             } else {
                 emptyView.setVisibility(View.VISIBLE);
             }
-            addButton.setEnabled(selectedCourse != -1);
+            addButton.setEnabled(selectedCourse != null);
         }
         return rootView;
     }
 
-    public void setOnFinishListener(OnFinishListener listener) {
+    public void setOnActionListener(OnActionListener listener) {
         this.listener = listener;
+    }
+
+    public interface OnActionListener {
+        void onAdded(String item, CourseDto course);
+
+        void onRemoved(String item, CourseDto course);
+
+        void onCourseSelected(CourseDto course);
+
+        void onFinished(List<String> list, CourseDto course);
     }
 }

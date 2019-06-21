@@ -1,17 +1,21 @@
 package com.idiotnation.raspored.models.dto;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.idiotnation.raspored.helpers.Utils;
 import com.idiotnation.raspored.models.db.Course;
 
 import org.joda.time.DateTime;
 
-public class CourseDto {
+public class CourseDto implements Parcelable {
     private Integer id = null;
     private String name = "";
     private String url = "";
     private CourseTypeDto type = new CourseTypeDto();
     private Integer year = -1;
     private DateTime lastSync = null;
+    private DateTime lastFailed = null;
 
     public Integer getId() {
         return id;
@@ -61,16 +65,25 @@ public class CourseDto {
         this.lastSync = lastSync;
     }
 
+    public DateTime getLastFailed() {
+        return lastFailed;
+    }
+
+    public void setLastFailed(DateTime lastFailed) {
+        this.lastFailed = lastFailed;
+    }
+
     public CourseDto() {
     }
 
-    public CourseDto(Integer id, String name, String url, CourseTypeDto type, Integer year, DateTime lastSync) {
+    public CourseDto(Integer id, String name, String url, CourseTypeDto type, Integer year, DateTime lastSync, DateTime lastFailed) {
         this.id = id;
         this.name = name;
         this.url = url;
         this.type = type;
         this.year = year;
         this.lastSync = lastSync;
+        this.lastFailed = lastFailed;
     }
 
     public CourseDto(Course course) {
@@ -88,6 +101,7 @@ public class CourseDto {
         }
         this.year = course.getYear();
         this.lastSync = course.getLastSync();
+        this.lastFailed = course.getLastFailed();
     }
 
     public Course toPojo() {
@@ -118,12 +132,29 @@ public class CourseDto {
 
     @Override
     public int hashCode() {
-
         return Utils.hash(name, url, type, year);
     }
 
     @Override
     public String toString() {
         return name;
+    }
+
+
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(id);
+        dest.writeString(name);
+        dest.writeString(url);
+        dest.writeInt(year);
+        dest.writeParcelable(type, 0);
+        dest.writeSerializable(lastSync);
+        dest.writeSerializable(lastFailed);
     }
 }

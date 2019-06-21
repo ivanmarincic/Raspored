@@ -22,19 +22,19 @@ public class Utils {
     public static final String APPOINTEMENT_NOTIFICATIONS_JOB_ID = "APPOINTEMENT_NOTIFICATIONS_JOB_ID";
 
     public static final String NOTIFICATION_CHANNEL_CHANGES_ID = "com.idiotnation.Raspored.Changes";
-    public static final String NOTIFICATION_CHANNEL_APPOINTMENTS_ID = "com.idiotnation.Raspored.Changes";
+    public static final String NOTIFICATION_CHANNEL_APPOINTMENTS_ID = "com.idiotnation.Raspored.Appointments";
 
-    public static final Integer NOTIFICATION_CHAGNES_ID = 7007148;
+    public static final String SETTINGS_CALENDAR_GUID = "CALENDAR_GUID";
+    public static final String SETTINGS_CALENDAR_SYNC_ID = "CALENDAR_SYNC_ID";
+    public static final String SETTINGS_LAST_SYNC = "LAST_SYNC";
+    public static final String SETTINGS_LAST_SYNC_COURSES = "LAST_SYNC_COURSES";
+
+    public static final Integer NOTIFICATION_CHANGES_ID = 7007148;
     public static final Integer NOTIFICATION_APPOINTMENTS_ID = 728585;
 
     public static final String WS_BASE_URL = BuildConfig.WS_BASE_URL;
 
     public static final Integer SETTINGS_RESULT_CODE = 241;
-
-    public static final String SETTINGS_RESULT_EXTRAS = "SETTINGS_EXTRAS";
-    public static final Integer SETTINGS_RESULT_EXTRAS_UPDATE = 1;
-    public static final Integer SETTINGS_RESULT_EXTRAS_JOB = 2;
-    public static final Integer SETTINGS_RESULT_EXTRAS_NOTIFICATIONS = 4;
 
     public static final int PERMISSIONS_READ_WRITE_CALENDAR = 555;
 
@@ -98,6 +98,14 @@ public class Utils {
             }
         }
         return buf.toString();
+    }
+
+    public static ArrayList<String> listToStringList(List list) {
+        ArrayList<String> result = new ArrayList<>();
+        for (Object item : list) {
+            result.add(item.toString());
+        }
+        return result;
     }
 
     public static boolean equals(Object o1, Object o2) {
