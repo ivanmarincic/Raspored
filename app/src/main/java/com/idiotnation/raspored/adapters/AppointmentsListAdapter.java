@@ -9,34 +9,32 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.google.android.material.card.MaterialCardView;
-import com.idiotnation.raspored.R;
-import com.idiotnation.raspored.custom.HeaderItemDecoration;
-import com.idiotnation.raspored.helpers.Utils;
-import com.idiotnation.raspored.models.dto.AppointmentDto;
-import com.idiotnation.raspored.models.dto.AppointmentEmptyDto;
-import com.idiotnation.raspored.models.dto.AppointmentHeaderDto;
-
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeConstants;
-import org.joda.time.DateTimeZone;
-import org.joda.time.Interval;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatTextView;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.card.MaterialCardView;
+import com.idiotnation.raspored.R;
+import com.idiotnation.raspored.custom.HeaderItemDecoration;
+import com.idiotnation.raspored.helpers.Utils;
+import com.idiotnation.raspored.models.dto.AppointmentDto;
+import com.idiotnation.raspored.models.dto.AppointmentHeaderDto;
+
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
+import org.joda.time.Days;
+
+import java.util.ArrayList;
+import java.util.List;
+
 public class AppointmentsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements HeaderItemDecoration.StickyHeaderInterface {
 
     public static final int VIEW_TYPE_ITEM = 0;
-    public static final int VIEW_TYPE_ITEM_EMPTY = 1;
     public static final int VIEW_TYPE_HEADER = 2;
 
     private Integer indexOfNow = -1;
+    private Integer indexOfNext = -1;
     private List<AppointmentDto> list;
     private Context context;
     private SparseArray<Object> sparseList;
@@ -55,39 +53,36 @@ public class AppointmentsListAdapter extends RecyclerView.Adapter<RecyclerView.V
         this.list = list;
         int index = 0;
         DateTime todayDate = DateTime.now().withZone(DateTimeZone.getDefault()).withTimeAtStartOfDay();
-        DateTime startDate = todayDate.withDayOfWeek(DateTimeConstants.MONDAY);
-        for (int i = 0; i < DateTimeConstants.DAYS_PER_WEEK * 2; i++) {
-            boolean wasThisDay = false;
-            DateTime dayOfWeekDate = startDate.plusDays(i).withTimeAtStartOfDay();
-            Interval dayOfWeekInterval = new Interval(dayOfWeekDate, dayOfWeekDate.plusDays(1));
-            int dayOfWeek = dayOfWeekDate.dayOfWeek().get();
-            sparseList.put(index, new AppointmentHeaderDto(Utils.getDayOfWeekString(dayOfWeek, context), dayOfWeekDate.toDateTime().toLocalDateTime().toString("dd\nMM")));
-            sparseListTypes.put(index, VIEW_TYPE_HEADER);
-            headerPositions.add(index);
-            if (dayOfWeekInterval.contains(todayDate)) {
-                indexOfNow = index;
-            }
-            index++;
+        int lastDayOfMonth = -1;
+        int lastTodayDifference = -1;
+        if (list.size() > 0) {
             for (AppointmentDto appointment : list) {
-                if (dayOfWeekInterval.contains(appointment.getStart())) {
-                    wasThisDay = true;
-                    sparseList.put(index, appointment);
-                    sparseListTypes.put(index, VIEW_TYPE_ITEM);
+                DateTime startDate = appointment.getStart().withZone(DateTimeZone.getDefault()).withTimeAtStartOfDay();
+                int dayOfMonth = appointment.getStart().getDayOfMonth();
+                if (dayOfMonth != lastDayOfMonth) {
+                    sparseList.put(index, new AppointmentHeaderDto(Utils.getDayOfWeekString(startDate.getDayOfWeek(), context), startDate.toLocalDateTime().toString("dd\nMM")));
+                    sparseListTypes.put(index, VIEW_TYPE_HEADER);
+                    headerPositions.add(index);
+                    int todayDifference = Math.abs(Days.daysBetween(todayDate, startDate).getDays());
+                    if (lastTodayDifference == -1 || todayDifference < lastTodayDifference) {
+                        lastTodayDifference = todayDifference;
+                        indexOfNext = index;
+                        if (todayDifference == 0) {
+                            indexOfNow = index;
+                        }
+                    }
+                    lastDayOfMonth = dayOfMonth;
                     index++;
-                } else if (wasThisDay) {
-                    break;
                 }
-            }
-            if (!wasThisDay) {
-                sparseList.put(index, new AppointmentEmptyDto(context.getResources().getString(R.string.main_view_appointments_list_empty_day)));
-                sparseListTypes.put(index, VIEW_TYPE_ITEM_EMPTY);
+                sparseList.put(index, appointment);
+                sparseListTypes.put(index, VIEW_TYPE_ITEM);
                 index++;
             }
         }
     }
 
-    public Integer getIndexOfNow() {
-        return indexOfNow;
+    public Integer getIndexOfNext() {
+        return indexOfNext;
     }
 
     public AppointmentsListAdapter(Context context, List<AppointmentDto> list) {
@@ -106,8 +101,6 @@ public class AppointmentsListAdapter extends RecyclerView.Adapter<RecyclerView.V
         switch (viewType) {
             case VIEW_TYPE_ITEM:
                 return new ViewHolderItem(inflater.inflate(R.layout.main_view_appointments_list_item, parent, false));
-            case VIEW_TYPE_ITEM_EMPTY:
-                return new ViewHolderItemEmpty(inflater.inflate(R.layout.main_view_appointments_list_item_empty, parent, false));
             case VIEW_TYPE_HEADER:
                 return new ViewHolderHeader(inflater.inflate(R.layout.main_view_appointments_list_header, parent, false));
             default:
@@ -138,10 +131,6 @@ public class AppointmentsListAdapter extends RecyclerView.Adapter<RecyclerView.V
             ((ViewHolderHeader) holder).name.setText(item.getDayOfWeek());
             return;
         }
-        if (holder instanceof ViewHolderItemEmpty) {
-            AppointmentEmptyDto item = (AppointmentEmptyDto) sparseList.get(position);
-            ((ViewHolderItemEmpty) holder).text.setText(item.getValue());
-        }
     }
 
     @Override
@@ -156,7 +145,7 @@ public class AppointmentsListAdapter extends RecyclerView.Adapter<RecyclerView.V
 
     @Override
     public int getHeaderPositionForItem(int itemPosition) {
-        int lastPosition = 0;
+        int lastPosition = -1;
         for (int position : headerPositions) {
             if (itemPosition >= position) {
                 lastPosition = position;
@@ -209,16 +198,6 @@ public class AppointmentsListAdapter extends RecyclerView.Adapter<RecyclerView.V
             classroom = itemView.findViewById(R.id.main_view_appointments_list_item_classroom);
             time = itemView.findViewById(R.id.main_view_appointments_list_item_time);
             container = itemView.findViewById(R.id.main_view_appointments_list_item_container);
-        }
-    }
-
-    class ViewHolderItemEmpty extends RecyclerView.ViewHolder {
-
-        AppCompatTextView text;
-
-        public ViewHolderItemEmpty(@NonNull View itemView) {
-            super(itemView);
-            text = itemView.findViewById(R.id.main_view_appointments_list_item_empty_text);
         }
     }
 

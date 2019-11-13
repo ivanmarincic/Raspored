@@ -26,6 +26,7 @@ public class MainContract {
         CalendarFilterDto getCalendarFilter();
         void getAppointments();
         void syncAppointments();
+        String currentURL();
         void blockAppointment(AppointmentDto appointmentDto);
     }
 

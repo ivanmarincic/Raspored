@@ -4,19 +4,21 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.widget.Toast;
 
+import androidx.core.widget.ContentLoadingProgressBar;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.idiotnation.raspored.R;
 import com.idiotnation.raspored.adapters.ArrayListAdapter;
 import com.idiotnation.raspored.custom.MaterialDialog;
 import com.idiotnation.raspored.dataaccess.api.AppointmentService;
 import com.idiotnation.raspored.dataaccess.api.ServiceGenerator;
+import com.idiotnation.raspored.helpers.exceptions.ServerUnavailableException;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import androidx.core.widget.ContentLoadingProgressBar;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.reactivex.SingleObserver;
@@ -82,6 +84,8 @@ public class AppointmentSelectionDialog extends MaterialDialog {
                     public void onError(Throwable e) {
                         if (e instanceof IOException) {
                             Toast.makeText(getContext(), getContext().getResources().getString(R.string.request_error_internet), Toast.LENGTH_SHORT).show();
+                        } else if (e instanceof ServerUnavailableException) {
+                            Toast.makeText(getContext(), getContext().getResources().getString(R.string.request_error_server), Toast.LENGTH_SHORT).show();
                         } else {
                             Toast.makeText(getContext(), getContext().getResources().getString(R.string.request_error_internal), Toast.LENGTH_SHORT).show();
                         }

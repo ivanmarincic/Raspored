@@ -1,14 +1,17 @@
 package com.idiotnation.raspored.views;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.browser.customtabs.CustomTabsIntent;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -41,6 +44,9 @@ public class MainView extends AppCompatActivity implements MainContract.View {
     @BindView(R.id.main_view_appointments_list)
     RecyclerView list;
 
+    @BindView(R.id.main_view_appointments_list_empty)
+    TextView emptyText;
+
     @BindView(R.id.main_view_appointments_refresh)
     CustomSwipeToRefresh swipeToRefresh;
 
@@ -68,6 +74,7 @@ public class MainView extends AppCompatActivity implements MainContract.View {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK && requestCode == Utils.SETTINGS_RESULT_CODE) {
             if (presenter.checkIfCourseIsSelected()) {
                 presenter.syncAppointments();
@@ -103,15 +110,22 @@ public class MainView extends AppCompatActivity implements MainContract.View {
         list.addItemDecoration(new HeaderItemDecoration(list, listAdapter));
         list.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
         if (presenter.checkIfCourseIsSelected()) {
+            setRefreshing(true);
             presenter.getAppointments();
         }
     }
 
     @Override
     public void loadList(List<AppointmentDto> appointments) {
-        listAdapter.setList(appointments);
-        listAdapter.notifyDataSetChanged();
-        list.setVisibility(View.VISIBLE);
+        if (appointments.size() > 0) {
+            listAdapter.setList(appointments);
+            listAdapter.notifyDataSetChanged();
+            list.setVisibility(View.VISIBLE);
+            emptyText.setVisibility(View.GONE);
+        } else {
+            list.setVisibility(View.GONE);
+            emptyText.setVisibility(View.VISIBLE);
+        }
         setRefreshing(false);
         list.post(new Runnable() {
             @Override
@@ -123,16 +137,19 @@ public class MainView extends AppCompatActivity implements MainContract.View {
 
     @Override
     public void scrollToNow() {
-        RecyclerView.SmoothScroller smoothScroller = new LinearSmoothScroller(getApplicationContext()) {
-            @Override
-            protected int getVerticalSnapPreference() {
-                return LinearSmoothScroller.SNAP_TO_START;
+        int target = listAdapter.getIndexOfNext();
+        if (target >= 0) {
+            RecyclerView.SmoothScroller smoothScroller = new LinearSmoothScroller(getApplicationContext()) {
+                @Override
+                protected int getVerticalSnapPreference() {
+                    return LinearSmoothScroller.SNAP_TO_START;
+                }
+            };
+            smoothScroller.setTargetPosition(target);
+            RecyclerView.LayoutManager layoutManager = list.getLayoutManager();
+            if (layoutManager != null) {
+                layoutManager.startSmoothScroll(smoothScroller);
             }
-        };
-        smoothScroller.setTargetPosition(listAdapter.getIndexOfNow());
-        RecyclerView.LayoutManager layoutManager = list.getLayoutManager();
-        if (layoutManager != null) {
-            layoutManager.startSmoothScroll(smoothScroller);
         }
     }
 
@@ -177,10 +194,13 @@ public class MainView extends AppCompatActivity implements MainContract.View {
                 item.setEnabled(true);
                 scrollToNow();
                 return true;
-            case R.id.main_view_menu_refresh:
+            case R.id.main_view_menu_browser:
                 item.setEnabled(true);
-                setRefreshing(true);
-                presenter.syncAppointments();
+                new CustomTabsIntent.Builder()
+                        .setToolbarColor(ContextCompat.getColor(getApplicationContext(), R.color.colorPrimaryDark))
+                        .setShowTitle(false)
+                        .build()
+                        .launchUrl(MainView.this, Uri.parse(presenter.currentURL()));
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

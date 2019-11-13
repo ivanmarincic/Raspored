@@ -2,9 +2,9 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/main_view_menu_refresh"
-        android:icon="@drawable/ic_refresh"
-        android:title="@string/main_view_menu_refresh_title"
+        android:id="@+id/main_view_menu_browser"
+        android:icon="@drawable/ic_open_in_browser"
+        android:title="@string/main_view_menu_browser_title"
         app:showAsAction="ifRoom" />
     <item
         android:id="@+id/main_view_menu_now"

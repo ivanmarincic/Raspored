@@ -11,6 +11,7 @@
     <string name="main_view_menu_settings_title">Postavke</string>
     <string name="main_view_menu_now_title">Pokaži današnji dan</string>
     <string name="main_view_menu_refresh_title">Osvježi</string>
+    <string name="main_view_menu_browser_title">Otvori URL</string>
     <string name="main_view_appointment_info_dialog_title">Informacije</string>
     <string name="main_view_appointment_info_dialog_name_label">Ime: </string>
     <string name="main_view_appointment_info_dialog_details_label">Detalji: </string>
@@ -56,6 +57,7 @@
     <string name="request_permission_rationale_positive">Da</string>
     <string name="request_permission_rationale_negative">Ne</string>
     <string name="request_error_internet">Nema internetske veze</string>
+    <string name="request_error_server">Server nije dostupan</string>
     <string name="request_error_internal">Došlo je do greške pokušajte ponovno</string>
     <string name="request_error_out_of_sync">Moguće kašnjenje rasporeda</string>
 </resources>

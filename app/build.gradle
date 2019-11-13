@@ -7,15 +7,16 @@ android {
         applicationId "com.idiotnation.raspored"
         minSdkVersion 17
         targetSdkVersion 28
-        versionCode 28000020
-        versionName "7.8"
+        versionCode 28000023
+        versionName "7.11"
         vectorDrawables.useSupportLibrary = true
         multiDexEnabled true
     }
 
     buildTypes {
         debug {
-            buildConfigField "String", "WS_BASE_URL", "\"http://192.168.0.24:5001/\""
+            buildConfigField "String", "WS_BASE_URL", "\"https://ivanmarincic.com/raspored-sync/\""
+//            buildConfigField "String", "WS_BASE_URL", "\"http://192.168.0.24:5001/\""
         }
 
         release {
@@ -33,8 +34,9 @@ android {
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'com.android.support:multidex:1.0.3'
-    implementation 'androidx.appcompat:appcompat:1.0.2'
+    implementation 'androidx.appcompat:appcompat:1.1.0'
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
+    implementation 'androidx.browser:browser:1.0.0'
     implementation 'com.google.android.material:material:1.0.0'
     implementation 'com.google.android.gms:play-services-gcm:17.0.0'
     implementation 'pub.devrel:easypermissions:2.0.0'

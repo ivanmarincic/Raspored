@@ -56,19 +56,21 @@ public class HeaderItemDecoration extends RecyclerView.ItemDecoration {
                 continue;
             }
             int headerPosition = listener.getHeaderPositionForItem(position);
-            View header = getHeaderViewForItem(headerPosition, parent);
-            if (topHeader == headerPosition) {
-                if (previousHeader != null) {
-                    if (previousHeader.getTop() < header.getBottom()) {
-                        moveHeader(c, header, previousHeader);
-                        continue;
+            if (headerPosition >= 0) {
+                View header = getHeaderViewForItem(headerPosition, parent);
+                if (topHeader == headerPosition) {
+                    if (previousHeader != null) {
+                        if (previousHeader.getTop() < header.getBottom()) {
+                            moveHeader(c, header, previousHeader);
+                            continue;
+                        }
                     }
+                    drawHeader(c, header);
+                } else {
+                    View parentHeader = getParentHeader(parent, headerPosition);
+                    drawHeaderAt(c, header, parentHeader);
+                    previousHeader = parentHeader;
                 }
-                drawHeader(c, header);
-            } else {
-                View parentHeader = getParentHeader(parent, headerPosition);
-                drawHeaderAt(c, header, parentHeader);
-                previousHeader = parentHeader;
             }
         }
     }

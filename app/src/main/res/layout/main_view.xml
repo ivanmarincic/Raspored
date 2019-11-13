@@ -7,6 +7,18 @@
     android:layout_height="fill_parent"
     tools:context=".views.MainView">
 
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/main_view_appointments_list_empty"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_margin="@dimen/margin_between_views"
+        android:gravity="center"
+        android:text="@string/main_view_appointments_list_empty_day"
+        android:textColor="@color/colorOnBackground"
+        android:textSize="@dimen/primary_text_size"
+        android:visibility="gone" />
+
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/main_view_app_bar"
         android:layout_width="match_parent"

@@ -7,6 +7,7 @@ import android.widget.Toast;
 import com.idiotnation.raspored.R;
 import com.idiotnation.raspored.contracts.MainContract;
 import com.idiotnation.raspored.helpers.Utils;
+import com.idiotnation.raspored.helpers.exceptions.ServerUnavailableException;
 import com.idiotnation.raspored.models.dto.AppointmentDto;
 import com.idiotnation.raspored.models.dto.AppointmentFilterDto;
 import com.idiotnation.raspored.models.dto.AppointmentSyncDto;
@@ -102,12 +103,15 @@ public class MainPresenter implements MainContract.Presenter {
                     @Override
                     public void onSuccess(List<AppointmentDto> appointments) {
                         view.loadList(appointments);
+                        syncAppointments();
                     }
 
                     @Override
                     public void onError(Throwable e) {
                         if (e instanceof IOException) {
                             Toast.makeText(context, context.getResources().getString(R.string.request_error_internet), Toast.LENGTH_SHORT).show();
+                        } else if (e instanceof ServerUnavailableException) {
+                            Toast.makeText(context, context.getResources().getString(R.string.request_error_server), Toast.LENGTH_SHORT).show();
                         } else {
                             Toast.makeText(context, context.getResources().getString(R.string.request_error_internal), Toast.LENGTH_SHORT).show();
                         }
@@ -144,6 +148,8 @@ public class MainPresenter implements MainContract.Presenter {
                     public void onError(Throwable e) {
                         if (e instanceof IOException) {
                             Toast.makeText(context, context.getResources().getString(R.string.request_error_internet), Toast.LENGTH_SHORT).show();
+                        } else if (e instanceof ServerUnavailableException) {
+                            Toast.makeText(context, context.getResources().getString(R.string.request_error_server), Toast.LENGTH_SHORT).show();
                         } else {
                             Toast.makeText(context, context.getResources().getString(R.string.request_error_internal), Toast.LENGTH_SHORT).show();
                         }
@@ -153,10 +159,16 @@ public class MainPresenter implements MainContract.Presenter {
     }
 
     @Override
+    public String currentURL() {
+        return currentSettings.getSelectedCourse().getUrl();
+    }
+
+    @Override
     public void blockAppointment(AppointmentDto appointmentDto) {
         if (appointmentDto != null && appointmentDto.getName() != null) {
             settingsService.addFilteredAppointment(appointmentDto.getName());
+            currentFiltered = settingsService.getFiltered();
+            syncAppointments();
         }
-        syncAppointments();
     }
 }

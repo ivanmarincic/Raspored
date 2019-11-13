@@ -10,6 +10,7 @@ import android.provider.CalendarContract;
 import com.idiotnation.raspored.dataaccess.api.ServiceGenerator;
 import com.idiotnation.raspored.dataaccess.database.DatabaseManager;
 import com.idiotnation.raspored.helpers.Utils;
+import com.idiotnation.raspored.helpers.exceptions.ServerUnavailableException;
 import com.idiotnation.raspored.jobs.AppointmentNotificationJob;
 import com.idiotnation.raspored.models.db.Appointment;
 import com.idiotnation.raspored.models.db.Course;
@@ -65,6 +66,8 @@ public class AppointmentService {
         int responseCode = response.code();
         if (responseCode == 210) {
             return null;
+        } else if (!response.isSuccessful()) {
+            throw new ServerUnavailableException();
         }
         final List<AppointmentDto> synced = response.body();
         if (synced != null) {
