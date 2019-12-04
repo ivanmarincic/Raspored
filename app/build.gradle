@@ -7,8 +7,8 @@ android {
         applicationId "com.idiotnation.raspored"
         minSdkVersion 17
         targetSdkVersion 28
-        versionCode 28000023
-        versionName "7.11"
+        versionCode 28000025
+        versionName "7.12"
         vectorDrawables.useSupportLibrary = true
         multiDexEnabled true
     }

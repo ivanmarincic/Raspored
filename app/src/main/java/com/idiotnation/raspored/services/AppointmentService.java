@@ -156,9 +156,9 @@ public class AppointmentService {
                     public Boolean call() {
                         try {
                             AppointmentSyncDto appointmentSync = getAppointmentsFromServer(appointmentFilter);
-                            if (appointmentSync != null && appointmentSync.getAppointments() != null && !appointmentSync.getOutOfSync()) {
+                            if (appointmentSync != null && appointmentSync.getAppointments() != null) {
                                 syncCalendarEvents(calendarFilterDto, appointmentSync.getAppointments(), context);
-                                return true;
+                                return !appointmentSync.getOutOfSync();
                             }
                         } catch (Exception e) {
                             e.printStackTrace();
